@@ -5,7 +5,7 @@ This is my Emacs configuration, modified based on the configuration in Remacs çš
 
 ## Environment
 - Arch Linux.
- -i3-wm
+- i3-wm
 
 ## Installation
 To use my configuration, follow these steps:
