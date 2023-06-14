@@ -79,16 +79,3 @@
 (provide 'init)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(edit-indirect yasnippet which-key vertico use-package-ensure-system-package undo-tree toc-org super-save smartparens shackle sdcv rime restart-emacs rainbow-delimiters quelpa-use-package pyvenv-auto py-autopep8 popper plantuml-mode pinyinlib ox-reveal ox-pandoc ox-gfm org-super-links org-roam-ui org-noter org-modern org-contrib org-auto-tangle org-appear org-ai orderless no-littering multiple-cursors minions marginalia magit-delta lsp-mode keycast ivy htmlize helpful gnuplot fontaine flycheck fanyi embark-consult eglot ef-themes doom-modeline diminish diff-hl denote dashboard crux corfu consult-notes company-box cdlatex cape cal-china-x avy all-the-icons-completion)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
