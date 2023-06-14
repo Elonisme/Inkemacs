@@ -1,6 +1,11 @@
 # .emacs.d
 [English Band](README.en.md)
 
+![dashband](imgs/dashband.png)
+![org mode](imgs/org.png)
+![rime-ice](imgs/rime.png)
+
+
 这是我的 Emacs 配置, 我根据 [Remacs 的世界](https://remacs.cc/) 中的《面向产品经理的 Emacs 教程》的配置进行了修改。我也是一个emacs新手，对于很多包也不会使用，但是我会持续更新配置。
 
 ## 环境

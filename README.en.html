@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>README.en.html</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+</head>
+
+<body>
+
+<h1>.emacs.d</h1>
+
+<p><a href="README.md">中文版</a></p>
+
+<p><img src="imgs/dashband.png" alt="dashband" />
+<img src="imgs/org.png" alt="org mode" />
+<img src="imgs/rime.png" alt="rime-ice" /></p>
+
+<p>This is my Emacs configuration, modified based on the configuration in Remacs 的世界 and their tutorial &ldquo;Emacs for Product Managers&rdquo;. I am also an Emacs beginner and not familiar with many packages, but I will continuously update my configuration.</p>
+
+<h2>Environment</h2>
+
+<ul>
+<li>Arch Linux.</li>
+<li>i3-wm</li>
+</ul>
+
+
+<h2>Installation</h2>
+
+<p>To use my configuration, follow these steps:</p>
+
+<ol>
+<li><p>Clone my configuration repository to your local machine:
+<code>bash
+git clone git@github.com:Elonisme/.emacs.d.git ~/.emacs.d
+</code></p></li>
+<li><p>Launch Emacs, open the emacs-config.org file, and execute the following command:
+<code>
+M-x org-babel-tangle
+</code>
+Restart Emacs, and the generated files will automatically install the required packages and dependencies.</p></li>
+<li><p>Restart Emacs to ensure the configuration takes effect.</p></li>
+</ol>
+
+
+<h2>Configuration Details</h2>
+
+<p>My configuration is primarily focused on coding and note-taking and is not intended to be a comprehensive setup. I strive to include only the features I truly need, making it aesthetically pleasing, fast, and user-friendly.</p>
+
+<ul>
+<li><p>Code completion: I use eglot as the code completion tool, primarily for Python development.</p></li>
+<li><p>Note management and linking: I utilize org-roam for note management and linking, enabling the creation of a knowledge graph.</p></li>
+<li><p>Reading and annotating PDF documents: I employ org-noter to read and annotate PDF documents within Emacs.</p></li>
+<li><p>Custom startup screen: I integrate the dashboard package to provide a personalized startup screen that facilitates quick access to recent files and projects.</p></li>
+<li><p>Chinese input method: I use rime for Chinese input, specifically the rime-ice configuration.</p></li>
+</ul>
+
+
+<p>Please note that my configuration generates el files using org-mode. Therefore, you need to use the org-babel-tangle command to generate the configuration files. For more detailed instructions, refer to the tutorial in <a href="https://remacs.cc/">Remacs 的世界</a>.</p>
+
+<p>If you are new to Emacs, I recommend reading the &ldquo;Emacs for Product Managers&rdquo; tutorial. I believe you will find it beneficial.</p>
+
+<p>It&rsquo;s worth noting that my usage of use-package in the configuration is not yet proficient. If you encounter issues with package downloads, please manually download them as needed.</p>
+
+<h2>License</h2>
+
+<p>This configuration is licensed under the GNU General Public License v3.0 (GPLv3). You can find the complete license text in the <a href="LICENSE">LICENSE</a> file.</p>
+
+<p>If you have any questions or suggestions, feel free to contact me.</p>
+
+<p>My email address is elonisme@163.com.</p>
+
+<p>Happy coding and note-taking in Emacs!</p>
+
+</body>
+</html>

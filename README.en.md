@@ -1,6 +1,10 @@
 # .emacs.d
 [中文版](README.md)
 
+![dashband](imgs/dashband.png)
+![org mode](imgs/org.png)
+![rime-ice](imgs/rime.png)
+
 This is my Emacs configuration, modified based on the configuration in Remacs 的世界 and their tutorial "Emacs for Product Managers". I am also an Emacs beginner and not familiar with many packages, but I will continuously update my configuration.
 
 ## Environment
