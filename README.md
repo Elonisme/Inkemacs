@@ -1,10 +1,11 @@
 # .emacs.d
 [中文版](README.zh.md)
+
 This is my Emacs configuration, modified based on the configuration in Remacs 的世界 and their tutorial "Emacs for Product Managers". I am also an Emacs beginner and not familiar with many packages, but I will continuously update my configuration.
 
 ## Environment
-Arch Linux.
-i3-wm
+- Arch Linux.
+ -i3-wm
 
 ## Installation
 To use my configuration, follow these steps:
