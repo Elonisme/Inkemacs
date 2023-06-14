@@ -190,7 +190,7 @@
   :bind ("C-c t" . ef-themes-toggle)
   :init
   ;; set two specific themes and switch between them
-  (setq ef-themes-to-toggle '(ef-winter ef-summer))
+  (setq ef-themes-to-toggle '(ef-summer ef-winter))
   ;; set org headings and function syntax
   (setq ef-themes-headings
         '((0 . (bold 1))
