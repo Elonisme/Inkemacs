@@ -127,16 +127,13 @@
   (("C-c C-a r" . restart-emacs))
   )
 
-  (use-package rime
-  :quelpa (rime :fetcher github
-                :repo "DogLooksGood/emacs-rime"
-                :files ("*.el" "Makefile" "lib.c"))
+(use-package rime
   :custom
   (default-input-method "rime"))
 
 (global-set-key (kbd "C-\\") 'toggle-input-method)
 
-(use-package pyvenv)
+(use-package pyvenv-auto)
 (setenv "WORKON_HOME" "/home/elon/anaconda3/envs/")
 
 (provide 'init-tools)
