@@ -1,4 +1,4 @@
-* .emacs.d
+* Inkwell Emacs
 
 [[./README.en.org][English Band]]
 

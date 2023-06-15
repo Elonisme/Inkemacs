@@ -1,4 +1,4 @@
-* .emacs.d
+* Inkwell Emacs
 
 [[./README.md][中文版]]
 
