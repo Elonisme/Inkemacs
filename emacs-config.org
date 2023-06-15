@@ -128,6 +128,10 @@
   :ensure t)
 #+END_SRC
 
+** auto-package-update
+#+BEGIN_SRC emacs-lisp
+(use-package auto-package-update)
+#+END_SRC
 ** find-config
 #+BEGIN_SRC emacs-lisp
 (defun open-custom-post-file()
@@ -703,25 +707,6 @@
 (use-package no-littering
   :ensure t)
 #+end_src
-
-** savehist记住迷你缓冲区历史
-记住迷你缓冲区历史。
-
-#+BEGIN_SRC emacs-lisp
-(use-package savehist
-  :ensure nil
-  :hook (after-init . savehist-mode)
-  :config
-  ;; Allow commands in minibuffers, will affect `dired-do-dired-do-find-regexp-and-replace' command:
-  (setq enable-recursive-minibuffers t)
-  (setq history-length 1000)
-  (setq savehist-additional-variables '(mark-ring
-                                        global-mark-ring
-                                        search-ring
-                                        regexp-search-ring
-                                        extended-command-history))
-  (setq savehist-autosave-interval 300))
-#+END_SRC
 
 ** saveplace记住每个文件的光标位置
 自动记住每个文件的最后一次访问的光标位置。
@@ -1390,33 +1375,6 @@ Optional for Org-mode file: `LINK'."
 (use-package cdlatex)
 #+END_SRC
 
-** Org mode补充配置
-#+BEGIN_SRC emacs-lisp
-  (setq org-format-latex-options
-        '(:foreground default
-          :background default
-          :scale 1.8
-          :html-foreground "Black"
-          :html-background "Transparent"
-          :html-scale 1.0
-          :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-        )
-  (add-hook 'org-mode-hook #'org-cdlatex-mode)
-
-  (setq org-highlight-latex-and-related '(native latex entities))
-  (setq org-pretty-entities t)
-  (setq org-pretty-entities-include-sub-superscripts nil)
-
-  (setq  org-latex-pdf-process '("tectonic -Z shell-escape %f"))
-  ;; (add-to-list 'org-latex-packages-alist '("" "ctex"))
-  ;; (add-to-list 'org-latex-packages-alist '("" "seqsplit"))
-  (setq org-latex-listings 'minted)
-  ;; (add-to-list 'org-latex-packages-alist '("" "minted"))
-
-  (global-set-key (kbd "C-c SPC") 'org-mark-ring-goto)
-
-#+END_SRC
-
 ** org-modern 美化
 下面，我们通过 [[https://github.com/minad/org-modern][org-modern]] 插件对Org mode进行进一步的美化。
 
@@ -1521,128 +1479,6 @@ Optional for Org-mode file: `LINK'."
                             :jump-to-captured t)
                            ))
   )
-#+END_SRC
-
-** denote笔记设置
-
-[[https://protesilaos.com/emacs/denote][denote]] 是一个轻量级的笔记插件，拥有良好的文件名命名模板。
-
-#+BEGIN_SRC emacs-lisp
-(use-package denote
-  :ensure t
-  :hook (dired-mode . denote-dired-mode-in-directories)
-  :bind (("C-c d n" . denote)
-         ("C-c d d" . denote-date)
-         ("C-c d t" . denote-type)
-         ("C-c d s" . denote-subdirectory)
-         ("C-c d f" . denote-open-or-create)
-         ("C-c d r" . denote-dired-rename-file))
-  :init
-  (with-eval-after-load 'org-capture
-    (setq denote-org-capture-specifiers "%l\n%i\n%?")
-    (add-to-list 'org-capture-templates
-                 '("N" "New note (with denote.el)" plain
-                   (file denote-last-path)
-                   #'denote-org-capture
-                   :no-save t
-                   :immediate-finish nil
-                   :kill-buffer t
-                   :jump-to-captured t)))
-  :config
-  (setq denote-directory (expand-file-name "~/org/"))
-  (setq denote-known-keywords '("emacs" "entertainment" "reading" "studying"))
-  (setq denote-infer-keywords t)
-  (setq denote-sort-keywords t)
-  ;; org is default, set others such as text, markdown-yaml, markdown-toml
-  (setq denote-file-type nil)
-  (setq denote-prompts '(title keywords))
-
-  ;; We allow multi-word keywords by default.  The author's personal
-  ;; preference is for single-word keywords for a more rigid workflow.
-  (setq denote-allow-multi-word-keywords t)
-  (setq denote-date-format nil)
-
-  ;; If you use Markdown or plain text files (Org renders links as buttons
-  ;; right away)
-  (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
-  (setq denote-dired-rename-expert nil)
-
-  ;; OR if only want it in `denote-dired-directories':
-  (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
-  )
-#+END_SRC
-
-** consult-notes查找笔记
-
-[[https://github.com/mclear-tools/consult-notes][consult-notes]] 插件可以通过consult快速找到笔记。
-
-#+BEGIN_SRC emacs-lisp
-(use-package consult-notes
-  :ensure t
-  :commands (consult-notes
-             consult-notes-search-in-all-notes)
-  :bind (("C-c n f" . consult-notes)
-         ("C-c n c" . consult-notes-search-in-all-notes))
-  :config
-  (setq consult-notes-file-dir-sources
-        `(
-          ("work"    ?w ,(concat org-directory "/midea/"))
-          ("article" ?a ,(concat org-directory "/article/"))
-          ("org"     ?o ,(concat org-directory "/"))
-          ("hugo"    ?h ,(concat org-directory "/hugo/"))
-          ("books"   ?b ,(concat (getenv "HOME") "/Books/"))
-          ))
-
-  ;; embark support
-  (with-eval-after-load 'embark
-    (defun consult-notes-open-dired (cand)
-      "Open notes directory dired with point on file CAND."
-      (interactive "fNote: ")
-      ;; dired-jump is in dired-x.el but is moved to dired in Emacs 28
-      (dired-jump nil cand))
-
-    (defun consult-notes-marked (cand)
-      "Open a notes file CAND in Marked 2.
-Marked 2 is a mac app that renders markdown."
-      (interactive "fNote: ")
-      (call-process-shell-command (format "open -a \"Marked 2\" \"%s\"" (expand-file-name cand))))
-
-    (defun consult-notes-grep (cand)
-      "Run grep in directory of notes file CAND."
-      (interactive "fNote: ")
-      (consult-grep (file-name-directory cand)))
-
-    (embark-define-keymap consult-notes-map
-                          "Keymap for Embark notes actions."
-                          :parent embark-file-map
-                          ("d" consult-notes-dired)
-                          ("g" consult-notes-grep)
-                          ("m" consult-notes-marked))
-
-    (add-to-list 'embark-keymap-alist `(,consult-notes-category . consult-notes-map))
-
-    ;; make embark-export use dired for notes
-    (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired)
-    )
-  )
-#+END_SRC
-
-** org-super-links反链设置
-
-[[https://github.com/toshism/org-super-links][org-super-links]] 插件可以设置反向链接。
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-super-links
-  :quelpa (org-super-links :fetcher github :repo "toshism/org-super-links")
-  :bind (("C-c s s"   . org-super-links-link)
-         ("C-c s l"   . org-super-links-store-link)
-         ("C-c s C-l" . org-super-links-insert-link)
-         ("C-c s d"   . org-super-links-quick-insert-drawer-link)
-         ("C-c s i"   . org-super-links-quick-insert-inline-link)
-         ("C-c s C-d" . org-super-links-delete-link))
-  :config
-  (setq org-super-links-related-into-drawer t)
-  (setq	org-super-links-link-prefix 'org-super-links-link-prefix-timestamp))
 #+END_SRC
 
 ** org-src代码块基础配置
@@ -1959,324 +1795,6 @@ Org mode代码块的基本配置。
                            ("zhihu"         . "https://zhihu.com/question/"))))
 #+END_SRC
 
-** Org mode 任务管理
-*** calendar基本设置
-
-#+BEGIN_SRC emacs-lisp
-(use-package calendar
-  :ensure nil
-  :hook (calendar-today-visible . calendar-mark-today)
-  :custom
-  ;; 是否显示中国节日，我们使用 `cal-chinese-x' 插件
-  (calendar-chinese-all-holidays-flag nil)
-  ;; 是否显示节日
-  (calendar-mark-holidays-flag t)
-  ;; 是否显示Emacs的日记，我们使用org的日记
-  (calendar-mark-diary-entries-flag nil)
-  ;; 数字方式显示时区，如 +0800，默认是字符方式如 CST
-  (calendar-time-zone-style 'numeric)
-  ;; 日期显示方式：year/month/day
-  (calendar-date-style 'iso)
-  ;; 中文天干地支设置
-  (calendar-chinese-celestial-stem ["甲" "乙" "丙" "丁" "戊" "己" "庚" "辛" "壬" "癸"])
-  (calendar-chinese-terrestrial-branch ["子" "丑" "寅" "卯" "辰" "巳" "午" "未" "申" "酉" "戌" "亥"])
-  ;; 设置中文月份
-  (calendar-month-name-array ["一月" "二月" "三月" "四月" "五月" "六月" "七月" "八月" "九月" "十月" "十一月" "十二月"])
-  ;; 设置星期标题显示
-  (calendar-day-name-array ["日" "一" "二" "三" "四" "五" "六"])
-  ;; 周一作为一周第一天
-  (calendar-week-start-day 1)
-  )
-#+END_SRC
-
-*** 日历中文增强
-
-我们通过 [[https://github.com/xwl/cal-china-x][cal-china-x]] 插件进一步地增强中文日历，显示农历等信息。
-
-#+BEGIN_SRC emacs-lisp
-;; 时间解析增加中文拼音
-(use-package parse-time
-  :ensure nil
-  :defer t
-  :config
-  (setq parse-time-months
-        (append '(("yiy" . 1) ("ery" . 2) ("sany" . 3)
-                  ("siy" . 4) ("wuy" . 5) ("liuy" . 6)
-                  ("qiy" . 7) ("bay" . 8) ("jiuy" . 9)
-                  ("shiy" . 10) ("shiyiy" . 11) ("shiery" . 12)
-                  ("yiyue" . 1) ("eryue" . 2) ("sanyue" . 3)
-                  ("siyue" . 4) ("wuyue" . 5) ("liuyue" . 6)
-                  ("qiyue" . 7) ("bayue" . 8) ("jiuyue" . 9)
-                  ("shiyue" . 10) ("shiyiyue" . 11) ("shieryue" . 12))
-                parse-time-months))
-
-  (setq parse-time-weekdays
-        (append '(("zri" . 0) ("zqi" . 0)
-                  ("zyi" . 1) ("zer" . 2) ("zsan" . 3)
-                  ("zsi" . 4) ("zwu" . 5) ("zliu" . 6)
-                  ("zr" . 0) ("zq" . 0)
-                  ("zy" . 1) ("ze" . 2) ("zs" . 3)
-                  ("zsi" . 4) ("zw" . 5) ("zl" . 6))
-                parse-time-weekdays)))
-
-;; 中国节日设置
-(use-package cal-china-x
-  :ensure t
-  :commands cal-china-x-setup
-  :hook (after-init . cal-china-x-setup)
-  :config
-  ;; 重要节日设置
-  (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
-  ;; 所有节日设置
-  (setq cal-china-x-general-holidays
-        '(;;公历节日
-          (holiday-fixed 1 1 "元旦")
-          (holiday-fixed 2 14 "情人节")
-          (holiday-fixed 3 8 "妇女节")
-          (holiday-fixed 3 14 "白色情人节")
-          (holiday-fixed 4 1 "愚人节")
-          (holiday-fixed 5 1 "劳动节")
-          (holiday-fixed 5 4 "青年节")
-          (holiday-float 5 0 2 "母亲节")
-          (holiday-fixed 6 1 "儿童节")
-          (holiday-float 6 0 3 "父亲节")
-          (holiday-fixed 9 10 "教师节")
-          (holiday-fixed 10 1 "国庆节")
-          (holiday-fixed 10 2 "国庆节")
-          (holiday-fixed 10 3 "国庆节")
-          (holiday-fixed 10 24 "程序员节")
-          (holiday-fixed 11 11 "双11购物节")
-          (holiday-fixed 12 25 "圣诞节")
-          ;; 农历节日
-          (holiday-lunar 12 30 "春节" 0)
-          (holiday-lunar 1 1 "春节" 0)
-          (holiday-lunar 1 2 "春节" 0)
-          (holiday-lunar 1 15 "元宵节" 0)
-          (holiday-solar-term "清明" "清明节")
-          (holiday-solar-term "小寒" "小寒")
-          (holiday-solar-term "大寒" "大寒")
-          (holiday-solar-term "立春" "立春")
-          (holiday-solar-term "雨水" "雨水")
-          (holiday-solar-term "惊蛰" "惊蛰")
-          (holiday-solar-term "春分" "春分")
-          (holiday-solar-term "谷雨" "谷雨")
-          (holiday-solar-term "立夏" "立夏")
-          (holiday-solar-term "小满" "小满")
-          (holiday-solar-term "芒种" "芒种")
-          (holiday-solar-term "夏至" "夏至")
-          (holiday-solar-term "小暑" "小暑")
-          (holiday-solar-term "大暑" "大暑")
-          (holiday-solar-term "立秋" "立秋")
-          (holiday-solar-term "处暑" "处暑")
-          (holiday-solar-term "白露" "白露")
-          (holiday-solar-term "秋分" "秋分")
-          (holiday-solar-term "寒露" "寒露")
-          (holiday-solar-term "霜降" "霜降")
-          (holiday-solar-term "立冬" "立冬")
-          (holiday-solar-term "小雪" "小雪")
-          (holiday-solar-term "大雪" "大雪")
-          (holiday-solar-term "冬至" "冬至")
-          (holiday-lunar 5 5 "端午节" 0)
-          (holiday-lunar 8 15 "中秋节" 0)
-          (holiday-lunar 7 7 "七夕情人节" 0)
-          (holiday-lunar 12 8 "腊八节" 0)
-          (holiday-lunar 9 9 "重阳节" 0)))
-  ;; 设置日历的节日，通用节日已经包含了所有节日
-  (setq calendar-holidays (append cal-china-x-general-holidays)))
-#+END_SRC
-
-*** org-agenda基本设置
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-agenda
-  :ensure nil
-  :hook (org-agenda-finalize . org-agenda-to-appt)
-  :bind (("\e\e a" . org-agenda)
-         :map org-agenda-mode-map
-         ("i" . (lambda () (interactive) (org-capture nil "d")))
-         ("J" . consult-org-agenda))
-  :config
-  ;; 日程模式的日期格式设置
-  (setq org-agenda-format-date 'org-agenda-format-date-aligned)
-  (defun org-agenda-format-date-aligned (date)
-    "Format a DATE string for display in the daily/weekly agenda, or timeline.
-
-This function makes sure that dates are aligned for easy reading."
-    (require 'cal-iso)
-    (let* ((dayname (aref cal-china-x-days
-                          (calendar-day-of-week date)))
-           (day (cadr date))
-           (month (car date))
-           (year (nth 2 date))
-           (day-of-week (calendar-day-of-week date))
-           (iso-week (org-days-to-iso-week
-                      (calendar-absolute-from-gregorian date)))
-           (cn-date (calendar-chinese-from-absolute (calendar-absolute-from-gregorian date)))
-           (cn-month (cl-caddr cn-date))
-           (cn-day (cl-cadddr cn-date))
-           (cn-month-string (concat (aref cal-china-x-month-name
-                                          (1- (floor cn-month)))
-                                    (if (integerp cn-month)
-                                        ""
-                                      "（闰月）")))
-           (cn-day-string (aref cal-china-x-day-name
-                                (1- cn-day)))
-           (extra (format " 农历%s%s%s%s"
-                          (if (or (eq org-agenda-current-span 'day)
-                                  (= day-of-week 1)
-                                  (= cn-day 1))
-                              cn-month-string
-                            "")
-                          (if (or (= day-of-week 1)
-                                  (= cn-day 1))
-                              (if (integerp cn-month) "" "[闰]")
-                            "")
-                          cn-day-string
-                          (if (or (= day-of-week 1)
-                                  (eq org-agenda-current-span 'day))
-                              (format " 今年第%02d周" iso-week)
-                            "")
-                          ))
-           )
-      (format "%04d-%02d-%02d 星期%s%s%s\n" year month
-              day dayname extra (concat " 第" (format-time-string "%j") "天"))))
-
-  ;; 显示时间线
-  (setq org-agenda-use-time-grid t)
-  ;; 设置面包屑分隔符
-  ;; (setq org-agenda-breadcrumbs-separator " ❱ ")
-  ;; 设置时间线的当前时间指示串
-  (setq org-agenda-current-time-string "⏰------------now")
-  ;; 时间线范围和颗粒度设置
-  (setq org-agenda-time-grid (quote ((daily today)
-                                     (0600 0800 1000 1200
-                                           1400 1600 1800
-                                           2000 2200 2400)
-                                     "......" "----------------")))
-  ;; 日程视图的前缀设置
-  (setq org-agenda-prefix-format '((agenda . " %i %-25:c %5t %s")
-                                   (todo   . " %i %-25:c ")
-                                   (tags   . " %i %-25:c ")
-                                   (search . " %i %-25:c ")))
-  ;; 对于计划中的任务在视图里的显示
-  (setq org-agenda-scheduled-leaders
-        '("计划 " "应在%02d天前开始 "))
-  ;; 对于截止日期的任务在视图里的显示
-  (setq org-agenda-deadline-leaders
-        '("截止 " "还有%02d天到期 " "已经过期%02d天 "))
-
-  ;; =====================
-  ;; 自定义日程视图，分别显示TODO，WIP，WIAT中的任务
-  ;; n键显示自定义视图，p键纯文本视图，a键默认视图
-  ;; =====================
-  (defvar my-org-custom-daily-agenda
-    `((todo "TODO"
-            ((org-agenda-block-separator nil)
-             (org-agenda-overriding-header "所有待办任务\n")))
-      (todo "WIP"
-            ((org-agenda-block-separator nil)
-             (org-agenda-overriding-header "\n进行中的任务\n")))
-      (todo "WAIT"
-            ((org-agenda-block-separator nil)
-             (org-agenda-overriding-header "\n等待中的任务\n")))
-      (agenda "" ((org-agenda-block-separator nil)
-                  (org-agenda-overriding-header "\n今日日程\n"))))
-    "Custom agenda for use in `org-agenda-custom-commands'.")
-  (setq org-agenda-custom-commands
-        `(("n" "Daily agenda and top priority tasks"
-           ,my-org-custom-daily-agenda)
-          ("p" "Plain text daily agenda and top priorities"
-           ,my-org-custom-daily-agenda
-           ((org-agenda-with-colors nil)
-            (org-agenda-prefix-format "%t %s")
-            (org-agenda-current-time-string ,(car (last org-agenda-time-grid)))
-            (org-agenda-fontify-priorities nil)
-            (org-agenda-remove-tags t))
-           ("agenda.txt"))))
-
-  ;; 时间戳格式设置，会影响到 `svg-tag' 等基于正则的设置
-  ;; 这里设置完后是 <2022-12-24 星期六> 或 <2022-12-24 星期六 06:53>
-  (setq system-time-locale "zh_CN.UTF-8")
-  (setq org-time-stamp-formats '("<%Y-%m-%d %A>" . "<%Y-%m-%d %A %H:%M>"))
-  ;; 不同日程类别间的间隔
-  (setq org-cycle-separator-lines 2)
-  :custom
-  ;; 设置需要被日程监控的org文件
-  (org-agenda-files
-   (list (expand-file-name "emacs-config.org" user-emacs-directory)
-         ))
-  ;; 设置org的日记文件
-  (org-agenda-diary-file (expand-file-name "diary.org" org-directory))
-  ;; 日记插入精确时间戳
-  (org-agenda-insert-diary-extract-time t)
-  ;; 设置日程视图更加紧凑
-  ;; (org-agenda-compact-blocks t)
-  ;; 日程视图的块分隔符
-  (org-agenda-block-separator ?─)
-  ;; 日视图还是周视图，通过 v-d, v-w, v-m, v-y 切换视图，默认周视图
-  (org-agenda-span 'day)
-  ;; q退出时删除agenda缓冲区
-  (org-agenda-sticky t)
-  ;; 是否包含直接日期
-  (org-agenda-include-deadlines t)
-  ;; 禁止日程启动画面
-  (org-agenda-inhibit-startup t)
-  ;; 显示每一天，不管有没有条目
-  (org-agenda-show-all-dates t)
-  ;; 时间不足位时前面加0
-  (org-agenda-time-leading-zero t)
-  ;; 日程同时启动log mode
-  (org-agenda-start-with-log-mode t)
-  ;; 日程同时启动任务时间记录报告模式
-  (org-agenda-start-with-clockreport-mode t)
-  ;; 截止的任务完成后不显示
-  ;; (org-agenda-skip-deadline-if-done t)
-  ;; 当计划的任务完成后不显示
-  (org-agenda-skip-scheduled-if-done t)
-  ;; 计划过期上限
-  (org-scheduled-past-days 365)
-  ;; 计划截止上限
-  (org-deadline-past-days 365)
-  ;; 计划中的任务不提醒截止时间
-  (org-agenda-skip-deadline-prewarning-if-scheduled 1)
-  (org-agenda-skip-scheduled-if-deadline-is-shown t)
-  (org-agenda-skip-timestamp-if-deadline-is-shown t)
-  ;; 设置工时记录报告格式
-  (org-agenda-clockreport-parameter-plist
-   '(:link t :maxlevel 5 :fileskip0 t :compact nil :narrow 80))
-  (org-agenda-columns-add-appointments-to-effort-sum t)
-  (org-agenda-restore-windows-after-quit t)
-  (org-agenda-window-setup 'current-window)
-  ;; 标签显示的位置，第100列往前右对齐
-  (org-agenda-tags-column -100)
-  ;; 从星期一开始作为一周第一天
-  (org-agenda-start-on-weekday 1)
-  ;; 是否使用am/pm
-  ;; (org-agenda-timegrid-use-ampm nil)
-  ;; 搜索是不看时间
-  (org-agenda-search-headline-for-time nil)
-  ;; 提前3天截止日期到期告警
-  (org-deadline-warning-days 3)
-  )
-#+END_SRC
-
-*** org-habit习惯管理
-
-#+begin_src emacs-lisp
-(use-package org-habit
-  :ensure nil
-  :defer t
-  :custom
-  (org-habit-show-habits t)
-  (org-habit-graph-column 70)
-  (org-habit-show-all-today t)
-  (org-habit-show-done-always-green t)
-  (org-habit-scheduled-past-days t)
-  ;; org habit show 7 days before today and 7 days after today. ! means not done. * means done.
-  (org-habit-preceding-days 7)
-  )
-#+end_src
-
 ** init-org.el 文件尾
 
 #+BEGIN_SRC emacs-lisp
@@ -2302,12 +1820,33 @@ Emacs的补全设置。
 
 #+END_SRC
 
+** counsel
+#+BEGIN_SRC emacs-lisp
+(use-package counsel
+  :ensure t)
+#+END_SRC
+
 ** ivy
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
   :ensure t
-  :diminish ivy-mode
-  :hook (after-init . ivy-mode))
+  :init
+  (ivy-mode 1)
+  (counsel-mode 1)
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq search-default-mode #'char-fold-to-regexp)
+  (setq ivy-count-format "(%d/%d) ")
+  :bind
+  (("C-s" . 'swiper)
+   ("C-x b" . 'ivy-switch-buffer)
+   ("C-c v" . 'ivy-push-view)
+   ("C-c s" . 'ivy-switch-view)
+   ("C-c V" . 'ivy-pop-view)
+   ("C-x C-@" . 'counsel-mark-ring); 在某些终端上 C-x C-SPC 会被映射为 C-x C-@，比如在 macOS 上，所以要手动设置
+   ("C-x C-SPC" . 'counsel-mark-ring)
+   :map minibuffer-local-map
+   ("C-r" . counsel-minibuffer-history)))
 #+END_SRC
 
 ** vertico
@@ -2332,11 +1871,6 @@ Emacs的补全设置。
   ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
    (setq vertico-cycle t)
   )
-
-;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-package savehist
-  :init
-  (savehist-mode))
 #+END_SRC
 
 ** orderless
@@ -2362,130 +1896,6 @@ Emacs的补全设置。
   :hook (after-init . marginalia-mode)
   :custom
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
-#+END_SRC
-
-** consult
-
-[[https://github.com/minad/consult][consult]] 插件基于Emacs自带的补全机制，提供了一系列的补全命令。
-
-#+BEGIN_SRC emacs-lisp
-(use-package consult
-  ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (;; C-c bindings in `mode-specific-map'
-         ("C-c M-x" . consult-mode-command)
-         ("C-c h" . consult-history)
-         ("C-c k" . consult-kmacro)
-         ("C-c m" . consult-man)
-         ("C-c i" . consult-info)
-         ([remap Info-search] . consult-info)
-         ;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ;; M-g bindings in `goto-map'
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings in `search-map'
-         ("M-s d" . consult-find)
-         ("M-s D" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("C-s" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
-
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
-  ;; The :init configuration is always executed (Not lazy)
-  :init
-
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
-  :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key "M-.")
-  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
-  (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key "M-."
-   :preview-key '(:debounce 0.4 any))
-
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; "C-+"
-
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
-
-  ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-  ;;;; 1. project.el (the default)
-  ;; (setq consult-project-function #'consult--default-project--function)
-  ;;;; 2. vc.el (vc-root-dir)
-  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
-  ;;;; 3. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-  ;;;; 4. projectile.el (projectile-project-root)
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
-  ;;;; 5. No project support
-  ;; (setq consult-project-function nil)
-)
 #+END_SRC
 
 ** corfu
@@ -2712,6 +2122,23 @@ Emacs的补全设置。
   (setq truncate-lines t) ; 如果单行信息很长会自动换行
   :hook
   (prog-mode . flycheck-mode))
+#+END_SRC
+
+** savehist
+#+BEGIN_SRC emacs-lisp
+(use-package savehist
+  :ensure nil
+  :hook (after-init . savehist-mode)
+  :config
+  ;; Allow commands in minibuffers, will affect `dired-do-dired-do-find-regexp-and-replace' command:
+  (setq enable-recursive-minibuffers t)
+  (setq history-length 1000)
+  (setq savehist-additional-variables '(mark-ring
+                                        global-mark-ring
+                                        search-ring
+                                        regexp-search-ring
+                                        extended-command-history))
+  (setq savehist-autosave-interval 300))
 #+END_SRC
 
 ** init-completion.el 文件尾
@@ -3031,78 +2458,6 @@ Version 2019-11-04"
   (which-key-add-column-padding 1))
 #+end_src
 
-** sdcv本地词典
-
-[[https://github.com/manateelazycat/sdcv][sdcv]] 是一个基于本地stardict词典的客户端，可以快速查询一些单词释义。
-
-#+BEGIN_SRC emacs-lisp
-;; 这个插件依赖于 `posframe' 这个插件
-(use-package posframe
-  :ensure t
-  )
-
-(use-package sdcv
-  :quelpa (sdcv :fetcher github :repo "manateelazycat/sdcv")
-  :commands (sdcv-search-pointer+)
-  :bind ("C-," . sdcv-search-pointer+)
-  :config
-  (setq sdcv-say-word-p t)
-  (setq sdcv-dictionary-data-dir (expand-file-name "~/Backup/stardict/"))
-  (setq sdcv-dictionary-simple-list
-        '("懒虫简明英汉词典"
-          "懒虫简明汉英词典"))
-  (setq sdcv-dictionary-complete-list
-        '("朗道英汉字典5.0"
-          "牛津英汉双解美化版"
-          "21世纪双语科技词典"
-          "quick_eng-zh_CN"
-          "新世纪英汉科技大词典"))
-  (setq sdcv-tooltip-timeout 10)
-  (setq sdcv-fail-notify-string "没找到释义")
-  (setq sdcv-tooltip-border-width 2)
-  )
-#+END_SRC
-
-** fanyi在线词典
-
-[[https://github.com/condy0919/fanyi.el][fanyi]] 是一个线上的多词典系统。安装 =mpv= 来播放读音。
-
-#+BEGIN_SRC emacs-lisp
-(use-package fanyi
-  :ensure t
-  :bind-keymap ("\e\e =" . fanyi-map)
-  :bind (:map fanyi-map
-              ("w" . fanyi-dwim2)
-              ("i" . fanyi-dwim))
-  :init
-  ;; to support `org-store-link' and `org-insert-link'
-  (require 'ol-fanyi)
-  ;; 如果当前指针下有单词，选择当前单词，否则选择剪贴板
-  (with-eval-after-load 'org-capture
-    (add-to-list 'org-capture-templates
-                 '("w" "New word" entry (file+olp+datetree "20221001T221032--vocabulary__studying.org" "New")
-                   "* %^{Input the new word:|%(cond ((with-current-buffer (org-capture-get :original-buffer) (thing-at-point 'word 'no-properties))) ((clipboard/get)))}\n\n[[fanyi:%\\1][%\\1]]\n\n[[http://dict.cn/%\\1][海词：%\\1]]%?"
-                   :tree-type day
-                   :empty-lines 1
-                   :jump-to-captured t)))
-  :config
-  (defvar fanyi-map nil "keymap for `fanyi")
-  (setq fanyi-map (make-sparse-keymap))
-  (setq fanyi-sound-player "mpv")
-  :custom
-  (fanyi-providers '(;; 海词
-                     fanyi-haici-provider
-                     ;; 有道同义词词典
-                     fanyi-youdao-thesaurus-provider
-                     ;; ;; Etymonline
-                     ;; fanyi-etymon-provider
-                     ;; Longman
-                     fanyi-longman-provider
-                     ;; ;; LibreTranslate
-                     ;; fanyi-libre-provider
-                     )))
-#+END_SRC
-
 ** org-ai智能助手
 
 [[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
@@ -3230,6 +2585,7 @@ Version 2019-11-04"
 (use-package pyvenv)
 (setenv "WORKON_HOME" "/home/elon/anaconda3/envs/")
 #+END_SRC
+
 
 ** init-tools.el 文件尾
 
