@@ -1,8 +1,6 @@
 * .emacs.d
 
-[[中文版][README.md]]
-
-[[English Band][./README.en.org]]
+[[./README.md][中文版]]
 
 #+ATTR_ORG: :width 700
 [[./imgs/dashband.png]]
@@ -22,19 +20,19 @@ This is my Emacs configuration, modified based on the configuration in [[https:/
 ** Installation
 To use my configuration, follow these steps:
 
-1. Clone my configuration repository to your local machine:
+- Clone my configuration repository to your local machine:
 #+BEGIN_SRC bash
 git clone git@github.com:Elonisme/.emacs.d.git ~/.emacs.d
 #+END_SRC
 
-2. Launch Emacs, open the emacs-config.org file, and execute the following command:
+- Launch Emacs, open the emacs-config.org file, and execute the following command:
 #+BEGIN_SRC bash
 org-babel-tangle
 #+END_SRC
    
 Restart Emacs, and the generated files will automatically install the required packages and dependencies.
 
-3. Restart Emacs to ensure the configuration takes effect.
+- Restart Emacs to ensure the configuration takes effect.
 
 ** Configuration Details
 My configuration is primarily focused on coding and note-taking and is not intended to be a comprehensive setup. I strive to include only the features I truly need, making it aesthetically pleasing, fast, and user-friendly.
