@@ -27,15 +27,11 @@
 #+BEGIN_SRC bash
 git clone git@github.com:Elonisme/.emacs.d.git ~/.emacs.d
 #+END_SRC
-
 2. 启动 Emacs, 打开emacs-config.org后，M-x。
-
 #+BEGIN_SRC bash
 org-babel-tangle
 #+END_SRC
-
 重启emacs, 生成的文件会自动安装所需的包和依赖项。
-
 3. 重新启动 Emacs，以确保配置生效。
 
 ** 配置详情
