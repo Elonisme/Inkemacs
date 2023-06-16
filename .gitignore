@@ -6,4 +6,8 @@ elpa/
 quelpa/
 snippets/
 var/
+var/rime
+var/auto-save/sessions
+var/lsp
+var/eshell
 etc/
