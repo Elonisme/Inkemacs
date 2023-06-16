@@ -1,5 +1,5 @@
 ;;; -*- coding: utf-8; mode: lisp-data -*-
-(("/home/elon/.emacs.d/.gitignore" . 71)
+(("/home/elon/.emacs.d/.gitignore" . 75)
  ("/home/elon/.emacs.d/elpa/compat-29.1.4.1.0.20230524.90557/compat-autoloads.el" . 706)
  ("/home/elon/.emacs.d/elpa/vertico-1.3.0.20230522.143108/vertico-autoloads.el" . 13434)
  ("/home/elon/.emacs.d/elpa/queue-0.2.0.20210306.173709/queue-autoloads.el" . 452)
