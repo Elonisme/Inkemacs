@@ -11,3 +11,4 @@ var/auto-save/sessions
 var/lsp
 var/eshell
 etc/
+network-security.data
