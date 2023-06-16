@@ -5,6 +5,4 @@ auto-save-list
 elpa/
 quelpa/
 snippets/
-var/
-etc/
-etc/eshell/
+var/rime
