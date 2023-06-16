@@ -405,9 +405,9 @@
     :init
     (progn
       ;; Set the title
-      (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+      (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
       ;; Set the banner
-      (setq dashboard-startup-banner "~/.emacs.d/logo.png")
+      (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
       ;; Content is not centered by default. To center, set
       (setq dashboard-center-content t)
       (setq dashboard-set-heading-icons t)

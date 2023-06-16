@@ -114,26 +114,7 @@
   :hook (python-mode . py-autopep8-mode)
   )
 
-(use-package sh-script
-  :ensure nil
-  :mode (("\\.sh\\'"     . sh-mode)
-         ("zshrc"        . sh-mode)
-         ("zshenv"       . sh-mode)
-         ("/PKGBUILD\\'" . sh-mode))
-  :hook (sh-mode . sh-mode-setup)
-  :bind (:map sh-mode-map
-         ("C-c C-e" . sh-execute-region))
-  :init
-  ;; for org babel
-  (add-list-to-list 'org-babel-default-header-args:shell
-                  '((:results . "output")
-                    (:tangle  . "no")))
-  :config
-  (defun sh-mode-setup ()
-    (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p nil t))
-  :custom
-  (sh-basic-offset 2)
-  (sh-indentation 2))
+(use-package rust-mode)
 
 (provide 'init-dev)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

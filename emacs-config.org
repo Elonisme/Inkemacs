@@ -664,9 +664,9 @@
     :init
     (progn
       ;; Set the title
-      (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+      (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
       ;; Set the banner
-      (setq dashboard-startup-banner "~/.emacs.d/logo.png")
+      (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
       ;; Content is not centered by default. To center, set
       (setq dashboard-center-content t)
       (setq dashboard-set-heading-icons t)
@@ -2808,29 +2808,9 @@ Python语言的设置。[[https://github.com/paetzke/py-autopep8.el][py-autopep8
   )
 #+END_SRC
 
-** Shell语言设置
-
+** Rust-mode
 #+BEGIN_SRC emacs-lisp
-(use-package sh-script
-  :ensure nil
-  :mode (("\\.sh\\'"     . sh-mode)
-         ("zshrc"        . sh-mode)
-         ("zshenv"       . sh-mode)
-         ("/PKGBUILD\\'" . sh-mode))
-  :hook (sh-mode . sh-mode-setup)
-  :bind (:map sh-mode-map
-         ("C-c C-e" . sh-execute-region))
-  :init
-  ;; for org babel
-  (add-list-to-list 'org-babel-default-header-args:shell
-                  '((:results . "output")
-                    (:tangle  . "no")))
-  :config
-  (defun sh-mode-setup ()
-    (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p nil t))
-  :custom
-  (sh-basic-offset 2)
-  (sh-indentation 2))
+(use-package rust-mode)
 #+END_SRC
 
 ** init-dev.el 文件尾
