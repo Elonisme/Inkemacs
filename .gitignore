@@ -12,3 +12,4 @@ var/lsp
 var/eshell
 etc/
 network-security.data
+.gitignore
