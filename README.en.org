@@ -1,6 +1,6 @@
 * Inkwell Emacs
 
-[[./README.md][中文版]]
+[[./README.org][中文版]]
 
 #+ATTR_ORG: :width 700
 [[./imgs/dashband.png]]
@@ -33,7 +33,11 @@ org-babel-tangle
 Restart Emacs, and the generated files will automatically install the required packages and dependencies.
 
 - Restart Emacs to ensure the configuration takes effect.
-
+- Install rime-ice
+#+BEGIN_SRC bash
+git clone git@github.com:iDvel/rime-ice.git ~/.emacs.d/var/rime
+#+END_SRC
+  
 ** Configuration Details
 My configuration is primarily focused on coding and note-taking and is not intended to be a comprehensive setup. I strive to include only the features I truly need, making it aesthetically pleasing, fast, and user-friendly.
 
@@ -52,6 +56,14 @@ Please note that my configuration generates el files using org-mode. Therefore, 
 If you are new to Emacs, I recommend reading the "Emacs for Product Managers" tutorial. I believe you will find it beneficial.
 
 It's worth noting that my usage of use-package in the configuration is not yet proficient. If you encounter issues with package downloads, please manually download them as needed.
+
+** Hot key
+
+| Function              | Hot key   |
+|-----------------------+-----------|
+| Restart emacs         | C-c C-a r |
+| Edit emacs-config.org | F5        |
+| Activate rime input   | C-\       |
 
 ** License
 This configuration is licensed under the GNU General Public License v3.0 (GPLv3). You can find the complete license text in the [[LICENSE][LICENSE]] file.

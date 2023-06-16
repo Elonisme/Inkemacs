@@ -35,7 +35,11 @@ org-babel-tangle
 重启emacs, 生成的文件会自动安装所需的包和依赖项。
 
 - 重新启动 Emacs，以确保配置生效。
-
+- 安装rime-ice
+#+BEGIN_SRC bash
+git clone git@github.com:iDvel/rime-ice.git ~/.emacs.d/var/rime
+#+END_SRC
+  
 ** 配置详情
 
 我的配置主要用于编写代码和笔记，不是一个全能的配置。我尽量使得我的配置都是我真正需要用的，使之尽量美观，快速，以及简单。
@@ -55,6 +59,15 @@ org-babel-tangle
 如果你是 Emacs 新手，我推荐你阅读《面向产品经理的 Emacs 教程》，我相信你会从中受益。
 
 需要注意的是，我的配置中关于 `use-package` 的使用还不够熟练，如果遇到不能下载的包，请麻烦手动下载。
+
+** 快捷键
+
+| 功能                 | 快捷键    |
+|----------------------+-----------|
+| 重启emacs            | C-c C-a r |
+| 编辑emacs-config.org | F5        |
+| 激活rime输入法       | C-\       |
+
 
 ** 许可证
 
