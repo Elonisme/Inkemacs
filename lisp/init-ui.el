@@ -334,7 +334,6 @@
         '((compilation-mode              :ignore t)
           ("\\*Async Shell.*\\*" :regexp t :ignore t)
           ("\\*corfu.*\\*"       :regexp t :ignore t)
-          ("*eshell*"                    :select t                          :size 0.4  :align t     :popup t)
           (helpful-mode                  :select t                          :size 0.3  :align below :popup t)
           ("*Messages*"                  :select t                          :size 0.4  :align t     :popup t)
           ("*Calendar*"                  :select t                          :size 0.3  :align t     :popup t)
@@ -358,7 +357,6 @@
           helpful-mode
           occur-mode
           pass-view-mode
-          "^\\*eshell.*\\*$" eshell-mode ;; eshell as a popup
           ("\\*corfu\\*" . hide)
           (compilation-mode . hide)
           ;; derived from `fundamental-mode' and fewer than 10 lines will be considered a popup
@@ -416,6 +414,11 @@
     :config
     (dashboard-setup-startup-hook)
     )
+
+;; 在编程模式下显示行号
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+;; 在其他模式下禁用行号显示
+(global-display-line-numbers-mode -1)
 
 (provide 'init-ui)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

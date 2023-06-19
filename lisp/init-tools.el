@@ -72,6 +72,12 @@
   (setq magit-delta-hide-plus-minus-markers nil)
   )
 
+(use-package swiper
+  :ensure t
+  :bind (("C-s" . swiper)
+         )
+  )
+
 (provide 'init-tools)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-tools.el ends here

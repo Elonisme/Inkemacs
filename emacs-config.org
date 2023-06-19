@@ -581,7 +581,6 @@
         '((compilation-mode              :ignore t)
           ("\\*Async Shell.*\\*" :regexp t :ignore t)
           ("\\*corfu.*\\*"       :regexp t :ignore t)
-          ("*eshell*"                    :select t                          :size 0.4  :align t     :popup t)
           (helpful-mode                  :select t                          :size 0.3  :align below :popup t)
           ("*Messages*"                  :select t                          :size 0.4  :align t     :popup t)
           ("*Calendar*"                  :select t                          :size 0.3  :align t     :popup t)
@@ -611,7 +610,6 @@
           helpful-mode
           occur-mode
           pass-view-mode
-          "^\\*eshell.*\\*$" eshell-mode ;; eshell as a popup
           ("\\*corfu\\*" . hide)
           (compilation-mode . hide)
           ;; derived from `fundamental-mode' and fewer than 10 lines will be considered a popup
@@ -678,6 +676,14 @@
     :config
     (dashboard-setup-startup-hook)
     )
+#+END_SRC
+
+** line-number-mode
+#+BEGIN_SRC emacs-lisp
+;; 在编程模式下显示行号
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+;; 在其他模式下禁用行号显示
+(global-display-line-numbers-mode -1)
 #+END_SRC
 
 ** init-ui.el 文件尾
@@ -2421,6 +2427,19 @@ alias more view-file $1
   )
 #+END_SRC
 
+** eshell 快捷键
+#+BEGIN_SRC emacs-lisp
+(defun my-start-eshell-mode ()
+  "启动 eshell 模式并将其放置在上方的窗口中"
+  (interactive)
+  (split-window-below)
+  (other-window 1)
+  (eshell)
+  (enlarge-window (- 15)))
+
+(global-set-key (kbd "<f9>") 'my-start-eshell-mode)
+#+END_SRC
+
 ** shell
 #+BEGIN_SRC emacs-lisp
 (defun my-start-shell-mode ()
@@ -2428,10 +2447,10 @@ alias more view-file $1
   (interactive)
   (split-window-below)
   (other-window 1)
-  (shell)
+  (term "/bin/zsh")
   (enlarge-window (- 15)))
 
-(global-set-key (kbd "<f9>") 'my-start-shell-mode)
+(global-set-key (kbd "<f10>") 'my-start-shell-mode)
 #+END_SRC
 
 ** init-shell.el 文件尾
@@ -2565,6 +2584,14 @@ Emacs自带的vc设置。
   )
 #+END_SRC
 
+** swiper(find-help)
+#+BEGIN_SRC emacs-lisp
+(use-package swiper
+  :ensure t
+  :bind (("C-s" . swiper)
+         )
+  )
+#+END_SRC
 
 ** init-tools.el 文件尾
 
