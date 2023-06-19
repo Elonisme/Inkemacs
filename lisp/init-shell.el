@@ -136,6 +136,16 @@ current directory."
   (setq eshell-up-print-parent-dir t)
   )
 
+(defun my-start-shell-mode ()
+  "启动 Shell 模式并将其放置在上方的窗口中"
+  (interactive)
+  (split-window-below)
+  (other-window 1)
+  (shell)
+  (enlarge-window (- 15)))
+
+(global-set-key (kbd "<f9>") 'my-start-shell-mode)
+
 (provide 'init-shell)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-shell.el ends here

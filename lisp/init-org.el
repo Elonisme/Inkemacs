@@ -73,6 +73,8 @@
 									 (plain-list-item . auto)
 									 ))
 
+  (setq org-clock-sound "~/.emacs.d/ding.wav")
+
   ;; ======================================
   ;; 设置打开Org links的程序
   ;; ======================================
@@ -274,11 +276,11 @@ Optional for Org-mode file: `LINK'."
   (org-archive-location "%s_archive::datetree/")
   )
 
+(global-set-key (kbd "C-c SPC") 'org-mark-ring-goto)
+
 ;; Org mode的附加包，有诸多附加功能
 (use-package org-contrib
   :ensure t)
-
-(use-package cdlatex)
 
 (use-package org-modern
   :ensure t
@@ -330,39 +332,6 @@ Optional for Org-mode file: `LINK'."
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t)
-  )
-
-(use-package org-capture
-  :ensure nil
-  :bind ("\e\e c" . (lambda () (interactive) (org-capture)))
-  :hook ((org-capture-mode . (lambda ()
-                               (setq-local org-complete-tags-always-offer-all-agenda-tags t)))
-         (org-capture-mode . delete-other-windows))
-  :custom
-  (org-capture-use-agenda-date nil)
-  ;; define common template
-  (org-capture-templates `(("t" "Tasks" entry (file+headline "tasks.org" "Reminders")
-                            "* TODO %i%?"
-                            :empty-lines-after 1
-                            :prepend t)
-                           ("n" "Notes" entry (file+headline "capture.org" "Notes")
-                            "* %? %^g\n%i\n"
-                            :empty-lines-after 1)
-                           ;; For EWW
-                           ("b" "Bookmarks" entry (file+headline "capture.org" "Bookmarks")
-                            "* %:description\n\n%a%?"
-                            :empty-lines 1
-                            :immediate-finish t)
-                           ("d" "Diary")
-                           ("dt" "Today's TODO list" entry (file+olp+datetree "diary.org")
-                            "* Today's TODO list [/]\n%T\n\n** TODO %?"
-                            :empty-lines 1
-                            :jump-to-captured t)
-                           ("do" "Other stuff" entry (file+olp+datetree "diary.org")
-                            "* %?\n%T\n\n%i"
-                            :empty-lines 1
-                            :jump-to-captured t)
-                           ))
   )
 
 (use-package org-src
@@ -545,42 +514,6 @@ Optional for Org-mode file: `LINK'."
                               ))
   )
 
-(use-package plantuml-mode
-  :ensure t
-  :mode ("\\.plantuml\\'" . plantuml-mode)
-  :init
-  ;; enable plantuml babel support
-  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((plantuml . t))))
-  :config
-  (setq org-plantuml-exec-mode 'plantuml)
-  (setq org-plantuml-executable-path "plantuml")
-  (setq plantuml-executable-path "plantuml")
-  (setq plantuml-default-exec-mode 'executable)
-  ;; set default babel header arguments
-  (setq org-babel-default-header-args:plantuml
-        '((:exports . "results")
-          (:results . "file")
-          ))
-  )
-
-(use-package gnuplot
-  :ensure t
-  :mode ("\\.gp$" . gnuplot-mode)
-  :init
-  (add-to-list 'org-src-lang-modes '("gnuplot" . gnuplot))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((gnuplot . t))))
-  :config
-  ;; (add-to-list 'auto-mode-alist '("\\.gp$" . gnuplot-mode))
-  (setq org-babel-default-header-args:gnuplot
-      '((:exports . "results")
-        (:results . "file")))
-  )
-
 ;; limit the babel result length
 (defvar org-babel-result-lines-limit 40)
 (defvar org-babel-result-length-limit 6000)
@@ -617,8 +550,6 @@ Optional for Org-mode file: `LINK'."
   (setq-default org-download-image-dir "./img")) ;; 用同级 ./img 目录放置截图文件
 
 (add-hook 'dired-mode-hook 'org-download-enable)
-(provide 'init-org-download)
-;;; org-download.el ends here
 
 (use-package toc-org
   :ensure t

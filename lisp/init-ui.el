@@ -335,7 +335,7 @@
           ("\\*Async Shell.*\\*" :regexp t :ignore t)
           ("\\*corfu.*\\*"       :regexp t :ignore t)
           ("*eshell*"                    :select t                          :size 0.4  :align t     :popup t)
-          (helpful-mode                  :select t                          :size 0.6  :align right :popup t)
+          (helpful-mode                  :select t                          :size 0.3  :align below :popup t)
           ("*Messages*"                  :select t                          :size 0.4  :align t     :popup t)
           ("*Calendar*"                  :select t                          :size 0.3  :align t     :popup t)
           ("*info*"                      :select t                                                  :same t)
@@ -359,7 +359,6 @@
           occur-mode
           pass-view-mode
           "^\\*eshell.*\\*$" eshell-mode ;; eshell as a popup
-          "^\\*shell.*\\*$"  shell-mode  ;; shell as a popup
           ("\\*corfu\\*" . hide)
           (compilation-mode . hide)
           ;; derived from `fundamental-mode' and fewer than 10 lines will be considered a popup

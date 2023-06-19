@@ -67,13 +67,15 @@
 #+END_SRC
 
 ** package包管理配置
+设置镜像为中科大源
+
 #+begin_src emacs-lisp
 (require 'package)
 (setq package-archives
-	  '(("melpa" . "https://mirrors.ustc.edu.cn/elpa/melpa/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/")
-	    ("gnu" . "https://mirrors.ustc.edu.cn/elpa/gnu/")
-        ("gnu-devel" . "https://elpa.gnu.org/devel/")
+	  '(("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
+	    ("gnu"    . "https://mirrors.ustc.edu.cn/elpa/gnu/")
+        ("gnu-devel" . "https://mirrors.ustc.edu.cn/elpa/gnu-devel/")
+        ("nognu-devel" . "https://mirrors.ustc.edu.cn/elpa/nongnu-devel/")
 	    ("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/")))
 
 (package-initialize)
@@ -139,7 +141,6 @@
   (interactive)
   (find-file "~/.emacs.d/emacs-config.org"))
 (global-set-key (kbd "<f5>") 'open-custom-post-file)
-(global-set-key (kbd "<f9>") 'eshell)
 #+END_SRC
 
 ** 加载模块化配置
@@ -158,7 +159,9 @@
     (require 'init-completion)            ; 补全系统
     (require 'init-tools)                 ; 相关工具
     (require 'init-base)                  ; 一些基本配置
-    (require 'init-dev)                   ; 开发相关配置
+    (require 'init-shell)                 ;shell设置
+    (require 'init-note)                  ; 写作相关配置
+    (require 'init-language)              ; 编程语言设置
     )
 #+END_SRC
 
@@ -579,7 +582,7 @@
           ("\\*Async Shell.*\\*" :regexp t :ignore t)
           ("\\*corfu.*\\*"       :regexp t :ignore t)
           ("*eshell*"                    :select t                          :size 0.4  :align t     :popup t)
-          (helpful-mode                  :select t                          :size 0.6  :align right :popup t)
+          (helpful-mode                  :select t                          :size 0.3  :align below :popup t)
           ("*Messages*"                  :select t                          :size 0.4  :align t     :popup t)
           ("*Calendar*"                  :select t                          :size 0.3  :align t     :popup t)
           ("*info*"                      :select t                                                  :same t)
@@ -609,7 +612,6 @@
           occur-mode
           pass-view-mode
           "^\\*eshell.*\\*$" eshell-mode ;; eshell as a popup
-          "^\\*shell.*\\*$"  shell-mode  ;; shell as a popup
           ("\\*corfu\\*" . hide)
           (compilation-mode . hide)
           ;; derived from `fundamental-mode' and fewer than 10 lines will be considered a popup
@@ -758,53 +760,6 @@
                      "COMMIT_EDITMSG\\'")))
 #+end_src
 
-** undo-tree撤销设置
-
-[[https://www.dr-qubit.org/undo-tree.html][undo-tree]] 插件可以提供一个可视化的撤销、重做系统，我们使用 =C-/= 来撤销，使用 =M-_= 来重做。
-
-#+begin_src emacs-lisp
-(use-package undo-tree
-  :ensure t
-  :hook (after-init . global-undo-tree-mode)
-  :config
-  ;; don't save undo history to local files
-  (setq undo-tree-auto-save-history nil)
-  )
-#+end_src
-
-** super-save自动保存
-
-[[https://github.com/bbatsov/super-save][super-save]] 插件能自动保存缓冲区。它可以设置在某些行为（如窗口切换、或窗口空闲一段时间）下自动保存。
-
-#+BEGIN_SRC emacs-lisp
-(use-package super-save
-  :ensure t
-  :hook (after-init . super-save-mode)
-  :config
-  ;; Emacs空闲是否自动保存，这里不设置
-  (setq super-save-auto-save-when-idle nil)
-  ;; 切换窗口自动保存
-  (add-to-list 'super-save-triggers 'other-window)
-  ;; 查找文件时自动保存
-  (add-to-list 'super-save-hook-triggers 'find-file-hook)
-  ;; 远程文件编辑不自动保存
-  (setq super-save-remote-files nil)
-  ;; 特定后缀名的文件不自动保存
-  (setq super-save-exclude '(".gpg"))
-  ;; 自动保存时，保存所有缓冲区
-  (defun super-save/save-all-buffers ()
-    (save-excursion
-      (dolist (buf (buffer-list))
-        (set-buffer buf)
-        (when (and buffer-file-name
-                   (buffer-modified-p (current-buffer))
-                   (file-writable-p buffer-file-name)
-                   (if (file-remote-p buffer-file-name) super-save-remote-files t))
-          (save-buffer)))))
-  (advice-add 'super-save-command :override 'super-save/save-all-buffers)
-  )
-#+END_SRC
-
 ** savehist
 #+BEGIN_SRC emacs-lisp
 (use-package savehist
@@ -841,6 +796,14 @@
   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
 #+end_src
 
+** restart-emacs
+#+BEGIN_SRC emacs-lisp
+(use-package restart-emacs
+  :ensure t
+  :bind
+  (("C-c C-a r" . restart-emacs))
+  )
+#+END_SRC
 ** 个人函数定义
 
 以下是一些个人的函数定义，配置文件的其他部分会用到这些函数。
@@ -1181,6 +1144,8 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
 									 (plain-list-item . auto)
 									 ))
 
+  (setq org-clock-sound "~/.emacs.d/ding.wav")
+
   ;; ======================================
   ;; 设置打开Org links的程序
   ;; ======================================
@@ -1382,14 +1347,11 @@ Optional for Org-mode file: `LINK'."
   (org-archive-location "%s_archive::datetree/")
   )
 
+(global-set-key (kbd "C-c SPC") 'org-mark-ring-goto)
+
 ;; Org mode的附加包，有诸多附加功能
 (use-package org-contrib
   :ensure t)
-#+END_SRC
-
-** org-cdlatex
-#+BEGIN_SRC emacs-lisp
-(use-package cdlatex)
 #+END_SRC
 
 ** org-modern 美化
@@ -1458,43 +1420,6 @@ Optional for Org-mode file: `LINK'."
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t)
-  )
-#+END_SRC
-
-** org-capture快速记录设置
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-capture
-  :ensure nil
-  :bind ("\e\e c" . (lambda () (interactive) (org-capture)))
-  :hook ((org-capture-mode . (lambda ()
-                               (setq-local org-complete-tags-always-offer-all-agenda-tags t)))
-         (org-capture-mode . delete-other-windows))
-  :custom
-  (org-capture-use-agenda-date nil)
-  ;; define common template
-  (org-capture-templates `(("t" "Tasks" entry (file+headline "tasks.org" "Reminders")
-                            "* TODO %i%?"
-                            :empty-lines-after 1
-                            :prepend t)
-                           ("n" "Notes" entry (file+headline "capture.org" "Notes")
-                            "* %? %^g\n%i\n"
-                            :empty-lines-after 1)
-                           ;; For EWW
-                           ("b" "Bookmarks" entry (file+headline "capture.org" "Bookmarks")
-                            "* %:description\n\n%a%?"
-                            :empty-lines 1
-                            :immediate-finish t)
-                           ("d" "Diary")
-                           ("dt" "Today's TODO list" entry (file+olp+datetree "diary.org")
-                            "* Today's TODO list [/]\n%T\n\n** TODO %?"
-                            :empty-lines 1
-                            :jump-to-captured t)
-                           ("do" "Other stuff" entry (file+olp+datetree "diary.org")
-                            "* %?\n%T\n\n%i"
-                            :empty-lines 1
-                            :jump-to-captured t)
-                           ))
   )
 #+END_SRC
 
@@ -1684,56 +1609,6 @@ Org mode代码块的基本配置。
   )
 #+END_SRC
 
-** org babel代码块后端
-*** plantuml绘图
-[[https://plantuml.com/zh/][plantuml]] 可以让我们在Org mode里通过纯文本画各种图，具体参考：[[https://plantuml.com/zh/emacs][PlantUML integration with Emacs]]。
-
-需要提前通过 =brew install plantuml= 安装 =plantuml= 。
-
-#+BEGIN_SRC emacs-lisp
-(use-package plantuml-mode
-  :ensure t
-  :mode ("\\.plantuml\\'" . plantuml-mode)
-  :init
-  ;; enable plantuml babel support
-  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((plantuml . t))))
-  :config
-  (setq org-plantuml-exec-mode 'plantuml)
-  (setq org-plantuml-executable-path "plantuml")
-  (setq plantuml-executable-path "plantuml")
-  (setq plantuml-default-exec-mode 'executable)
-  ;; set default babel header arguments
-  (setq org-babel-default-header-args:plantuml
-        '((:exports . "results")
-          (:results . "file")
-          ))
-  )
-#+END_SRC
-
-*** gnuplot绘图
-
-[[https://github.com/emacs-gnuplot/gnuplot][gnuplot]] 插件可以让Emacs通过gnuplot绘图。
-
-#+BEGIN_SRC emacs-lisp
-(use-package gnuplot
-  :ensure t
-  :mode ("\\.gp$" . gnuplot-mode)
-  :init
-  (add-to-list 'org-src-lang-modes '("gnuplot" . gnuplot))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((gnuplot . t))))
-  :config
-  ;; (add-to-list 'auto-mode-alist '("\\.gp$" . gnuplot-mode))
-  (setq org-babel-default-header-args:gnuplot
-      '((:exports . "results")
-        (:results . "file")))
-  )
-#+END_SRC
-
 ** 限制代码块结果长度
 
 参考 [[https://emacs-china.org/t/org-babel/18399/4][twlz0ne 大佬在这篇贴子的回复]]。
@@ -1765,7 +1640,8 @@ Org mode代码块的基本配置。
 (advice-add 'org-babel-insert-result :around #'org-babel-insert-result@limit)
 #+END_SRC
 
-** org-download
+** org-download实现粘贴复制图片到orgmode
+
 #+BEGIN_SRC emacs-lisp
 (use-package org-download
   :defer t ;; 延迟加载
@@ -1778,10 +1654,7 @@ Org mode代码块的基本配置。
   (setq-default org-download-image-dir "./img")) ;; 用同级 ./img 目录放置截图文件
 
 (add-hook 'dired-mode-hook 'org-download-enable)
-(provide 'init-org-download)
-;;; org-download.el ends here
 #+END_SRC
-
 ** toc-org目录自动生成
 
 [[https://github.com/snosov1/toc-org][toc-org]] 插件可以在Org文件里自动生成目录，只需给一个标题行设置一个标签为 =toc= 或 =toc_2= 即可（后者只生成2层）。
@@ -1838,27 +1711,35 @@ Emacs的补全设置。
 #+END_SRC
 
 ** vertico
-
-[[https://github.com/minad/vertico][vertico]] 插件提供了一个垂直样式的补全系统。
-
+为M-x命令行提供补全的功能
 #+BEGIN_SRC emacs-lisp
-  ;; Enable vertico
 (use-package vertico
-  :init
-  (vertico-mode)
-  (vertico-mouse-mode)
+  :ensure t
+  :hook (after-init . vertico-mode)
+  :bind (:map minibuffer-local-map
+              ("M-<DEL>" . my/minibuffer-backward-kill)
+              :map vertico-map
+              ("M-q" . vertico-quick-insert)) ; use C-g to exit
+  :config
+  (defun my/minibuffer-backward-kill (arg)
+    "When minibuffer is completing a file name delete up to parent
+folder, otherwise delete a word"
+    (interactive "p")
+    (if minibuffer-completing-file-name
+        ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+        (if (string-match-p "/." (minibuffer-contents))
+            (zap-up-to-char (- arg) ?/)
+          (delete-minibuffer-contents))
+      (backward-kill-word arg)))
 
-  ;; Different scroll margin
-  (setq vertico-scroll-margin 0)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-  ;; Show more candidates
-  (setq vertico-count 10)
-
-  ;; Grow and shrink the Vertico minibuffer
-  (setq vertico-resize t)
-
-  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
-   (setq vertico-cycle t)
+  (setq vertico-cycle t)                ; cycle from last to first
+  :custom
+  (vertico-count 15)                    ; number of candidates to display, default is 10
   )
 #+END_SRC
 
@@ -1874,128 +1755,6 @@ Emacs的补全设置。
   (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
-** consult
-
-#+BEGIN_SRC emacs-lisp
-;; Example configuration for Consult
-(use-package consult
-  ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (;; C-c bindings in `mode-specific-map'
-         ("C-c M-x" . consult-mode-command)
-         ("C-c h" . consult-history)
-         ("C-c k" . consult-kmacro)
-         ("C-c m" . consult-man)
-         ("C-c i" . consult-info)
-         ([remap Info-search] . consult-info)
-         ;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ;; M-g bindings in `goto-map'
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings in `search-map'
-         ("M-s d" . consult-find)
-         ("M-s D" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("C-s" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
-
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
-  ;; The :init configuration is always executed (Not lazy)
-  :init
-
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
-  :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key "M-.")
-  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
-  (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key "M-."
-   :preview-key '(:debounce 0.4 any))
-
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; "C-+"
-
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
-
-  ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-  ;;;; 1. project.el (the default)
-  ;; (setq consult-project-function #'consult--default-project--function)
-  ;;;; 2. vc.el (vc-root-dir)
-  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
-  ;;;; 3. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-  ;;;; 4. projectile.el (projectile-project-root)
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
-  ;;;; 5. No project support
-  ;; (setq consult-project-function nil)
-)
-#+END_SRC
 ** marginalia
 
 [[https://github.com/minad/marginalia][marginalia]] 插件给迷你缓冲区的补全候选条目添加一些提示。
@@ -2018,7 +1777,7 @@ Emacs的补全设置。
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-auto t)                 ;; Enable auto completion
   ;; (corfu-separator ?\s)          ;; Orderless field separator
   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
@@ -2028,10 +1787,8 @@ Emacs的补全设置。
   (corfu-scroll-margin 5)        ;; Use scroll margin
 
   ;; Enable Corfu only for certain modes.
-  ;; :hook ((prog-mode . corfu-mode)
-  ;;        (shell-mode . corfu-mode)
-  ;;        (org-mode . corfu-mode)
-  ;;        (eshell-mode . corfu-mode))
+  :hook ( (shell-mode . corfu-mode)
+          (eshell-mode . corfu-mode))
 
   ;; Recommended: Enable Corfu globally.
   ;; This is recommended since Dabbrev can be used globally (M-/).
@@ -2046,7 +1803,6 @@ Emacs的补全设置。
 #+END_SRC
 
 ** cape
-
 [[https://github.com/minad/cape][Cape]] 提供了一系列开箱即用的补全后端，跟corfu联合使用。
 
 #+BEGIN_SRC emacs-lisp
@@ -2086,6 +1842,11 @@ Emacs的补全设置。
 )
 #+END_SRC
 
+** completion
+#+BEGIN_SRC emacs-lisp
+(use-package company)
+#+END_SRC
+
 ** lsp-mode
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-mode
@@ -2099,21 +1860,12 @@ Emacs的补全设置。
   :commands lsp)
 
 ;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
+;; (use-package lsp-ui :commands lsp-ui-mode)
 ;; if you are helm user
 ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 ;; if you are ivy user
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-;; optionally if you want to use debugger
-;; (use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-;; optional if you want which-key integration
-;; (use-package which-key
-;;     :config
-;;     (which-key-mode))
+;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 #+END_SRC
 
 ** eglot
@@ -2177,16 +1929,26 @@ Emacs的补全设置。
 (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 #+END_SRC
 
-** flycheck
+** paren高亮匹配的括号
+
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck
-  :ensure t
-  :config
-  (setq truncate-lines t) ; 如果单行信息很长会自动换行
-  :hook
-  (prog-mode . flycheck-mode))
+(use-package paren
+  :ensure nil
+  :hook (after-init . show-paren-mode)
+  :custom
+  (show-paren-when-point-inside-paren t)
+  (show-paren-when-point-in-periphery t))
 #+END_SRC
 
+** rainbow-delimeters多彩括号
+
+[[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] 插件将多彩显示括号等分隔符。
+
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
 ** init-completion.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
@@ -2441,387 +2203,14 @@ Version 2019-11-04"
 #+END_SRC
 
 ** init-dired.el 文件尾
-#+BEGIN_SRC emacs-lisp
 
+#+BEGIN_SRC emacs-lisp
 (provide 'init-dired)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dired.el ends here
 #+END_SRC
 
-* init-tools.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-tools.el :mkdirp yes
-:END:
-
-** init-tools.el 文件头
-
-#+BEGIN_SRC emacs-lisp
-;;; init-tools.el --- Tools settings -*- lexical-binding: t -*-
-;;; Commentary: Useful tools to make Emacs efficient!
-
-;;; Code:
-
-#+END_SRC
-
-** helpful帮助增强
-
-[[https://github.com/Wilfred/helpful][helpful]] 插件提供了帮助增强。
-
-#+begin_src emacs-lisp
-(use-package helpful
-  :ensure t
-  :commands (helpful-callable helpful-variable helpful-command helpful-key helpful-mode)
-  :bind (([remap describe-command] . helpful-command)
-         ("C-h f" . helpful-callable)
-         ("C-h v" . helpful-variable)
-         ("C-h s" . helpful-symbol)
-         ("C-h S" . describe-syntax)
-         ("C-h m" . describe-mode)
-         ("C-h F" . describe-face)
-         ([remap describe-key] . helpful-key))
-  )
-#+end_src
-
-** which-key快捷键
-
-[[https://github.com/justbur/emacs-which-key][which-key]] 插件将提示快捷键。
-
-#+begin_src emacs-lisp
-(use-package which-key
-  :ensure t
-  :hook (after-init . which-key-mode)
-  :config
-  (which-key-add-key-based-replacements
-    "C-c !" "flycheck"
-    "C-c @" "hideshow"
-    "C-c i" "ispell"
-    "C-c t" "hl-todo"
-    "C-x a" "abbrev"
-    "C-x n" "narrow"
-    "C-x t" "tab")
-  :custom
-  (which-key-idle-delay 0.7)
-  (which-key-add-column-padding 1))
-#+end_src
-
-** org-ai智能助手
-
-[[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-ai
-  :ensure t
-  :commands (org-ai-mode
-             org-ai-global-mode)
-  :bind (
-         ("C-c q" . org-ai-prompt)
-         ("C-c x" . org-ai-on-region)
-         )
-  :hook (org-mode . org-ai-mode)
-  :config
-  (setq org-ai-default-max-tokens 480)
-  (setq org-ai-default-chat-system-prompt "你是一个Emacs助手，请以Org-mode的格式来回复我")
-  (org-ai-install-yasnippets)
-  )
-
-(load-file "~/.emacs.d/keys/chatai-key.el")
-(require 'chatai-key)
-#+END_SRC
-
-** org-noter
-#+BEGIN_SRC emacs-lisp
-(use-package org-noter
-  :ensure t
-  :custom
-  (org-noter-notes-search-path '("~/Documents/Notes")) ;; 默认笔记路径
-  (org-noter-auto-save-last-location t) ;; 自动保存上次阅读位置
-  (org-noter-highlight-selected-text t)
-  (org-noter-max-short-selected-text-length 20) ;; 默认为 80
-  (org-noter-default-heading-title "第 $p$ 页的笔记") ;; 默认短标题格式
-  :bind
-  (("C-c n n" . org-noter) ;; 与 org-roam 配合
-   :map org-noter-doc-mode-map ;; 加入左手键位
-   ("e" . org-noter-insert-note)
-   ("M-e" . org-noter-insert-precise-note)))
-#+END_SRC
-
-** org-roam
-#+BEGIN_SRC emacs-lisp
-(use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory (file-truename "~/org-roam"))
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
-  :bind-keymap
-  ("C-c n d" . org-roam-dailies-map) ;; 日记菜单
-  :config
-  (require 'org-roam-dailies)
-  ;;============= 新增内容 =================
-  ;; 下面的 (setq my/ref-template ...) 可以放到 use-package 代码块之外
-  (setq my/ref-template
-        (concat "#+FILETAGS: reading research \n"
-                "- tags :: %^{keywords} \n"
-                "* %^{title}\n"
-                ":PROPERTIES:\n"
-                ":Custom_ID: %^{citekey}\n"
-                ":URL: %^{url}\n"
-                ":AUTHOR: %^{author-or-editor}\n"
-                ":NOTER_DOCUMENT: ~/Nutstore Files/zotero-lib/%^{citekey}.pdf\n"
-                ":NOTER_PAGE:\n"
-                ":END:"))
-  (add-to-list 'org-roam-capture-templates
-               `("r" "Zotero 文献模板" plain ; 文献笔记模板
-                 ,my/ref-template
-                 :target
-                 (file+head "ref/${citekey}.org" "#+title: ${title}\n")))
-
-  (setq org-roam-capture-templates
-        '(("n" "笔记" plain "%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n")
-           :unnarrowed t)))
-
-
-  ;;============= 新增内容结束 =================
-  ;; If you're using a vertical completion framework, you might want a more informative completion interface
-  ;; (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  (org-roam-db-autosync-mode)
-  ;; If using org-roam-protocol
-  ;;(require 'org-roam-protocol)
-  )
-
-(use-package org-roam-ui
-  :ensure t
-  :after org-roam
-  :custom
-  (org-roam-ui-sync-theme t)
-  (org-roam-ui-follow-mode t)
-  )
-#+END_SRC
-
-** restart-emacs
-#+BEGIN_SRC emacs-lisp
-(use-package restart-emacs
-  :ensure t
-  :bind
-  (("C-c C-a r" . restart-emacs))
-  )
-#+END_SRC
-
-** rime
-#+BEGIN_SRC emacs-lisp
-(use-package rime
-  :custom
-  (default-input-method "rime"))
-
-(global-set-key (kbd "C-\\") 'toggle-input-method)
-#+END_SRC
-
-** pyvenv-auto
-#+BEGIN_SRC emacs-lisp
-(use-package pyvenv-auto)
-(setenv "WORKON_HOME" "/home/elon/anaconda3/envs/")
-#+END_SRC
-
-
-** init-tools.el 文件尾
-
-#+BEGIN_SRC emacs-lisp
-
-(provide 'init-tools)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-tools.el ends here
-#+END_SRC
-
-* init-dev.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-dev.el :mkdirp yes
-:END:
-
-** init-dev.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-dev.el --- Development settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
-#+END_SRC
-
-** vc设置
-
-Emacs自带的vc设置。
-
-#+BEGIN_SRC emacs-lisp
-(use-package vc
-  :ensure nil
-  :custom
-  ;; 打开链接文件时，不进行追问
-  (vc-follow-symlinks t)
-  (vc-allow-async-revert t)
-  (vc-handled-backends '(Git)))
-#+END_SRC
-
-** magit版本管理
-
-[[https://github.com/magit/magit][magit]] 是Emacs里的另一个杀手级应用！可以直接在Emacs里进行基于git的版本管理。
-
-#+begin_src emacs-lisp
-(use-package magit
-  :ensure t
-  :hook (git-commit-mode . flyspell-mode)
-  :bind (("C-x g"   . magit-status)
-         ("C-x M-g" . magit-dispatch)
-         ("C-c M-g" . magit-file-dispatch))
-  :custom
-  (magit-diff-refine-hunk t)
-  (magit-ediff-dwim-show-on-hunks t))
-#+end_src
-
-** diff-hl高亮显示修改的部分
-
-[[https://github.com/dgutov/diff-hl][diff-hl]] 插件可以在左侧高亮显示相对于远程仓库的修改部分。
-
-#+BEGIN_SRC emacs-lisp
-(use-package diff-hl
-  :ensure t
-  :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
-         (magit-pre-refresh  . diff-hl-magit-pre-refresh)
-         (magit-post-refresh . diff-hl-magit-post-refresh))
-  :init
-  (global-diff-hl-mode t)
-  :config
-  ;; When Emacs runs in terminal, show the indicators in margin instead.
-  (unless (display-graphic-p)
-    (diff-hl-margin-mode)))
-#+END_SRC
-
-** magit-delta增强git diff
-
-[[https://github.com/dandavison/magit-delta][magit-delta]] 插件可以通过 =git-delta= 来更优化的方式显示diff内容（需要提前安装 =brew install git-delta= ）。
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit-delta
-  :ensure t
-  :hook (magit-mode . magit-delta-mode)
-  :config
-  (setq magit-delta-hide-plus-minus-markers nil)
-  )
-#+END_SRC
-
-** paren高亮匹配的括号
-
-#+BEGIN_SRC emacs-lisp
-(use-package paren
-  :ensure nil
-  :hook (after-init . show-paren-mode)
-  :custom
-  (show-paren-when-point-inside-paren t)
-  (show-paren-when-point-in-periphery t))
-#+END_SRC
-
-** rainbow-delimeters多彩括号
-
-[[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] 插件将多彩显示括号等分隔符。
-
-#+begin_src emacs-lisp
-(use-package rainbow-delimiters
-  :ensure t
-  :hook (prog-mode . rainbow-delimiters-mode))
-#+end_src
-
-** emacs-lisp语言设置
-
-#+BEGIN_SRC emacs-lisp
-(use-package elisp-mode
-  :ensure nil
-  :after org
-  :bind (:map emacs-lisp-mode-map
-              ("C-c C-b" . eval-buffer)
-              ("C-c C-c" . eval-to-comment)
-              :map lisp-interaction-mode-map
-              ("C-c C-c" . eval-to-comment)
-              :map org-mode-map
-              ("C-c C-;" . eval-to-comment)
-              )
-  :init
-  ;; for emacs-lisp org babel
-  (add-to-list 'org-babel-default-header-args:emacs-lisp
-             '(:results . "value pp"))
-  :config
-  (defconst eval-as-comment-prefix " ⇒ ")
-  (defun eval-to-comment (&optional arg)
-    (interactive "P")
-    ;; (if (not (looking-back ";\\s*"))
-    ;;     (call-interactively 'comment-dwim))
-    (call-interactively 'comment-dwim)
-    (progn
-      (search-backward ";")
-      (forward-char 1))
-    (delete-region (point) (line-end-position))
-    (save-excursion
-      (let ((current-prefix-arg '(4)))
-        (call-interactively 'eval-last-sexp)))
-    (insert eval-as-comment-prefix)
-    (end-of-line 1))
-  )
-#+END_SRC
-
-** Python语言设置
-
-Python语言的设置。[[https://github.com/paetzke/py-autopep8.el][py-autopep8.el]] 插件可以让我们在编写Python保存文件的时候，自动以 =PEP8= 标准做格式美化（需要提前 =brew install autopep8= ）。
-
-#+BEGIN_SRC emacs-lisp
-(use-package python
-  :ensure nil
-  :mode ("\\.py\\'" . python-mode)
-  :init
-  (add-list-to-list 'org-babel-default-header-args:python '((:results . "output pp")
-                                                            (:noweb   . "yes")
-                                                            (:session . "py")
-                                                            (:async   . "yes")
-                                                            (:exports . "both")
-                                                            ))
-  :config
-  (setq python-indent-offset 4)
-  ;; Disable readline based native completion
-  (setq python-shell-completion-native-enable nil)
-  (setq python-indent-guess-indent-offset-verbose nil)
-  (setq python-shell-interpreter "python3"
-        python-shell-prompt-detect-failure-warning nil)
-  ;; disable native completion
-  (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
-  ;; Env vars
-  (with-eval-after-load 'exec-path-from-shell
-    (exec-path-from-shell-copy-env "PYTHONPATH"))
-  )
-
-;; need to pip install autopep8 first
-(use-package py-autopep8
-  :ensure t
-  :hook (python-mode . py-autopep8-mode)
-  )
-#+END_SRC
-
-** Rust-mode
-#+BEGIN_SRC emacs-lisp
-(use-package rust-mode)
-#+END_SRC
-
-** init-dev.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
-(provide 'init-dev)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-dev.el ends here
-#+END_SRC
-
-* init-shell.el
+* Init-shell.el
 :PROPERTIES:
 :HEADER-ARGS: :tangle lisp/init-shell.el :mkdirp yes
 :END:
@@ -3032,6 +2421,19 @@ alias more view-file $1
   )
 #+END_SRC
 
+** shell
+#+BEGIN_SRC emacs-lisp
+(defun my-start-shell-mode ()
+  "启动 Shell 模式并将其放置在上方的窗口中"
+  (interactive)
+  (split-window-below)
+  (other-window 1)
+  (shell)
+  (enlarge-window (- 15)))
+
+(global-set-key (kbd "<f9>") 'my-start-shell-mode)
+#+END_SRC
+
 ** init-shell.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
@@ -3039,4 +2441,480 @@ alias more view-file $1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-shell.el ends here
 #+END_SRC
+* init-tools.el
+:PROPERTIES:
+:HEADER-ARGS: :tangle lisp/init-tools.el :mkdirp yes
+:END:
 
+** init-tools.el 文件头
+
+#+BEGIN_SRC emacs-lisp
+;;; init-tools.el --- Tools settings -*- lexical-binding: t -*-
+;;; Commentary: Useful tools to make Emacs efficient!
+
+;;; Code:
+
+#+END_SRC
+
+** helpful帮助增强
+
+[[https://github.com/Wilfred/helpful][helpful]] 插件提供了帮助增强。
+
+#+begin_src emacs-lisp
+(use-package helpful
+  :ensure t
+  :commands (helpful-callable helpful-variable helpful-command helpful-key helpful-mode)
+  :bind (([remap describe-command] . helpful-command)
+         ("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h s" . helpful-symbol)
+         ("C-h S" . describe-syntax)
+         ("C-h m" . describe-mode)
+         ("C-h F" . describe-face)
+         ([remap describe-key] . helpful-key))
+  )
+#+end_src
+
+** which-key快捷键
+
+[[https://github.com/justbur/emacs-which-key][which-key]] 插件将提示快捷键。
+
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :hook (after-init . which-key-mode)
+  :config
+  (which-key-add-key-based-replacements
+    "C-c !" "flycheck"
+    "C-c @" "hideshow"
+    "C-c i" "ispell"
+    "C-c t" "hl-todo"
+    "C-x a" "abbrev"
+    "C-x n" "narrow"
+    "C-x t" "tab")
+  :custom
+  (which-key-idle-delay 0.7)
+  (which-key-add-column-padding 1))
+#+end_src
+
+** pyvenv-auto
+
+#+BEGIN_SRC emacs-lisp
+(use-package pyvenv-auto)
+(setenv "WORKON_HOME" "/home/elon/anaconda3/envs/")
+#+END_SRC
+
+** vc设置
+
+Emacs自带的vc设置。
+
+#+BEGIN_SRC emacs-lisp
+(use-package vc
+  :ensure nil
+  :custom
+  ;; 打开链接文件时，不进行追问
+  (vc-follow-symlinks t)
+  (vc-allow-async-revert t)
+  (vc-handled-backends '(Git)))
+#+END_SRC
+
+** magit版本管理
+
+[[https://github.com/magit/magit][magit]] 是Emacs里的另一个杀手级应用！可以直接在Emacs里进行基于git的版本管理。
+
+#+begin_src emacs-lisp
+(use-package magit
+  :ensure t
+  :hook (git-commit-mode . flyspell-mode)
+  :bind (("C-x g"   . magit-status)
+         ("C-x M-g" . magit-dispatch)
+         ("C-c M-g" . magit-file-dispatch))
+  :custom
+  (magit-diff-refine-hunk t)
+  (magit-ediff-dwim-show-on-hunks t))
+#+end_src
+
+** diff-hl高亮显示修改的部分
+
+[[https://github.com/dgutov/diff-hl][diff-hl]] 插件可以在左侧高亮显示相对于远程仓库的修改部分。
+
+#+BEGIN_SRC emacs-lisp
+(use-package diff-hl
+  :ensure t
+  :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
+         (magit-pre-refresh  . diff-hl-magit-pre-refresh)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
+  :init
+  (global-diff-hl-mode t)
+  :config
+  ;; When Emacs runs in terminal, show the indicators in margin instead.
+  (unless (display-graphic-p)
+    (diff-hl-margin-mode)))
+#+END_SRC
+
+** magit-delta增强git diff
+
+[[https://github.com/dandavison/magit-delta][magit-delta]] 插件可以通过 =git-delta= 来更优化的方式显示diff内容（需要提前安装 =brew install git-delta= ）。
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit-delta
+  :ensure t
+  :hook (magit-mode . magit-delta-mode)
+  :config
+  (setq magit-delta-hide-plus-minus-markers nil)
+  )
+#+END_SRC
+
+
+** init-tools.el 文件尾
+
+#+BEGIN_SRC emacs-lisp
+
+(provide 'init-tools)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-tools.el ends here
+#+END_SRC
+* init-note.el
+:PROPERTIES:
+:HEADER-ARGS: :tangle lisp/init-note.el :mkdirp yes
+:END:
+emacs 写作助手
+** init-note.el 文件头
+#+BEGIN_SRC emacs-lisp
+;;; init-note.el --- Development settings -*- lexical-binding: t -*-
+;;; Commentary:
+
+;;; Code:
+
+#+END_SRC
+
+** org-ai智能助手
+
+[[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ai
+  :ensure t
+  :commands (org-ai-mode
+             org-ai-global-mode)
+  :bind (
+         ("C-c q" . org-ai-prompt)
+         ("C-c x" . org-ai-on-region)
+         )
+  :hook (org-mode . org-ai-mode)
+  :config
+  (setq org-ai-default-max-tokens 480)
+  (setq org-ai-default-chat-system-prompt "你是一个Emacs助手，请以Org-mode的格式来回复我")
+  (org-ai-install-yasnippets)
+  )
+
+(load-file "~/.emacs.d/keys/chatai-key.el")
+(require 'chatai-key)
+#+END_SRC
+
+** org-noter
+#+BEGIN_SRC emacs-lisp
+(use-package org-noter
+  :ensure t
+  :custom
+  (org-noter-notes-search-path '("~/Documents/Notes")) ;; 默认笔记路径
+  (org-noter-auto-save-last-location t) ;; 自动保存上次阅读位置
+  (org-noter-highlight-selected-text t)
+  (org-noter-max-short-selected-text-length 20) ;; 默认为 80
+  (org-noter-default-heading-title "第 $p$ 页的笔记") ;; 默认短标题格式
+  :bind
+  (("C-c n n" . org-noter) ;; 与 org-roam 配合
+   :map org-noter-doc-mode-map ;; 加入左手键位
+   ("e" . org-noter-insert-note)
+   ("M-e" . org-noter-insert-precise-note)))
+#+END_SRC
+
+** org-roam
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/org-roam"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map) ;; 日记菜单
+  :config
+  (require 'org-roam-dailies)
+  ;;============= 新增内容 =================
+  ;; 下面的 (setq my/ref-template ...) 可以放到 use-package 代码块之外
+  (setq my/ref-template
+        (concat "#+FILETAGS: reading research \n"
+                "- tags :: %^{keywords} \n"
+                "* %^{title}\n"
+                ":PROPERTIES:\n"
+                ":Custom_ID: %^{citekey}\n"
+                ":URL: %^{url}\n"
+                ":AUTHOR: %^{author-or-editor}\n"
+                ":NOTER_DOCUMENT: ~/Nutstore Files/zotero-lib/%^{citekey}.pdf\n"
+                ":NOTER_PAGE:\n"
+                ":END:"))
+  (add-to-list 'org-roam-capture-templates
+               `("r" "Zotero 文献模板" plain ; 文献笔记模板
+                 ,my/ref-template
+                 :target
+                 (file+head "ref/${citekey}.org" "#+title: ${title}\n")))
+
+  (setq org-roam-capture-templates
+        '(("n" "笔记" plain "%?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n")
+           :unnarrowed t)))
+
+
+  ;;============= 新增内容结束 =================
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  ;; (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  ;;(require 'org-roam-protocol)
+  )
+
+(use-package org-roam-ui
+  :ensure t
+  :after org-roam
+  :custom
+  (org-roam-ui-sync-theme t)
+  (org-roam-ui-follow-mode t)
+  )
+#+END_SRC
+
+** rime
+输入法设置
+#+BEGIN_SRC emacs-lisp
+(use-package rime
+  :custom
+  (default-input-method "rime")
+  )
+
+(global-set-key (kbd "C-\\") 'toggle-input-method)
+#+END_SRC
+
+** youdao dictionary
+有道翻译
+#+BEGIN_SRC emacs-lisp
+(use-package youdao-dictionary)
+(setq url-automatic-caching t)
+(setq youdao-dictionary-search-history-file "~/.emacs.d/.youdao")
+#+END_SRC
+
+** plantuml绘图
+[[https://plantuml.com/zh/][plantuml]] 可以让我们在Org mode里通过纯文本画各种图，具体参考：[[https://plantuml.com/zh/emacs][PlantUML integration with Emacs]]。
+
+需要提前通过 =brew install plantuml= 安装 =plantuml= 。
+
+#+BEGIN_SRC emacs-lisp
+(use-package plantuml-mode
+  :ensure t
+  :mode ("\\.plantuml\\'" . plantuml-mode)
+  :init
+  ;; enable plantuml babel support
+  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((plantuml . t))))
+  :config
+  (setq org-plantuml-exec-mode 'plantuml)
+  (setq org-plantuml-executable-path "plantuml")
+  (setq plantuml-executable-path "plantuml")
+  (setq plantuml-default-exec-mode 'executable)
+  ;; set default babel header arguments
+  (setq org-babel-default-header-args:plantuml
+        '((:exports . "results")
+          (:results . "file")
+          ))
+  )
+#+END_SRC
+
+** gnuplot绘图
+
+[[https://github.com/emacs-gnuplot/gnuplot][gnuplot]] 插件可以让Emacs通过gnuplot绘图。
+
+#+BEGIN_SRC emacs-lisp
+(use-package gnuplot
+  :ensure t
+  :mode ("\\.gp$" . gnuplot-mode)
+  :init
+  (add-to-list 'org-src-lang-modes '("gnuplot" . gnuplot))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((gnuplot . t))))
+  :config
+  ;; (add-to-list 'auto-mode-alist '("\\.gp$" . gnuplot-mode))
+  (setq org-babel-default-header-args:gnuplot
+      '((:exports . "results")
+        (:results . "file")))
+  )
+#+END_SRC
+** org-capture快速记录设置
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-capture
+  :ensure nil
+  :bind ("\e\e c" . (lambda () (interactive) (org-capture)))
+  :hook ((org-capture-mode . (lambda ()
+                               (setq-local org-complete-tags-always-offer-all-agenda-tags t)))
+         (org-capture-mode . delete-other-windows))
+  :custom
+  (org-capture-use-agenda-date nil)
+  ;; define common template
+  (org-capture-templates `(("t" "Tasks" entry (file+headline "tasks.org" "Reminders")
+                            "* TODO %i%?"
+                            :empty-lines-after 1
+                            :prepend t)
+                           ("n" "Notes" entry (file+headline "capture.org" "Notes")
+                            "* %? %^g\n%i\n"
+                            :empty-lines-after 1)
+                           ;; For EWW
+                           ("b" "Bookmarks" entry (file+headline "capture.org" "Bookmarks")
+                            "* %:description\n\n%a%?"
+                            :empty-lines 1
+                            :immediate-finish t)
+                           ("d" "Diary")
+                           ("dt" "Today's TODO list" entry (file+olp+datetree "diary.org")
+                            "* Today's TODO list [/]\n%T\n\n** TODO %?"
+                            :empty-lines 1
+                            :jump-to-captured t)
+                           ("do" "Other stuff" entry (file+olp+datetree "diary.org")
+                            "* %?\n%T\n\n%i"
+                            :empty-lines 1
+                            :jump-to-captured t)
+                           ))
+  )
+#+END_SRC
+** init-note.el 文件尾
+#+BEGIN_SRC emacs-lisp
+
+(provide 'init-note)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-dev.el ends here
+#+END_SRC
+
+* Init-language.el
+:PROPERTIES:
+:HEADER-ARGS: :tangle lisp/init-language.el :mkdirp yes
+:END:
+
+Emacs里的language设置。
+
+
+** init-language.el 文件头
+#+BEGIN_SRC emacs-lisp
+;;; init-.el --- Development settings -*- lexical-binding: t -*-
+;;; Commentary:
+
+;;; Code:
+
+#+END_SRC
+
+** Python语言设置
+
+Python语言的设置。[[https://github.com/paetzke/py-autopep8.el][py-autopep8.el]] 插件可以让我们在编写Python保存文件的时候，自动以 =PEP8= 标准做格式美化（需要提前 =brew install autopep8= ）。
+
+#+BEGIN_SRC emacs-lisp
+(use-package python
+  :ensure nil
+  :mode ("\\.py\\'" . python-mode)
+  :init
+  (add-list-to-list 'org-babel-default-header-args:python '((:results . "output pp")
+                                                            (:noweb   . "yes")
+                                                            (:session . "py")
+                                                            (:async   . "yes")
+                                                            (:exports . "both")
+                                                            ))
+  :config
+  (setq python-indent-offset 4)
+  ;; Disable readline based native completion
+  (setq python-shell-completion-native-enable nil)
+  (setq python-indent-guess-indent-offset-verbose nil)
+  (setq python-shell-interpreter "python3"
+        python-shell-prompt-detect-failure-warning nil)
+  ;; disable native completion
+  (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
+  ;; Env vars
+  (with-eval-after-load 'exec-path-from-shell
+    (exec-path-from-shell-copy-env "PYTHONPATH"))
+  )
+
+;; need to pip install autopep8 first
+(use-package py-autopep8
+  :ensure t
+  :hook (python-mode . py-autopep8-mode)
+  )
+#+END_SRC
+
+** Rust-mode
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode)
+(add-hook 'rust-mode-hook
+          (lambda () (setq indent-tabs-mode nil)))
+(setq rust-format-on-save t)
+(add-hook 'rust-mode-hook
+          (lambda () (prettify-symbols-mode)))
+;; (add-hook 'rust-mode-hook 'eglot-ensure)
+(add-hook 'rust-mode-hook 'lsp-deferred)
+#+END_SRC
+
+** emacs-lisp语言设置
+
+#+BEGIN_SRC emacs-lisp
+(use-package elisp-mode
+  :ensure nil
+  :after org
+  :bind (:map emacs-lisp-mode-map
+              ("C-c C-b" . eval-buffer)
+              ("C-c C-c" . eval-to-comment)
+              :map lisp-interaction-mode-map
+              ("C-c C-c" . eval-to-comment)
+              :map org-mode-map
+              ("C-c C-;" . eval-to-comment)
+              )
+  :init
+  ;; for emacs-lisp org babel
+  (add-to-list 'org-babel-default-header-args:emacs-lisp
+             '(:results . "value pp"))
+  :config
+  (defconst eval-as-comment-prefix " ⇒ ")
+  (defun eval-to-comment (&optional arg)
+    (interactive "P")
+    ;; (if (not (looking-back ";\\s*"))
+    ;;     (call-interactively 'comment-dwim))
+    (call-interactively 'comment-dwim)
+    (progn
+      (search-backward ";")
+      (forward-char 1))
+    (delete-region (point) (line-end-position))
+    (save-excursion
+      (let ((current-prefix-arg '(4)))
+        (call-interactively 'eval-last-sexp)))
+    (insert eval-as-comment-prefix)
+    (end-of-line 1))
+  )
+#+END_SRC
+
+** lua-moode
+#+BEGIN_SRC emacs-lisp
+(use-package lua-mode)
+#+END_SRC
+
+** org-cdlatex
+#+BEGIN_SRC emacs-lisp
+(use-package cdlatex)
+#+END_SRC
+** init-language.el 文件尾
+#+BEGIN_SRC emacs-lisp
+
+(provide 'init-language)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-dev.el ends here
+#+END_SRC

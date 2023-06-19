@@ -5,10 +5,10 @@
 
 (require 'package)
 (setq package-archives
-	  '(("melpa" . "https://mirrors.ustc.edu.cn/elpa/melpa/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/")
-	    ("gnu" . "https://mirrors.ustc.edu.cn/elpa/gnu/")
-        ("gnu-devel" . "https://elpa.gnu.org/devel/")
+	  '(("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
+	    ("gnu"    . "https://mirrors.ustc.edu.cn/elpa/gnu/")
+        ("gnu-devel" . "https://mirrors.ustc.edu.cn/elpa/gnu-devel/")
+        ("nognu-devel" . "https://mirrors.ustc.edu.cn/elpa/nongnu-devel/")
 	    ("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/")))
 
 (package-initialize)
@@ -60,7 +60,6 @@
   (interactive)
   (find-file "~/.emacs.d/emacs-config.org"))
 (global-set-key (kbd "<f5>") 'open-custom-post-file)
-(global-set-key (kbd "<f9>") 'eshell)
 
   ;; 将lisp目录放到加载路径的前面以加快启动速度
   (let ((dir (locate-user-emacs-file "lisp")))
@@ -75,7 +74,9 @@
     (require 'init-completion)            ; 补全系统
     (require 'init-tools)                 ; 相关工具
     (require 'init-base)                  ; 一些基本配置
-    (require 'init-dev)                   ; 开发相关配置
+    (require 'init-shell)                 ;shell设置
+    (require 'init-note)                  ; 写作相关配置
+    (require 'init-language)              ; 编程语言设置
     )
 
 (provide 'init)

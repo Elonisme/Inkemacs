@@ -46,41 +46,6 @@
                      "/TAGS\\'"
                      "COMMIT_EDITMSG\\'")))
 
-(use-package undo-tree
-  :ensure t
-  :hook (after-init . global-undo-tree-mode)
-  :config
-  ;; don't save undo history to local files
-  (setq undo-tree-auto-save-history nil)
-  )
-
-(use-package super-save
-  :ensure t
-  :hook (after-init . super-save-mode)
-  :config
-  ;; Emacs空闲是否自动保存，这里不设置
-  (setq super-save-auto-save-when-idle nil)
-  ;; 切换窗口自动保存
-  (add-to-list 'super-save-triggers 'other-window)
-  ;; 查找文件时自动保存
-  (add-to-list 'super-save-hook-triggers 'find-file-hook)
-  ;; 远程文件编辑不自动保存
-  (setq super-save-remote-files nil)
-  ;; 特定后缀名的文件不自动保存
-  (setq super-save-exclude '(".gpg"))
-  ;; 自动保存时，保存所有缓冲区
-  (defun super-save/save-all-buffers ()
-    (save-excursion
-      (dolist (buf (buffer-list))
-        (set-buffer buf)
-        (when (and buffer-file-name
-                   (buffer-modified-p (current-buffer))
-                   (file-writable-p buffer-file-name)
-                   (if (file-remote-p buffer-file-name) super-save-remote-files t))
-          (save-buffer)))))
-  (advice-add 'super-save-command :override 'super-save/save-all-buffers)
-  )
-
 (use-package savehist
   :ensure nil
   :hook (after-init . savehist-mode)
@@ -108,6 +73,12 @@
   (crux-with-region-or-buffer untabify)
   (crux-with-region-or-point-to-eol kill-ring-save)
   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
+
+(use-package restart-emacs
+  :ensure t
+  :bind
+  (("C-c C-a r" . restart-emacs))
+  )
 
 ;; 将列表加入到列表
 (defun add-list-to-list (dst src)
