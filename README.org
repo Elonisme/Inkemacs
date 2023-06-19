@@ -9,7 +9,11 @@
 [[./imgs/org.png]]
 
 #+ATTR_ORG: :width 700
-[[./imgs/rime.png]]
+[[./imgs/coding.png]]
+
+#+ATTR_ORG: :width 700
+[[./imgs/emacs.png]]
+
 
 
 

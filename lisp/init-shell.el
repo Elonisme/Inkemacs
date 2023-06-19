@@ -112,7 +112,7 @@ current directory."
   :custom-face
   (eshell-git-prompt-multiline2-dir-face ((t (:foreground "#c09035" :bold t))))
   :config
-  (eshell-git-prompt-use-theme 'multiline2)
+  (eshell-git-prompt-use-theme 'powerline)
   )
 
 (use-package eshell-syntax-highlighting
