@@ -39,8 +39,8 @@
 					("#+end_src"        . 9633)         ; □
                     ("#+begin_ai"       . 9883)         ; ⚛
                     ("#+end_ai"         . 9876)         ; ⚔
-					("#+begin_example"  . 129083)       ; 🠻
-					("#+end_example"    . 129081)       ; 🠹
+					("#+begin_example"  . 129083)       ; 🌛
+					("#+end_example"    . 129081)       ; 🌙
 					("#+results:"       . 9776)         ; ☰
 					("#+attr_latex:"    . "🄛")
 					("#+attr_html:"     . "🄗")

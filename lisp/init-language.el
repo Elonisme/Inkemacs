@@ -42,6 +42,13 @@
 ;; (add-hook 'rust-mode-hook 'eglot-ensure)
 (add-hook 'rust-mode-hook 'lsp-deferred)
 
+(org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((rust . t))))
+
+;; 设置 Rust 语言的执行命令
+(setq org-babel-rust-command "rustc")
+
 (use-package elisp-mode
   :ensure nil
   :after org

@@ -76,7 +76,6 @@
    (cond
     ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
     ((member "Symbola" (font-family-list)) "Symbola")
-    ((member "Apple Color Emoji" (font-family-list)) "Apple Color Emoji")
     ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
     ((member "Segoe UI Emoji" (font-family-list)) "Segoe UI Emoji")
     ))
@@ -93,12 +92,11 @@
                    ((member "Sarasa Mono SC Nerd" (font-family-list)) "Sarasa Mono SC Nerd")
                    ((member "PingFang SC" (font-family-list)) "PingFang SC")
                    ((member "WenQuanYi Zen Hei" (font-family-list)) "WenQuanYi Zen Hei")
-                   ((member "Microsoft YaHei" (font-family-list)) "Microsoft YaHei")
                    ))
                  ((eq system-type 'gnu/linux)
                   (cond
                    ((member "Sarasa Mono SC Nerd" (font-family-list)) "Sarasa Mono SC Nerd")
-                   ((member "WenQuanYi Zen Hei" (font-family-list)) "WenQuanYi Zen Hei")                
+                   ((member "WenQuanYi Zen Hei" (font-family-list)) "WenQuanYi Zen Hei")
                    ))
                  (t
                   (cond
@@ -110,6 +108,7 @@
   ;; set Chinese font scale
   (setq face-font-rescale-alist `(
                                   ("Symbola"             . 1.3)
+                                  ("Microsoft YaHei"     . 1.2)
                                   ("WenQuanYi Zen Hei"   . 1.2)
                                   ("Sarasa Mono SC Nerd" . 1.2)
                                   ("PingFang SC"         . 1.16)
@@ -119,6 +118,18 @@
                                   ("Apple Color Emoji"   . 0.91)
                                   ))
   )
+
+
+(defun set-emacsclient-frame-font-size ()
+  "Set the font size for Emacs client frames."
+  (let ((font-size 18)) ; 设置字体大小
+    (set-face-attribute 'default nil :height (* font-size 10))))
+
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (select-frame frame)
+            (when (window-system frame)
+              (set-emacsclient-frame-font-size))))
 
 ;; 设置窗口大小，仅仅在图形界面需要设置
 (when (display-graphic-p)
@@ -419,6 +430,10 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 ;; 在其他模式下禁用行号显示
 (global-display-line-numbers-mode -1)
+
+(use-package ace-window
+  :ensure t
+ )
 
 (provide 'init-ui)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
