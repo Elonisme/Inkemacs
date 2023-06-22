@@ -44,6 +44,7 @@
          ("C-c n g" . org-roam-graph)
          ("C-c n i" . org-roam-node-insert)
          ("C-c n c" . org-roam-capture)
+         ("C-c n u" . org-roam-ui-open)
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today))
   :bind-keymap

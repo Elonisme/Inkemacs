@@ -78,25 +78,30 @@ Emacs 社区非常欢迎新人。毕竟在专有软件还在世界上横行霸�
 *** org-mode
 在org mode中我配置了yasnippet。
 我列举常用的yasnippet快捷键
-| 语言       | 快捷键  |
-|------------+---------|
-| emacs lisp | <el Tab |
-| rust       | <rt Tab |
-| python     | <py Tab |
-| chat gpt   | <ai Tab |
+| 语言          | 快捷键    |
+|---------------+-----------|
+| emacs lisp    | <el Tab   |
+| rust          | <rt Tab   |
+| python        | <py Tab   |
+| chat gpt      | <ai Tab   |
+| quote         | <q  Tab   |
+| math          | <math Tab |
+| mermaid       | <mm Tab   |
+| mind 思维导图 | <mind Tab |
 
 
 ** 常用快捷键
 
 | 功能                 | 快捷键    |
 |----------------------+-----------|
-| 重启emacs            | C-x C-a r |
+| 重启emacs            | C-c C-x r |
 | 编辑emacs-config.org | F5        |
 | 激活rime输入法       | C-\       |
 | 启动番茄时钟         | C-c C-X ; |
 | 打开eshell           | F9        |
 | org-roam find        | C-c n f   |
 | org-roam node insert | C-c n i   |
+| org-roam-ui open     | C-c n u   |
 
 
 ** 许可证
