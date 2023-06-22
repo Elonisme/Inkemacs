@@ -194,10 +194,13 @@
 #+BEGIN_SRC emacs-lisp
 (use-package ef-themes
   :ensure t
-  :bind ("C-c t" . ef-themes-toggle)
+  :bind (
+         ( "C-c t" . ef-themes-toggle)
+         ("C-c e r" . ef-themes-load-random)
+         )
   :init
   ;; set two specific themes and switch between them
-  (setq ef-themes-to-toggle '(ef-summer ef-winter ef-themes-load-random))
+  (setq ef-themes-to-toggle '(ef-summer ef-winter))
   ;; set org headings and function syntax
   (setq ef-themes-headings
         '((0 . (bold 1))
@@ -706,9 +709,18 @@
 
 ** ace-window
 #+BEGIN_SRC emacs-lisp
-(use-package ace-window
-  :ensure t
- )
+  (use-package ace-window
+    :ensure t
+    :init
+    (setq aw-keys '(?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
+    :config
+    ;; 增大数字跳转显示的字体大小
+    (custom-set-faces
+     '(aw-leading-char-face ((t (:height 2.0 :foreground "red")))))
+    :bind (("C-x o" . ace-window))
+  )
+
+
 #+END_SRC
 
 ** init-ui.el 文件尾
