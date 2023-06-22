@@ -77,7 +77,7 @@
 (use-package restart-emacs
   :ensure t
   :bind
-  (("C-c C-a r" . restart-emacs))
+  (("C-c C-x r" . restart-emacs))
   )
 
 ;; 将列表加入到列表

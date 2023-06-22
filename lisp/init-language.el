@@ -3,7 +3,23 @@
 
 ;;; Code:
 
-  (use-package anaconda-mode
+(use-package python
+  :ensure t
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode)
+  :config
+  ;; 在保存时自动格式化代码
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook 'py-autopep8-before-save))))
+
+(use-package pyvenv
+  :ensure t
+  :after python
+  :config
+  (add-hook 'python-mode-hook 'pyvenv-mode))
+
+(use-package anaconda-mode
   :ensure t
   :hook (python-mode . anaconda-mode)
   :init

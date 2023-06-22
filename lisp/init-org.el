@@ -551,8 +551,11 @@ Optional for Org-mode file: `LINK'."
 (setq org-export-with-sub-superscripts nil)
 
 (add-to-list 'org-latex-packages-alist '("" "fontspec"))
+(add-to-list 'org-latex-packages-alist '("" "seqsplit"))
 
-(add-to-list 'org-latex-packages-alist '("" "minted"))
+(setq org-latex-listings t)
+(add-to-list 'org-latex-packages-alist '("" "listings"))
+(add-to-list 'org-latex-packages-alist '("" "xcolor")) 
 
 (setq org-latex-logfiles-extensions 
       (quote ("lof" "lot" "tex~" "tex" "aux" 

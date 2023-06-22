@@ -92,7 +92,7 @@
 
 ;; 配置 `use-package'
 (eval-and-compile
-  (setq use-package-always-ensure nil)
+  (setq use-package-always-ensure t)
   (setq use-package-always-defer nil)
   (setq use-package-expand-minimally nil)
   (setq use-package-enable-imenu-support t)
@@ -197,7 +197,7 @@
   :bind ("C-c t" . ef-themes-toggle)
   :init
   ;; set two specific themes and switch between them
-  (setq ef-themes-to-toggle '(ef-summer ef-winter))
+  (setq ef-themes-to-toggle '(ef-summer ef-winter ef-themes-load-random))
   ;; set org headings and function syntax
   (setq ef-themes-headings
         '((0 . (bold 1))
@@ -215,12 +215,12 @@
   ;; `ef-themes-light-themes'.
   
   ;; 如果你不喜欢随机主题，也可以直接固定选择一个主题，如下：
-  ;; (ef-themes-select 'ef-summer)
+  (ef-themes-select 'ef-summer)
 
   ;; 随机挑选一款主题，如果是命令行打开Emacs，则随机挑选一款黑色主题
-  (if (display-graphic-p)
-      (ef-themes-load-random)
-    (ef-themes-load-random 'dark))
+  ;; (if (display-graphic-p)
+  ;;     (ef-themes-load-random)
+  ;;   (ef-themes-load-random 'dark))
   )
 #+END_SRC
 
@@ -832,7 +832,7 @@
 (use-package restart-emacs
   :ensure t
   :bind
-  (("C-c C-a r" . restart-emacs))
+  (("C-c C-x r" . restart-emacs))
   )
 #+END_SRC
 ** 个人函数定义
@@ -1686,8 +1686,11 @@ Optional for Org-mode file: `LINK'."
 (setq org-export-with-sub-superscripts nil)
 
 (add-to-list 'org-latex-packages-alist '("" "fontspec"))
+(add-to-list 'org-latex-packages-alist '("" "seqsplit"))
 
-(add-to-list 'org-latex-packages-alist '("" "minted"))
+(setq org-latex-listings t)
+(add-to-list 'org-latex-packages-alist '("" "listings"))
+(add-to-list 'org-latex-packages-alist '("" "xcolor")) 
 
 (setq org-latex-logfiles-extensions 
       (quote ("lof" "lot" "tex~" "tex" "aux" 
@@ -1743,7 +1746,6 @@ Optional for Org-mode file: `LINK'."
         ("cache=false" "minted" nil) ;; Code color
         "\\tolerance=1000"))
 #+END_SRC
-
 
 ** org-download实现粘贴复制图片到orgmode
 
@@ -2959,7 +2961,23 @@ Emacs里的language设置。
 
 ** Python-mode
 #+BEGIN_SRC emacs-lisp
-  (use-package anaconda-mode
+(use-package python
+  :ensure t
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode)
+  :config
+  ;; 在保存时自动格式化代码
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook 'py-autopep8-before-save))))
+
+(use-package pyvenv
+  :ensure t
+  :after python
+  :config
+  (add-hook 'python-mode-hook 'pyvenv-mode))
+
+(use-package anaconda-mode
   :ensure t
   :hook (python-mode . anaconda-mode)
   :init

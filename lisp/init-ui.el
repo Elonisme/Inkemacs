@@ -8,7 +8,7 @@
   :bind ("C-c t" . ef-themes-toggle)
   :init
   ;; set two specific themes and switch between them
-  (setq ef-themes-to-toggle '(ef-summer ef-winter))
+  (setq ef-themes-to-toggle '(ef-summer ef-winter ef-themes-load-random))
   ;; set org headings and function syntax
   (setq ef-themes-headings
         '((0 . (bold 1))
@@ -26,12 +26,12 @@
   ;; `ef-themes-light-themes'.
   
   ;; 如果你不喜欢随机主题，也可以直接固定选择一个主题，如下：
-  ;; (ef-themes-select 'ef-summer)
+  (ef-themes-select 'ef-summer)
 
   ;; 随机挑选一款主题，如果是命令行打开Emacs，则随机挑选一款黑色主题
-  (if (display-graphic-p)
-      (ef-themes-load-random)
-    (ef-themes-load-random 'dark))
+  ;; (if (display-graphic-p)
+  ;;     (ef-themes-load-random)
+  ;;   (ef-themes-load-random 'dark))
   )
 
 (use-package fontaine
