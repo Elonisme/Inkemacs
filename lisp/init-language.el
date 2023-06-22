@@ -3,44 +3,81 @@
 
 ;;; Code:
 
-(use-package python
-  :ensure nil
-  :mode ("\\.py\\'" . python-mode)
-  :init
-  (add-list-to-list 'org-babel-default-header-args:python '((:results . "output pp")
-                                                            (:noweb   . "yes")
-                                                            (:session . "py")
-                                                            (:async   . "yes")
-                                                            (:exports . "both")
-                                                            ))
-  :config
-  (setq python-indent-offset 4)
-  ;; Disable readline based native completion
-  (setq python-shell-completion-native-enable nil)
-  (setq python-indent-guess-indent-offset-verbose nil)
-  (setq python-shell-interpreter "python3"
-        python-shell-prompt-detect-failure-warning nil)
-  ;; disable native completion
-  (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
-  ;; Env vars
-  (with-eval-after-load 'exec-path-from-shell
-    (exec-path-from-shell-copy-env "PYTHONPATH"))
-  )
-
-;; need to pip install autopep8 first
-(use-package py-autopep8
+  (use-package anaconda-mode
   :ensure t
-  :hook (python-mode . py-autopep8-mode)
-  )
+  :hook (python-mode . anaconda-mode)
+  :init
+  (setq anaconda-mode-eldoc-as-single-line t))
 
-(use-package rust-mode)
-(add-hook 'rust-mode-hook
-          (lambda () (setq indent-tabs-mode nil)))
-(setq rust-format-on-save t)
-(add-hook 'rust-mode-hook
-          (lambda () (prettify-symbols-mode)))
-;; (add-hook 'rust-mode-hook 'eglot-ensure)
-(add-hook 'rust-mode-hook 'lsp-deferred)
+(use-package company-anaconda
+  :ensure t
+  :after anaconda-mode
+  :config
+  (eval-after-load "company"
+    '(add-to-list 'company-backends 'company-anaconda)))
+
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable)
+  :config
+  (setq elpy-rpc-python-command "python3") ;; 设置 Python 解释器路径
+  (setq python-shell-interpreter "python3")) ;; 设置 Python 解释器路径
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+(use-package blacken
+  :ensure t
+  :hook (python-mode . blacken-mode))
+
+;; (use-package rust-mode)
+;; (add-hook 'rust-mode-hook
+;;           (lambda () (setq indent-tabs-mode nil)))
+;; (setq rust-format-on-save t)
+;; (add-hook 'rust-mode-hook
+;;           (lambda () (prettify-symbols-mode)))
+;; ;; (add-hook 'rust-mode-hook 'eglot-ensure)
+;; (add-hook 'rust-mode-hook 'lsp-deferred)
+
+;; Rust 开发配置
+(use-package rust-mode
+  :ensure t
+  :hook (rust-mode . lsp-deferred)
+  :config
+  (setq rust-format-on-save t))
+
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook (rust-mode . lsp-deferred)
+  :init
+  (setq lsp-rust-server 'rust-analyzer))
+
+(use-package company
+  :ensure t
+  :hook (prog-mode . company-mode)
+  :config
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.0))
+
+(use-package lsp-ui
+  :ensure t
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-peek-enable t)
+  (setq lsp-ui-sideline-enable nil))
+
+(use-package lsp-treemacs
+  :ensure t
+  :commands lsp-treemacs-errors-list)
+
+(use-package cargo
+  :ensure t
+  :hook (rust-mode . cargo-minor-mode))
 
 (org-babel-do-load-languages 'org-babel-load-languages
                                (append org-babel-load-languages

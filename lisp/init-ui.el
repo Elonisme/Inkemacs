@@ -108,28 +108,35 @@
   ;; set Chinese font scale
   (setq face-font-rescale-alist `(
                                   ("Symbola"             . 1.3)
-                                  ("Microsoft YaHei"     . 1.2)
                                   ("WenQuanYi Zen Hei"   . 1.2)
                                   ("Sarasa Mono SC Nerd" . 1.2)
                                   ("PingFang SC"         . 1.16)
                                   ("Lantinghei SC"       . 1.16)
                                   ("Kaiti SC"            . 1.16)
                                   ("Yuanti SC"           . 1.16)
-                                  ("Apple Color Emoji"   . 0.91)
                                   ))
   )
 
 
-(defun set-emacsclient-frame-font-size ()
-  "Set the font size for Emacs client frames."
-  (let ((font-size 18)) ; 设置字体大小
-    (set-face-attribute 'default nil :height (* font-size 10))))
+(defun set-emacsclient-font ()
+  "Set the font for Emacs client frames."
+  (let ((chinese-font "WenQuanYi Zen Hei")   ; 设置中文字体名称
+        (english-font "Source Code Pro")        ; 设置英文字体名称
+        (font-size 18)                         ; 设置字体大小
+        (chinese-font-scale 1.2))               ; 设置中文字体缩放比例
+    (set-face-attribute 'default nil :family english-font :height (* font-size 10))
+    (set-fontset-font t 'han (font-spec :family chinese-font))
+    (setq face-font-rescale-alist `(
+                                     ("WenQuanYi Zen Hei"   . 1.2)
+                                    ))
+    )
+  )
 
 (add-hook 'after-make-frame-functions
           (lambda (frame)
             (select-frame frame)
             (when (window-system frame)
-              (set-emacsclient-frame-font-size))))
+              (set-emacsclient-font))))
 
 ;; 设置窗口大小，仅仅在图形界面需要设置
 (when (display-graphic-p)

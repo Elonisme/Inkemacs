@@ -313,30 +313,35 @@
   ;; set Chinese font scale
   (setq face-font-rescale-alist `(
                                   ("Symbola"             . 1.3)
-                                  ("Microsoft YaHei"     . 1.2)
                                   ("WenQuanYi Zen Hei"   . 1.2)
                                   ("Sarasa Mono SC Nerd" . 1.2)
                                   ("PingFang SC"         . 1.16)
                                   ("Lantinghei SC"       . 1.16)
                                   ("Kaiti SC"            . 1.16)
                                   ("Yuanti SC"           . 1.16)
-                                  ("Apple Color Emoji"   . 0.91)
                                   ))
   )
 
 
-(defun set-emacsclient-frame-font-size ()
-  "Set the font size for Emacs client frames."
-  (let ((font-size 18)) ; 设置字体大小
-    (set-face-attribute 'default nil :height (* font-size 10))))
+(defun set-emacsclient-font ()
+  "Set the font for Emacs client frames."
+  (let ((chinese-font "WenQuanYi Zen Hei")   ; 设置中文字体名称
+        (english-font "Source Code Pro")        ; 设置英文字体名称
+        (font-size 18)                         ; 设置字体大小
+        (chinese-font-scale 1.2))               ; 设置中文字体缩放比例
+    (set-face-attribute 'default nil :family english-font :height (* font-size 10))
+    (set-fontset-font t 'han (font-spec :family chinese-font))
+    (setq face-font-rescale-alist `(
+                                     ("WenQuanYi Zen Hei"   . 1.2)
+                                    ))
+    )
+  )
 
 (add-hook 'after-make-frame-functions
           (lambda (frame)
             (select-frame frame)
             (when (window-system frame)
-              (set-emacsclient-frame-font-size))))
-
-
+              (set-emacsclient-font))))
 #+END_SRC
 
 ** 窗口设置
@@ -841,6 +846,18 @@
   (set dst
        (append (eval dst) src)))
 #+END_SRC
+** 设置代理
+#+BEGIN_SRC rust
+(defun set-proxy ()
+  "设置代理"
+  (interactive)
+  (setq url-proxy-services
+        '(("http" . "127.0.0.1:7890")
+          ("https" . "127.0.0.1:7890")))
+  (message "代理已设置为 127.0.0.1:7890"))
+
+(set-proxy)
+#+END_SRC
 
 ** good-scroll
 #+BEGIN_SRC emacs-lisp
@@ -1103,10 +1120,7 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
 
 #+END_SRC
 
-** Org mode基本配置
-
-对Org mode基本配置进行修改。
-
+** org-mode
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :ensure nil
@@ -1221,7 +1235,7 @@ Optional for Org-mode file: `LINK'."
   ;; 标题行美化
   (org-fontify-whole-heading-line t)
   ;; 设置标题行折叠符号
-  (org-ellipsis " ▾")
+  (org-ellipsis "⤵")
   ;; 在活动区域内的所有标题栏执行某些命令
   (org-loop-over-headlines-in-active-region t)
   ;; TODO标签美化
@@ -1387,10 +1401,7 @@ Optional for Org-mode file: `LINK'."
 (use-package org-contrib
   :ensure t)
 #+END_SRC
-
-** org-modern 美化
-下面，我们通过 [[https://github.com/minad/org-modern][org-modern]] 插件对Org mode进行进一步的美化。
-
+** Org-modern
 #+BEGIN_SRC emacs-lisp
 (use-package org-modern
   :ensure t
@@ -1426,12 +1437,8 @@ Optional for Org-mode file: `LINK'."
   (setq org-modern-keyword nil)
   )
 #+END_SRC
-
-** org-appear自动展开强调链接
-
-通过 [[https://github.com/awth13/org-appear][org-appear]] 插件，当我们的光标移动到Org mode里的强调、链接上时，会自动展开，这样方便进行编辑。
-
-#+begin_src emacs-lisp
+** org-appear
+#+BEGIN_SRC emacs-lis
 (use-package org-appear
   :ensure t
   :hook (org-mode . org-appear-mode)
@@ -1442,13 +1449,10 @@ Optional for Org-mode file: `LINK'."
   (setq org-appear-autokeywords t)
   (setq org-appear-inside-latex t)
   )
-#+end_src
+#+END_SRC
 
-** org-auto-tangle自动tangle设置
-
-[[https://github.com/yilkalargaw/org-auto-tangle][org-auto-tangle]] 插件可以在Org mode下自动进行tangle。
-
-#+BEGIN_SRC emacs-lisp
+** org-auto-tangle
+#+BEGIN_SRC emacs-lis
 (use-package org-auto-tangle
   :ensure t
   :hook (org-mode . org-auto-tangle-mode)
@@ -1457,10 +1461,7 @@ Optional for Org-mode file: `LINK'."
   )
 #+END_SRC
 
-** org-src代码块基础配置
-
-Org mode代码块的基本配置。
-
+** org-src
 #+BEGIN_SRC emacs-lisp
 (use-package org-src
   :ensure nil
@@ -1643,10 +1644,7 @@ Org mode代码块的基本配置。
   )
 #+END_SRC
 
-** 限制代码块结果长度
-
-参考 [[https://emacs-china.org/t/org-babel/18399/4][twlz0ne 大佬在这篇贴子的回复]]。
-
+** limit the babel result length
 #+BEGIN_SRC emacs-lisp
 ;; limit the babel result length
 (defvar org-babel-result-lines-limit 40)
@@ -1673,6 +1671,79 @@ Org mode代码块的基本配置。
 
 (advice-add 'org-babel-insert-result :around #'org-babel-insert-result@limit)
 #+END_SRC
+
+** 导出为中文
+#+BEGIN_SRC emacs-lisp
+;; 使用xelatex，配合当前org文件最开始的配置来正常输出中文
+(setq org-latex-pdf-process '("xelatex -file-line-error -interaction nonstopmode %f"
+                              "bibtex %b"
+                              "xelatex -file-line-error -interaction nonstopmode %f"
+                              "xelatex -file-line-error -interaction nonstopmode %f"))
+
+;; 图片默认宽度
+(setq org-image-actual-width '(300))
+
+(setq org-export-with-sub-superscripts nil)
+
+(add-to-list 'org-latex-packages-alist '("" "fontspec"))
+
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+
+(setq org-latex-logfiles-extensions 
+      (quote ("lof" "lot" "tex~" "tex" "aux" 
+              "idx" "log" "out" "toc" "nav" 
+              "snm" "vrb" "dvi" "fdb_latexmk" 
+              "blg" "brf" "fls" "entoc" "ps" 
+              "spl" "bbl" "xdv" "pyg")))
+
+(setq org-latex-classes
+      '(("article"
+         "
+\\documentclass[12pt,a4paper]{article}
+[DEFAULT-PACKAGES]
+[PACKAGES]
+
+\\setmainfont{WenQuanYi Micro Hei}
+\\setsansfont{WenQuanYi Zen Hei}
+\\setmonofont[Scale=0.9]{WenQuanYi Micro Hei}
+\\newfontfamily\\quotefont{Source Han Serif SC}
+\\newfontfamily\\headfootfont{Source Han Sans SC}
+
+[EXTRA]
+"
+         ("\\section{%s}" . "\\section*{%s}")
+         ("\\subsection{%s}" . "\\subsection*{%s}")
+         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+(setq org-latex-with-hyperref t)
+
+(setq org-latex-default-packages-alist
+      '(("" "nopageno" t)
+        ("" "hyperref" t)
+        ("" "fontspec" t)
+        ("" "etoolbox" t) ;; Quote 部份的字型設定
+        ("margin=2cm" "geometry" nil)
+        ;; ("AUTO" "inputenc" t)
+        ;; ("" "fixltx2e" nil)
+        ("dvipdfmx" "graphicx" t)
+        ("" "longtable" nil)
+        ("" "float" nil)
+        ("" "wrapfig" nil)
+        ("" "rotating" nil)
+        ("normalem" "ulem" t)
+        ("" "amsmath" t)
+        ("" "textcomp" t)
+        ("" "marvosym" t)
+        ("" "wasysym" t)
+        ("" "multicol" t)  ; 這是我另外加的，因為常需要多欄位文件版面。
+        ("" "amssymb" t)
+        ("" "fancyhdr" nil) ;; 页眉页脚
+        ("cache=false" "minted" nil) ;; Code color
+        "\\tolerance=1000"))
+#+END_SRC
+
 
 ** org-download实现粘贴复制图片到orgmode
 
@@ -2652,7 +2723,12 @@ emacs 写作助手
 
 #+END_SRC
 
-** org-ai智能助手
+** org-#+begin_ai
+[SYS]: You are a helpful assistant.
+
+[ME]: 
+#+end_ai
+智能助手
 
 [[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
 
@@ -2881,52 +2957,85 @@ Emacs里的language设置。
 
 #+END_SRC
 
-** Python语言设置
-
-Python语言的设置。[[https://github.com/paetzke/py-autopep8.el][py-autopep8.el]] 插件可以让我们在编写Python保存文件的时候，自动以 =PEP8= 标准做格式美化（需要提前 =brew install autopep8= ）。
-
+** Python-mode
 #+BEGIN_SRC emacs-lisp
-(use-package python
-  :ensure nil
-  :mode ("\\.py\\'" . python-mode)
-  :init
-  (add-list-to-list 'org-babel-default-header-args:python '((:results . "output pp")
-                                                            (:noweb   . "yes")
-                                                            (:session . "py")
-                                                            (:async   . "yes")
-                                                            (:exports . "both")
-                                                            ))
-  :config
-  (setq python-indent-offset 4)
-  ;; Disable readline based native completion
-  (setq python-shell-completion-native-enable nil)
-  (setq python-indent-guess-indent-offset-verbose nil)
-  (setq python-shell-interpreter "python3"
-        python-shell-prompt-detect-failure-warning nil)
-  ;; disable native completion
-  (add-to-list 'python-shell-completion-native-disabled-interpreters "python3")
-  ;; Env vars
-  (with-eval-after-load 'exec-path-from-shell
-    (exec-path-from-shell-copy-env "PYTHONPATH"))
-  )
-
-;; need to pip install autopep8 first
-(use-package py-autopep8
+  (use-package anaconda-mode
   :ensure t
-  :hook (python-mode . py-autopep8-mode)
-  )
-#+END_SRC
+  :hook (python-mode . anaconda-mode)
+  :init
+  (setq anaconda-mode-eldoc-as-single-line t))
 
+(use-package company-anaconda
+  :ensure t
+  :after anaconda-mode
+  :config
+  (eval-after-load "company"
+    '(add-to-list 'company-backends 'company-anaconda)))
+
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable)
+  :config
+  (setq elpy-rpc-python-command "python3") ;; 设置 Python 解释器路径
+  (setq python-shell-interpreter "python3")) ;; 设置 Python 解释器路径
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+(use-package blacken
+  :ensure t
+  :hook (python-mode . blacken-mode))
+#+END_SRC
 ** Rust-mode
 #+BEGIN_SRC emacs-lisp
-(use-package rust-mode)
-(add-hook 'rust-mode-hook
-          (lambda () (setq indent-tabs-mode nil)))
-(setq rust-format-on-save t)
-(add-hook 'rust-mode-hook
-          (lambda () (prettify-symbols-mode)))
-;; (add-hook 'rust-mode-hook 'eglot-ensure)
-(add-hook 'rust-mode-hook 'lsp-deferred)
+;; (use-package rust-mode)
+;; (add-hook 'rust-mode-hook
+;;           (lambda () (setq indent-tabs-mode nil)))
+;; (setq rust-format-on-save t)
+;; (add-hook 'rust-mode-hook
+;;           (lambda () (prettify-symbols-mode)))
+;; ;; (add-hook 'rust-mode-hook 'eglot-ensure)
+;; (add-hook 'rust-mode-hook 'lsp-deferred)
+
+;; Rust 开发配置
+(use-package rust-mode
+  :ensure t
+  :hook (rust-mode . lsp-deferred)
+  :config
+  (setq rust-format-on-save t))
+
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook (rust-mode . lsp-deferred)
+  :init
+  (setq lsp-rust-server 'rust-analyzer))
+
+(use-package company
+  :ensure t
+  :hook (prog-mode . company-mode)
+  :config
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.0))
+
+(use-package lsp-ui
+  :ensure t
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-peek-enable t)
+  (setq lsp-ui-sideline-enable nil))
+
+(use-package lsp-treemacs
+  :ensure t
+  :commands lsp-treemacs-errors-list)
+
+(use-package cargo
+  :ensure t
+  :hook (rust-mode . cargo-minor-mode))
 
 (org-babel-do-load-languages 'org-babel-load-languages
                                (append org-babel-load-languages
@@ -2935,7 +3044,7 @@ Python语言的设置。[[https://github.com/paetzke/py-autopep8.el][py-autopep8
 ;; 设置 Rust 语言的执行命令
 (setq org-babel-rust-command "rustc")
 #+END_SRC
-** emacs-lisp语言设置
+** emacs-lisp-mode
 
 #+BEGIN_SRC emacs-lisp
 (use-package elisp-mode

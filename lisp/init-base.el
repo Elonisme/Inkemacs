@@ -86,6 +86,16 @@
   (set dst
        (append (eval dst) src)))
 
+(defun set-proxy ()
+  "设置代理"
+  (interactive)
+  (setq url-proxy-services
+        '(("http" . "127.0.0.1:7890")
+          ("https" . "127.0.0.1:7890")))
+  (message "代理已设置为 127.0.0.1:7890"))
+
+(set-proxy)
+
 (use-package good-scroll
   :ensure t
   :if window-system          ; 在图形化界面时才使用这个插件

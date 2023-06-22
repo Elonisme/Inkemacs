@@ -116,7 +116,7 @@ Optional for Org-mode file: `LINK'."
   ;; 标题行美化
   (org-fontify-whole-heading-line t)
   ;; 设置标题行折叠符号
-  (org-ellipsis " ▾")
+  (org-ellipsis "⤵")
   ;; 在活动区域内的所有标题栏执行某些命令
   (org-loop-over-headlines-in-active-region t)
   ;; TODO标签美化
@@ -538,6 +538,75 @@ Optional for Org-mode file: `LINK'."
     (apply orig-fn result args)))
 
 (advice-add 'org-babel-insert-result :around #'org-babel-insert-result@limit)
+
+;; 使用xelatex，配合当前org文件最开始的配置来正常输出中文
+(setq org-latex-pdf-process '("xelatex -file-line-error -interaction nonstopmode %f"
+                              "bibtex %b"
+                              "xelatex -file-line-error -interaction nonstopmode %f"
+                              "xelatex -file-line-error -interaction nonstopmode %f"))
+
+;; 图片默认宽度
+(setq org-image-actual-width '(300))
+
+(setq org-export-with-sub-superscripts nil)
+
+(add-to-list 'org-latex-packages-alist '("" "fontspec"))
+
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+
+(setq org-latex-logfiles-extensions 
+      (quote ("lof" "lot" "tex~" "tex" "aux" 
+              "idx" "log" "out" "toc" "nav" 
+              "snm" "vrb" "dvi" "fdb_latexmk" 
+              "blg" "brf" "fls" "entoc" "ps" 
+              "spl" "bbl" "xdv" "pyg")))
+
+(setq org-latex-classes
+      '(("article"
+         "
+\\documentclass[12pt,a4paper]{article}
+[DEFAULT-PACKAGES]
+[PACKAGES]
+
+\\setmainfont{WenQuanYi Micro Hei}
+\\setsansfont{WenQuanYi Zen Hei}
+\\setmonofont[Scale=0.9]{WenQuanYi Micro Hei}
+\\newfontfamily\\quotefont{Source Han Serif SC}
+\\newfontfamily\\headfootfont{Source Han Sans SC}
+
+[EXTRA]
+"
+         ("\\section{%s}" . "\\section*{%s}")
+         ("\\subsection{%s}" . "\\subsection*{%s}")
+         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+(setq org-latex-with-hyperref t)
+
+(setq org-latex-default-packages-alist
+      '(("" "nopageno" t)
+        ("" "hyperref" t)
+        ("" "fontspec" t)
+        ("" "etoolbox" t) ;; Quote 部份的字型設定
+        ("margin=2cm" "geometry" nil)
+        ;; ("AUTO" "inputenc" t)
+        ;; ("" "fixltx2e" nil)
+        ("dvipdfmx" "graphicx" t)
+        ("" "longtable" nil)
+        ("" "float" nil)
+        ("" "wrapfig" nil)
+        ("" "rotating" nil)
+        ("normalem" "ulem" t)
+        ("" "amsmath" t)
+        ("" "textcomp" t)
+        ("" "marvosym" t)
+        ("" "wasysym" t)
+        ("" "multicol" t)  ; 這是我另外加的，因為常需要多欄位文件版面。
+        ("" "amssymb" t)
+        ("" "fancyhdr" nil) ;; 页眉页脚
+        ("cache=false" "minted" nil) ;; Code color
+        "\\tolerance=1000"))
 
 (use-package org-download
   :defer t ;; 延迟加载
