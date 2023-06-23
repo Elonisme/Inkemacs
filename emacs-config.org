@@ -92,7 +92,7 @@
 
 ;; 配置 `use-package'
 (eval-and-compile
-  (setq use-package-always-ensure t)
+  (setq use-package-always-ensure nil)
   (setq use-package-always-defer nil)
   (setq use-package-expand-minimally nil)
   (setq use-package-enable-imenu-support t)
@@ -162,6 +162,7 @@
     (require 'init-shell)                 ;shell设置
     (require 'init-note)                  ; 写作相关配置
     (require 'init-language)              ; 编程语言设置
+    (require 'init-hugo)                  ; 发布博客设置
     )
 #+END_SRC
 
@@ -1687,76 +1688,39 @@ Optional for Org-mode file: `LINK'."
 ** 导出为中文
 #+BEGIN_SRC emacs-lisp
 ;; 使用xelatex，配合当前org文件最开始的配置来正常输出中文
-(setq org-latex-pdf-process '("xelatex -file-line-error -interaction nonstopmode %f"
-                              "bibtex %b"
-                              "xelatex -file-line-error -interaction nonstopmode %f"
-                              "xelatex -file-line-error -interaction nonstopmode %f"))
+(setq org-latex-pdf-process
+      '("xelatex -interaction nonstopmode -output-directory %o %f"
+        "xelatex -interaction nonstopmode -output-directory %o %f"
+        "xelatex -interaction nonstopmode -output-directory %o %f"))
 
 ;; 图片默认宽度
-(setq org-image-actual-width '(300))
+(setq org-image-actual-width '(400))
+#+END_SRC
 
-(setq org-export-with-sub-superscripts nil)
+** 显示数学公式
+#+BEGIN_SRC emacs-lisp
+(defun my/latex-hook ()
+  (turn-on-cdlatex)
+  (turn-on-reftex))
 
-(add-to-list 'org-latex-packages-alist '("" "fontspec"))
-(add-to-list 'org-latex-packages-alist '("" "seqsplit"))
+(use-package tex
+  :ensure auctex
+  :custom
+  (TeX-parse-self t) ; 自动解析 tex 文件
+  (TeX-PDF-mode t)
+  (TeX-DVI-via-PDFTeX t)
+  :config
+  (setq-default TeX-master t) ; 默认询问主文件
+  (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
 
-(setq org-latex-listings t)
-(add-to-list 'org-latex-packages-alist '("" "listings"))
-(add-to-list 'org-latex-packages-alist '("" "xcolor")) 
+(use-package cdlatex)
 
-(setq org-latex-logfiles-extensions 
-      (quote ("lof" "lot" "tex~" "tex" "aux" 
-              "idx" "log" "out" "toc" "nav" 
-              "snm" "vrb" "dvi" "fdb_latexmk" 
-              "blg" "brf" "fls" "entoc" "ps" 
-              "spl" "bbl" "xdv" "pyg")))
-
-(setq org-latex-classes
-      '(("article"
-         "
-\\documentclass[12pt,a4paper]{article}
-[DEFAULT-PACKAGES]
-[PACKAGES]
-
-\\setmainfont{WenQuanYi Micro Hei}
-\\setsansfont{WenQuanYi Zen Hei}
-\\setmonofont[Scale=0.9]{WenQuanYi Micro Hei}
-\\newfontfamily\\quotefont{Source Han Serif SC}
-\\newfontfamily\\headfootfont{Source Han Sans SC}
-
-[EXTRA]
-"
-         ("\\section{%s}" . "\\section*{%s}")
-         ("\\subsection{%s}" . "\\subsection*{%s}")
-         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-         ("\\paragraph{%s}" . "\\paragraph*{%s}")
-         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-(setq org-latex-with-hyperref t)
-
-(setq org-latex-default-packages-alist
-      '(("" "nopageno" t)
-        ("" "hyperref" t)
-        ("" "fontspec" t)
-        ("" "etoolbox" t) ;; Quote 部份的字型設定
-        ("margin=2cm" "geometry" nil)
-        ;; ("AUTO" "inputenc" t)
-        ;; ("" "fixltx2e" nil)
-        ("dvipdfmx" "graphicx" t)
-        ("" "longtable" nil)
-        ("" "float" nil)
-        ("" "wrapfig" nil)
-        ("" "rotating" nil)
-        ("normalem" "ulem" t)
-        ("" "amsmath" t)
-        ("" "textcomp" t)
-        ("" "marvosym" t)
-        ("" "wasysym" t)
-        ("" "multicol" t)  ; 這是我另外加的，因為常需要多欄位文件版面。
-        ("" "amssymb" t)
-        ("" "fancyhdr" nil) ;; 页眉页脚
-        ("cache=false" "minted" nil) ;; Code color
-        "\\tolerance=1000"))
+(use-package texfrag
+  :ensure t
+  :hook (org-mode . texfrag-mode)
+  :config
+  (setq texfrag-extensions '("pdf"))
+  (setq texfrag-dpi 300))
 #+END_SRC
 
 ** org-download实现粘贴复制图片到orgmode
@@ -2706,15 +2670,6 @@ Emacs自带的vc设置。
   )
 #+END_SRC
 
-** undo-tree
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :ensure t
-  :init (global-undo-tree-mode)
-  :custom
-  (undo-tree-auto-save-history nil))
-#+END_SRC
-
 ** init-tools.el 文件尾
 
 #+BEGIN_SRC emacs-lisp
@@ -2730,19 +2685,13 @@ Emacs自带的vc设置。
 emacs 写作助手
 ** init-note.el 文件头
 #+BEGIN_SRC emacs-lisp
-;;; init-note.el --- Development settings -*- lexical-binding: t -*-
+;;; init-note.el --- Noting settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
 #+END_SRC
 
-** org-#+begin_ai
-[SYS]: You are a helpful assistant.
-
-[ME]: 
-#+end_ai
-智能助手
 
 [[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
 
@@ -2965,7 +2914,7 @@ Emacs里的language设置。
 
 ** init-language.el 文件头
 #+BEGIN_SRC emacs-lisp
-;;; init-.el --- Development settings -*- lexical-binding: t -*-
+;;; init-language.el --- language settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
@@ -3025,8 +2974,7 @@ Emacs里的language设置。
 ;; (add-hook 'rust-mode-hook
 ;;           (lambda () (setq indent-tabs-mode nil)))
 ;; (setq rust-format-on-save t)
-;; (add-hook 'rust-mode-hook
-;;           (lambda () (prettify-symbols-mode)))
+
 ;; ;; (add-hook 'rust-mode-hook 'eglot-ensure)
 ;; (add-hook 'rust-mode-hook 'lsp-deferred)
 
@@ -3036,6 +2984,9 @@ Emacs里的language设置。
   :hook (rust-mode . lsp-deferred)
   :config
   (setq rust-format-on-save t))
+
+(add-hook 'rust-mode-hook
+           (lambda () (prettify-symbols-mode)))
 
 (use-package lsp-mode
   :ensure t
@@ -3067,6 +3018,8 @@ Emacs里的language设置。
 (use-package cargo
   :ensure t
   :hook (rust-mode . cargo-minor-mode))
+
+
 
 (org-babel-do-load-languages 'org-babel-load-languages
                                (append org-babel-load-languages
@@ -3119,12 +3072,71 @@ Emacs里的language设置。
 
 ** org-cdlatex
 #+BEGIN_SRC emacs-lisp
-(use-package cdlatex)
+(defun my/latex-hook ()
+  (turn-on-cdlatex)
+  (turn-on-reftex))
+
+(use-package tex
+  :ensure auctex
+  :custom
+  (TeX-parse-self t) ; 自动解析 tex 文件
+  (TeX-PDF-mode t)
+  (TeX-DVI-via-PDFTeX t)
+  :config
+  (setq-default TeX-master t) ; 默认询问主文件
+  (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
+
+
+(use-package cdlatex
+  :after tex
+  )
 #+END_SRC
 ** init-language.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
 (provide 'init-language)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-dev.el ends here
+#+END_SRC
+* init-hugo.el
+:PROPERTIES:
+:HEADER-ARGS: :tangle lisp/init-hugo.el :mkdirp yes
+:END:
+hugo设置
+
+** init-hugo.el文件头
+#+BEGIN_SRC emacs-lisp
+;;; init-hugo.el -- hugo settings -*-  lexical-binding: t -*-
+;;; Commentary:
+
+;;; Code:
+#+END_SRC
+
+** ox-hugo
+#+BEGIN_SRC emacs-lisp
+(use-package ox-hugo
+  :ensure t   ;Auto-install the package from Melpa
+  :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+  :after ox)
+#+END_SRC
+
+** deploy-hugo
+#+BEGIN_SRC emacs-lisp
+(defun execute-hugo-deploy-script (args)
+  "执行 deploy.sh 脚本文件并将结果输出到 *Shell Output* 缓冲区"
+  (interactive "sArguments: ")
+  (let ((script-file "/home/elon/hugo_blog/blogsite/deploy.sh"))
+    (if (file-exists-p script-file)
+        (progn
+          (message "Running deploy.sh script...")
+          (shell-command (concat script-file " " args) "*Shell Output*"))
+      (message "deploy.sh script file not found"))))
+#+END_SRC
+
+** init-hugo.el 文件尾
+#+BEGIN_SRC emacs-lisp
+
+(provide 'init-hugo)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here
 #+END_SRC

@@ -20,7 +20,7 @@
 
 ;; 配置 `use-package'
 (eval-and-compile
-  (setq use-package-always-ensure t)
+  (setq use-package-always-ensure nil)
   (setq use-package-always-defer nil)
   (setq use-package-expand-minimally nil)
   (setq use-package-enable-imenu-support t)
@@ -77,6 +77,7 @@
     (require 'init-shell)                 ;shell设置
     (require 'init-note)                  ; 写作相关配置
     (require 'init-language)              ; 编程语言设置
+    (require 'init-hugo)                  ; 发布博客设置
     )
 
 (provide 'init)

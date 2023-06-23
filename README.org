@@ -88,6 +88,11 @@ Emacs 社区非常欢迎新人。毕竟在专有软件还在世界上横行霸�
 | math          | <math Tab |
 | mermaid       | <mm Tab   |
 | mind 思维导图 | <mind Tab |
+| gnuplot       | <gp Tab   |
+| plantuml      | <uml Tab  |
+
+
+
 
 
 ** 常用快捷键

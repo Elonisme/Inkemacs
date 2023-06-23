@@ -1,4 +1,4 @@
-;;; init-note.el --- Development settings -*- lexical-binding: t -*-
+;;; init-note.el --- Noting settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:

@@ -1,4 +1,4 @@
-;;; init-.el --- Development settings -*- lexical-binding: t -*-
+;;; init-language.el --- language settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
@@ -52,8 +52,7 @@
 ;; (add-hook 'rust-mode-hook
 ;;           (lambda () (setq indent-tabs-mode nil)))
 ;; (setq rust-format-on-save t)
-;; (add-hook 'rust-mode-hook
-;;           (lambda () (prettify-symbols-mode)))
+
 ;; ;; (add-hook 'rust-mode-hook 'eglot-ensure)
 ;; (add-hook 'rust-mode-hook 'lsp-deferred)
 
@@ -63,6 +62,9 @@
   :hook (rust-mode . lsp-deferred)
   :config
   (setq rust-format-on-save t))
+
+(add-hook 'rust-mode-hook
+           (lambda () (prettify-symbols-mode)))
 
 (use-package lsp-mode
   :ensure t
@@ -94,6 +96,8 @@
 (use-package cargo
   :ensure t
   :hook (rust-mode . cargo-minor-mode))
+
+
 
 (org-babel-do-load-languages 'org-babel-load-languages
                                (append org-babel-load-languages
@@ -137,7 +141,24 @@
 
 (use-package lua-mode)
 
-(use-package cdlatex)
+(defun my/latex-hook ()
+  (turn-on-cdlatex)
+  (turn-on-reftex))
+
+(use-package tex
+  :ensure auctex
+  :custom
+  (TeX-parse-self t) ; 自动解析 tex 文件
+  (TeX-PDF-mode t)
+  (TeX-DVI-via-PDFTeX t)
+  :config
+  (setq-default TeX-master t) ; 默认询问主文件
+  (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
+
+
+(use-package cdlatex
+  :after tex
+  )
 
 (provide 'init-language)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
