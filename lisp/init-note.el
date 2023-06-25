@@ -173,6 +173,17 @@
                            ))
   )
 
+ (use-package whisper
+  :load-path "/home/elon/.emacs.d/whisper.el"
+  :bind ("M-s-r" . whisper-run)
+  :config
+  (setq whisper-model "base"
+        whisper-language "en"
+        whisper-translate nil)
+  )
+
+(use-package greader :ensure)
+
 (provide 'init-note)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here

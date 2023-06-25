@@ -2914,6 +2914,20 @@ emacs 写作助手
                            ))
   )
 #+END_SRC
+
+** whisper
+#+BEGIN_SRC emacs-lisp
+ (use-package whisper
+  :load-path "/home/elon/.emacs.d/whisper.el"
+  :bind ("M-s-r" . whisper-run)
+  :config
+  (setq whisper-model "base"
+        whisper-language "en"
+        whisper-translate nil)
+  )
+
+(use-package greader :ensure)
+#+END_SRC
 ** init-note.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
@@ -3130,6 +3144,7 @@ hugo设置
 ;;; Code:
 #+END_SRC
 
+
 ** ox-hugo
 #+BEGIN_SRC emacs-lisp
 (use-package ox-hugo
@@ -3149,20 +3164,6 @@ hugo设置
           (message "Running deploy.sh script...")
           (shell-command (concat script-file " " args) "*Shell Output*"))
       (message "deploy.sh script file not found"))))
-#+END_SRC
-
-** whisper
-#+BEGIN_SRC emacs-lisp
- (use-package whisper
-  :load-path "/home/elon/.emacs.d/whisper.el"
-  :bind ("M-s-r" . whisper-run)
-  :config
-  (setq whisper-model "base"
-        whisper-language "en"
-        whisper-translate nil)
-  )
-
-(use-package greader :ensure)
 #+END_SRC
 
 ** init-hugo.el 文件尾
