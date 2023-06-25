@@ -681,23 +681,28 @@
 
 ** Dashboard
 #+BEGIN_SRC emacs-lisp
-  (use-package dashboard
-    :ensure t
-    :init
-    (progn
-      ;; Set the title
-      (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
-      ;; Set the banner
-      (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
-      ;; Content is not centered by default. To center, set
-      (setq dashboard-center-content t)
-      (setq dashboard-set-heading-icons t)
-      (setq dashboard-icon-type 'all-the-icons)
-      (setq dashboard-set-file-icons t)
-      )
-    :config
-    (dashboard-setup-startup-hook)
+(use-package dashboard
+  :ensure t
+  :init
+  (progn
+    ;; Set the title
+    (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
+    ;; Set the banner
+    (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
+    ;; Content is not centered by default. To center, set
+    (setq dashboard-center-content t)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-icon-type 'all-the-icons)
+    (setq dashboard-set-file-icons t)
     )
+  :config
+  (dashboard-setup-startup-hook)
+
+  ;; Customize the dashboard items
+  (setq dashboard-items '((recents . 6)
+                          (bookmarks . 6)
+                          (agenda . 6)))
+  )
 #+END_SRC
 
 ** line-number-mode
@@ -722,6 +727,19 @@
   )
 
 
+#+END_SRC
+
+** 恢复单屏
+#+BEGIN_SRC emacs-lisp
+(defun my-kill-buffer-and-close-window ()
+  "Kill the current buffer and close its window."
+  (interactive)
+  (let ((current-window (selected-window))
+        (buffer-to-kill (current-buffer)))
+    (kill-buffer buffer-to-kill)
+    (delete-window current-window)))
+
+(global-set-key (kbd "C-x k") 'my-kill-buffer-and-close-window)
 #+END_SRC
 
 ** init-ui.el 文件尾
@@ -2692,7 +2710,7 @@ emacs 写作助手
 
 #+END_SRC
 
-
+** org-ai
 [[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
 
 #+BEGIN_SRC emacs-lisp
@@ -2707,7 +2725,7 @@ emacs 写作助手
   :hook (org-mode . org-ai-mode)
   :config
   (setq org-ai-default-max-tokens 480)
-  (setq org-ai-default-chat-system-prompt "你是一个Emacs助手，请以Org-mode的格式来回复我")
+  (setq org-ai-default-chat-system-prompt "You are an Emacs helper, please reply me in Org-mode format")
   (org-ai-install-yasnippets)
   )
 
@@ -3131,6 +3149,20 @@ hugo设置
           (message "Running deploy.sh script...")
           (shell-command (concat script-file " " args) "*Shell Output*"))
       (message "deploy.sh script file not found"))))
+#+END_SRC
+
+** whisper
+#+BEGIN_SRC emacs-lisp
+ (use-package whisper
+  :load-path "/home/elon/.emacs.d/whisper.el"
+  :bind ("M-s-r" . whisper-run)
+  :config
+  (setq whisper-model "base"
+        whisper-language "en"
+        whisper-translate nil)
+  )
+
+(use-package greader :ensure)
 #+END_SRC
 
 ** init-hugo.el 文件尾

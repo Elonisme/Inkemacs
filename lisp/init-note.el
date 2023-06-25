@@ -14,7 +14,7 @@
   :hook (org-mode . org-ai-mode)
   :config
   (setq org-ai-default-max-tokens 480)
-  (setq org-ai-default-chat-system-prompt "你是一个Emacs助手，请以Org-mode的格式来回复我")
+  (setq org-ai-default-chat-system-prompt "You are an Emacs helper, please reply me in Org-mode format")
   (org-ai-install-yasnippets)
   )
 

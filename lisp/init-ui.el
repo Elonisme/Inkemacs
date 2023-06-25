@@ -418,23 +418,28 @@
           "*esh command on file*"))
   )
 
-  (use-package dashboard
-    :ensure t
-    :init
-    (progn
-      ;; Set the title
-      (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
-      ;; Set the banner
-      (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
-      ;; Content is not centered by default. To center, set
-      (setq dashboard-center-content t)
-      (setq dashboard-set-heading-icons t)
-      (setq dashboard-icon-type 'all-the-icons)
-      (setq dashboard-set-file-icons t)
-      )
-    :config
-    (dashboard-setup-startup-hook)
+(use-package dashboard
+  :ensure t
+  :init
+  (progn
+    ;; Set the title
+    (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
+    ;; Set the banner
+    (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
+    ;; Content is not centered by default. To center, set
+    (setq dashboard-center-content t)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-icon-type 'all-the-icons)
+    (setq dashboard-set-file-icons t)
     )
+  :config
+  (dashboard-setup-startup-hook)
+
+  ;; Customize the dashboard items
+  (setq dashboard-items '((recents . 6)
+                          (bookmarks . 6)
+                          (agenda . 6)))
+  )
 
 ;; 在编程模式下显示行号
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -451,6 +456,16 @@
      '(aw-leading-char-face ((t (:height 2.0 :foreground "red")))))
     :bind (("C-x o" . ace-window))
   )
+
+(defun my-kill-buffer-and-close-window ()
+  "Kill the current buffer and close its window."
+  (interactive)
+  (let ((current-window (selected-window))
+        (buffer-to-kill (current-buffer)))
+    (kill-buffer buffer-to-kill)
+    (delete-window current-window)))
+
+(global-set-key (kbd "C-x k") 'my-kill-buffer-and-close-window)
 
 (provide 'init-ui)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -83,3 +83,16 @@
 (provide 'init)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(youdao-dictionary which-key vertico use-package-ensure-system-package treemacs-all-the-icons toc-org texfrag swiper smartparens shackle rust-mode rime restart-emacs rainbow-delimiters quelpa-use-package pyvenv-auto popper plantuml-mode ox-hugo org-roam-ui org-noter org-modern org-download org-contrib org-auto-tangle org-appear org-ai orderless ob-rust no-littering multiple-cursors minions marginalia magit-delta lua-mode lsp-ui lsp-treemacs keycast helpful greader good-scroll gnuplot fontaine flycheck eshell-up eshell-syntax-highlighting eshell-git-prompt esh-autosuggest elpy eglot ef-themes doom-modeline diminish diff-hl dashboard crux corfu company-anaconda cdlatex cargo cape blacken auto-package-update aproject all-the-icons-completion)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

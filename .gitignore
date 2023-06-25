@@ -17,3 +17,5 @@ elpy/
 .youdao
 README.assets/
 url/
+.cache/
+whisper.el/
