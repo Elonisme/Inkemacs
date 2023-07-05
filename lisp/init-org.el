@@ -601,6 +601,20 @@ Optional for Org-mode file: `LINK'."
                            ("youtube"       . "https://youtube.com/watch?v=")
                            ("zhihu"         . "https://zhihu.com/question/"))))
 
+(defun update-org-date ()
+  "Update the DATE property to the current date."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^#\\+DATE:.*$" nil t)
+      (replace-match (format-time-string "#+DATE: <%Y-%m-%d %a>" (current-time))))))
+  
+(defun my-org-mode-config ()
+  "Custom configurations for Org Mode."
+  (add-hook 'before-save-hook 'update-org-date nil t))
+  
+(add-hook 'org-mode-hook 'my-org-mode-config)
+
 (provide 'init-org)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-org.el ends here
