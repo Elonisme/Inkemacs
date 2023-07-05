@@ -1097,6 +1097,8 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   (avy-background t)
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?l ?q ?e ?r ?u ?i ?p ?n))
   )
+
+(ace-pinyin-global-mode +1)
 #+end_src
 
 ** multiple-cursors多光标编辑
@@ -2611,6 +2613,33 @@ alias more view-file $1
   (which-key-add-column-padding 1))
 #+end_src
 
+** ivy-mode                                                         :ORDERED:
+:PROPERTIES:
+:ORDERED:  t
+:END:
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :ensure t
+  :init
+  (ivy-mode 1)
+  (counsel-mode 1)
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq search-default-mode #'char-fold-to-regexp)
+  (setq ivy-count-format "(%d/%d) ")
+  :bind
+  (("C-s" . 'swiper)
+   ("C-x b" . 'ivy-switch-buffer)
+   ("C-c v" . 'ivy-push-view)
+   ("C-c s" . 'ivy-switch-view)
+   ("C-c V" . 'ivy-pop-view)
+   ("C-c C-SPC" . 'counsel-mark-ring)
+   :map minibuffer-local-map
+   ("C-r" . counsel-minibuffer-history)))
+
+(use-package amx)
+#+END_SRC
+
 ** pyvenv-auto
 
 #+BEGIN_SRC emacs-lisp
@@ -3122,6 +3151,34 @@ Emacs里的language设置。
 (use-package cdlatex
   :after tex
   )
+#+END_SRC
+** c-mode
+#+BEGIN_SRC emacs-lisp
+;; 配置 C/C++ 开发环境
+(use-package cc-mode
+  :config
+  ;; 启用语法检查
+  (add-hook 'c-mode-hook 'flycheck-mode)
+  (add-hook 'c++-mode-hook 'flycheck-mode)
+  
+  ;; 使用 company 补全
+  (add-hook 'c-mode-hook 'company-mode)
+  (add-hook 'c++-mode-hook 'company-mode)
+  
+  ;; 使用 clangd 作为 LSP 服务器
+  (use-package lsp-mode
+    :config
+    (add-hook 'c-mode-hook 'lsp)
+    (add-hook 'c++-mode-hook 'lsp))
+  
+  ;; 配置代码风格
+  (setq c-default-style "linux"
+        c-basic-offset 4
+        tab-width 4
+        indent-tabs-mode t)
+  
+  ;; 设置快捷键
+  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
 #+END_SRC
 ** init-language.el 文件尾
 #+BEGIN_SRC emacs-lisp

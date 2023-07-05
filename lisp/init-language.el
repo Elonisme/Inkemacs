@@ -160,6 +160,32 @@
   :after tex
   )
 
+;; 配置 C/C++ 开发环境
+(use-package cc-mode
+  :config
+  ;; 启用语法检查
+  (add-hook 'c-mode-hook 'flycheck-mode)
+  (add-hook 'c++-mode-hook 'flycheck-mode)
+  
+  ;; 使用 company 补全
+  (add-hook 'c-mode-hook 'company-mode)
+  (add-hook 'c++-mode-hook 'company-mode)
+  
+  ;; 使用 clangd 作为 LSP 服务器
+  (use-package lsp-mode
+    :config
+    (add-hook 'c-mode-hook 'lsp)
+    (add-hook 'c++-mode-hook 'lsp))
+  
+  ;; 配置代码风格
+  (setq c-default-style "linux"
+        c-basic-offset 4
+        tab-width 4
+        indent-tabs-mode t)
+  
+  ;; 设置快捷键
+  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
+
 (provide 'init-language)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here

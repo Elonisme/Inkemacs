@@ -151,6 +151,8 @@
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?l ?q ?e ?r ?u ?i ?p ?n))
   )
 
+(ace-pinyin-global-mode +1)
+
 (use-package multiple-cursors
   :ensure t
   :bind-keymap ("C-c o" . multiple-cursors-map)
