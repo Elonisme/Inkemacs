@@ -141,25 +141,6 @@
 
 (use-package lua-mode)
 
-(defun my/latex-hook ()
-  (turn-on-cdlatex)
-  (turn-on-reftex))
-
-(use-package tex
-  :ensure auctex
-  :custom
-  (TeX-parse-self t) ; 自动解析 tex 文件
-  (TeX-PDF-mode t)
-  (TeX-DVI-via-PDFTeX t)
-  :config
-  (setq-default TeX-master t) ; 默认询问主文件
-  (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
-
-
-(use-package cdlatex
-  :after tex
-  )
-
 ;; 配置 C/C++ 开发环境
 (use-package cc-mode
   :config

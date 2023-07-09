@@ -13,7 +13,6 @@
          )
   :hook (org-mode . org-ai-mode)
   :config
-  (setq org-ai-default-max-tokens 480)
   (setq org-ai-default-chat-system-prompt "You are an Emacs helper, please reply me in Org-mode format")
   (org-ai-install-yasnippets)
   )
@@ -21,19 +20,20 @@
 (load-file "~/.emacs.d/keys/chatai-key.el")
 (require 'chatai-key)
 
-(use-package org-noter
-  :ensure t
-  :custom
-  (org-noter-notes-search-path '("~/Documents/Notes")) ;; 默认笔记路径
-  (org-noter-auto-save-last-location t) ;; 自动保存上次阅读位置
-  (org-noter-highlight-selected-text t)
-  (org-noter-max-short-selected-text-length 20) ;; 默认为 80
-  (org-noter-default-heading-title "第 $p$ 页的笔记") ;; 默认短标题格式
-  :bind
-  (("C-c n n" . org-noter) ;; 与 org-roam 配合
-   :map org-noter-doc-mode-map ;; 加入左手键位
-   ("e" . org-noter-insert-note)
-   ("M-e" . org-noter-insert-precise-note)))
+(defun replace-and-translate ()
+  "将 org-mode 中的 BEGIN_QUOTE 替换为 begin_ai，换行加入 [SYS]: 你是一个擅长英文翻译为中文的翻译专家，请将下面的英文句子翻译为中文."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "BEGIN_QUOTE" nil t)
+      (replace-match "begin_ai\n[SYS]: 你是一个擅长英文翻译为中文的翻译专家，请将下面的英文句子翻译为中文" nil t))
+    (goto-char (point-min))
+    (while (search-forward "END_QUOTE" nil t)
+      (replace-match "end_ai" nil t)))
+  (goto-char (point-min))
+  (while (search-forward "\\[SYS\\]: " nil t)
+    (replace-match "[SYS]: " nil t))
+  (shell-command-on-region (point-min) (point-max) "trans -b -no-auto -s en -t zh" t t))
 
 (use-package org-roam
   :ensure t
@@ -101,8 +101,10 @@
 (global-set-key (kbd "C-\\") 'toggle-input-method)
 
 (use-package youdao-dictionary)
+(global-set-key (kbd "C-c y") 'youdao-dictionary-search-at-point-tooltip)
 (setq url-automatic-caching t)
 (setq youdao-dictionary-search-history-file "~/.emacs.d/.youdao")
+(setq youdao-dictionary-use-chinese-word-segmentation t)
 
 (use-package plantuml-mode
   :ensure t

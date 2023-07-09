@@ -38,7 +38,7 @@
 					("#+begin_src"      . 9998)         ; ✎
 					("#+end_src"        . 9633)         ; □
                     ("#+begin_ai"       . 9883)         ; ⚛
-                    ("#+end_ai"         . 9876)         ; ⚔
+                    ("#+end_ai"         . 9998)         ; ✎
 					("#+begin_example"  . 129083)       ; 🌛
 					("#+end_example"    . 129081)       ; 🌙
 					("#+results:"       . 9776)         ; ☰
@@ -116,7 +116,7 @@ Optional for Org-mode file: `LINK'."
   ;; 标题行美化
   (org-fontify-whole-heading-line t)
   ;; 设置标题行折叠符号
-  (org-ellipsis "⤵")
+  (org-ellipsis " ▾")
   ;; 在活动区域内的所有标题栏执行某些命令
   (org-loop-over-headlines-in-active-region t)
   ;; TODO标签美化
@@ -549,6 +549,7 @@ Optional for Org-mode file: `LINK'."
 (setq org-image-actual-width '(400))
 
 (defun my/latex-hook ()
+  (interactive)
   (turn-on-cdlatex)
   (turn-on-reftex))
 
@@ -569,7 +570,13 @@ Optional for Org-mode file: `LINK'."
   :hook (org-mode . texfrag-mode)
   :config
   (setq texfrag-extensions '("pdf"))
-  (setq texfrag-dpi 300))
+  (setq texfrag-dpi 900))
+
+(setq TeX-source-correlate-mode t) ;; 编译后开启正反向搜索
+(setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
+(setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
+
+(add-hook 'org-mode-hook 'org-cdlatex-mode)
 
 (use-package org-download
   :defer t ;; 延迟加载

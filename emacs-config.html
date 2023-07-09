@@ -1,19 +1,405 @@
-#+TITLE: Emacs配置文件
-#+SUBTITLE: Fast and modern emacs dotfile
-#+AUTHOR: Elon Li
-#+DATE: <2023-07-09 SUN>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-07-09 Sun 13:01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emacs配置文件</title>
+<meta name="author" content="Elon Li" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
 
-#+STARTUP: overview
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Emacs配置文件
+<br />
+<span class="subtitle">Fast and modern emacs dotfile</span>
+</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgc234569">1. early-init.el</a></li>
+<li><a href="#org888f83b">2. init.el</a>
+<ul>
+<li><a href="#orgb2dcb75">2.1. init.el 文件头</a></li>
+<li><a href="#org11e46aa">2.2. package包管理配置</a></li>
+<li><a href="#org34ff447">2.3. 安装use-package插件</a></li>
+<li><a href="#org3c84484">2.4. quelpa包管理器</a></li>
+<li><a href="#orgafc2fe2">2.5. auto-package-update</a></li>
+<li><a href="#orgc513a0b">2.6. find-config</a></li>
+<li><a href="#orge2ebc97">2.7. 加载模块化配置</a></li>
+<li><a href="#orgae4695c">2.8. init.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#org550120b">3. init-ui.el</a>
+<ul>
+<li><a href="#orge2e9622">3.1. init-ui.el 文件头</a></li>
+<li><a href="#orga072974">3.2. ef主题</a></li>
+<li><a href="#org9c361e6">3.3. 字体设置</a></li>
+<li><a href="#org9b73235">3.4. 窗口设置</a>
+<ul>
+<li><a href="#org4ae72b5">3.4.1. 调整启动窗口大小</a></li>
+</ul>
+</li>
+<li><a href="#org25fe7f9">3.5. 其他UI零散设置项</a></li>
+<li><a href="#org267fb70">3.6. 编码设置</a></li>
+<li><a href="#orgbaeea60">3.7. 模式栏设置</a>
+<ul>
+<li><a href="#org982bbb6">3.7.1. doom-modeline插件</a></li>
+<li><a href="#orgd72f7d7">3.7.2. minions插件</a></li>
+<li><a href="#org9422ee8">3.7.3. keycast按键展示</a></li>
+</ul>
+</li>
+<li><a href="#org631a7af">3.8. 图标设置</a></li>
+<li><a href="#org087b552">3.9. shackle窗口管理</a></li>
+<li><a href="#org6345e28">3.10. popper窗口弹出管理</a></li>
+<li><a href="#org1858f7d">3.11. winner窗口管理</a></li>
+<li><a href="#orgdaa4c83">3.12. Dashboard</a></li>
+<li><a href="#orgbe432bc">3.13. line-number-mode</a></li>
+<li><a href="#org2470c9f">3.14. ace-window</a></li>
+<li><a href="#org8c0d2f2">3.15. 恢复单屏</a></li>
+<li><a href="#org911debf">3.16. init-ui.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#orgfa82d3f">4. init-base.el</a>
+<ul>
+<li><a href="#org08978e3">4.1. init-base.el 文件头</a></li>
+<li><a href="#orgcae5a60">4.2. no-littering让配置目录简洁</a></li>
+<li><a href="#org9d010a0">4.3. saveplace记住每个文件的光标位置</a></li>
+<li><a href="#org3745453">4.4. recentf最近打开的文件历史</a></li>
+<li><a href="#orgaa7c52c">4.5. savehist</a></li>
+<li><a href="#org6a7b717">4.6. crux系统增强</a></li>
+<li><a href="#org25aede3">4.7. restart-emacs</a></li>
+<li><a href="#orgc3ebbb5">4.8. 个人函数定义</a></li>
+<li><a href="#org22a44a8">4.9. 设置代理</a></li>
+<li><a href="#orgc6d6ab3">4.10. good-scroll</a></li>
+<li><a href="#org324a93c">4.11. init-base.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#org83d7719">5. init-edit.el</a>
+<ul>
+<li><a href="#org7312de2">5.1. init-edit.el 文件头</a></li>
+<li><a href="#orgc44c047">5.2. Emacs备份设置</a></li>
+<li><a href="#org0bbbf4c">5.3. 解除一些不常用的快捷键</a></li>
+<li><a href="#org789cb5f">5.4. delsel选择文本输入时直接替换</a></li>
+<li><a href="#orgcf9eb17">5.5. 自动重载设置</a></li>
+<li><a href="#org61b90dd">5.6. avy光标移动</a></li>
+<li><a href="#orgb944446">5.7. multiple-cursors多光标编辑</a></li>
+<li><a href="#org6ad596d">5.8. init-edit.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#org691c8bc">6. init-org.el</a>
+<ul>
+<li><a href="#org7ac216b">6.1. init-org.el 文件头</a></li>
+<li><a href="#org749ecb5">6.2. org-mode</a></li>
+<li><a href="#org6d2f243">6.3. Org-modern</a></li>
+<li><a href="#orgd547c98">6.4. org-appear</a></li>
+<li><a href="#org2742824">6.5. org-auto-tangle</a></li>
+<li><a href="#org70d71c4">6.6. org-src</a></li>
+<li><a href="#org94435be">6.7. limit the babel result length</a></li>
+<li><a href="#org88c3c04">6.8. 导出为中文</a></li>
+<li><a href="#org2a820b9">6.9. 显示数学公式</a></li>
+<li><a href="#orgf8561e1">6.10. org-download实现粘贴复制图片到orgmode</a></li>
+<li><a href="#orgbd5ba66">6.11. toc-org目录自动生成</a></li>
+<li><a href="#org3c5bcdc">6.12. ol新增链接类型</a></li>
+<li><a href="#org343076d">6.13. org mode auto update date</a></li>
+<li><a href="#org2e46fa9">6.14. init-org.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#org9bedd77">7. init-completion.el</a>
+<ul>
+<li><a href="#org61e1cda">7.1. init-completion.el 文件头</a></li>
+<li><a href="#org0046bf8">7.2. consult</a></li>
+<li><a href="#orgdbf61ca">7.3. vertico</a></li>
+<li><a href="#org2de9125">7.4. orderless</a></li>
+<li><a href="#orgbc5f19e">7.5. marginalia</a></li>
+<li><a href="#org828223e">7.6. corfu</a></li>
+<li><a href="#org99e7aa3">7.7. cape</a></li>
+<li><a href="#org42ec777">7.8. completion</a></li>
+<li><a href="#orgdfdcb8a">7.9. lsp-mode</a></li>
+<li><a href="#org867c76b">7.10. eglot</a></li>
+<li><a href="#orge34daa2">7.11. yasnippet模板补全</a></li>
+<li><a href="#org00f73d0">7.12. all-the-icons-completion补全图标美化</a></li>
+<li><a href="#org3ff2979">7.13. smartparens</a></li>
+<li><a href="#org5570d6d">7.14. paren高亮匹配的括号</a></li>
+<li><a href="#org0205921">7.15. rainbow-delimeters多彩括号</a></li>
+<li><a href="#org7601500">7.16. init-completion.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#orgd2ca19c">8. init-dired.el</a>
+<ul>
+<li><a href="#org5951f20">8.1. init-dired.el 文件头</a></li>
+<li><a href="#orgf698e73">8.2. diredfl多彩美化</a></li>
+<li><a href="#orge68481b">8.3. all-the-icons-dired图标美化</a></li>
+<li><a href="#orgf220757">8.4. dirvish文件管理</a></li>
+<li><a href="#orgcacc9cc">8.5. init-dired.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#orge0bd352">9. Init-shell.el</a>
+<ul>
+<li><a href="#orgbc7a20d">9.1. init-shell.el 文件头</a></li>
+<li><a href="#orga5ab39a">9.2. eshell 基本配置</a></li>
+<li><a href="#org931576b">9.3. eshell alias 设置</a></li>
+<li><a href="#org34e8ffd">9.4. eshell 里的 C-d</a></li>
+<li><a href="#orgc6eb8b3">9.5. Eshell 的命令历史</a></li>
+<li><a href="#orgc85f77e">9.6. 有些命令使用 term</a></li>
+<li><a href="#org7b83cb5">9.7. eshell-git-prompt 命令行主题</a></li>
+<li><a href="#orgcd02a61">9.8. eshell-syntax-highlighting 语法高亮</a></li>
+<li><a href="#org35b5856">9.9. esh-autosuggest自动补全</a></li>
+<li><a href="#org94c2d3b">9.10. eshell-up快速进入父级文件夹</a></li>
+<li><a href="#org5924556">9.11. eshell 快捷键</a></li>
+<li><a href="#org4656b35">9.12. shell</a></li>
+<li><a href="#orga42a7b8">9.13. init-shell.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#org682629a">10. init-tools.el</a>
+<ul>
+<li><a href="#org0b26027">10.1. init-tools.el 文件头</a></li>
+<li><a href="#org6ea8c1b">10.2. helpful帮助增强</a></li>
+<li><a href="#orgb135492">10.3. which-key快捷键</a></li>
+<li><a href="#orgaf1a904">10.4. pyvenv-auto</a></li>
+<li><a href="#orgd79e723">10.5. vc设置</a></li>
+<li><a href="#orgf6f87b3">10.6. magit版本管理</a></li>
+<li><a href="#org7934282">10.7. diff-hl高亮显示修改的部分</a></li>
+<li><a href="#orga04833e">10.8. magit-delta增强git diff</a></li>
+<li><a href="#org685ceda">10.9. swiper(find-help)</a></li>
+<li><a href="#orgf478be9">10.10. eaf</a></li>
+<li><a href="#orga0e0d09">10.11. init-tools.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#orgdd70590">11. init-note.el</a>
+<ul>
+<li><a href="#orgd55de26">11.1. init-note.el 文件头</a></li>
+<li><a href="#org547cafd">11.2. org-ai</a></li>
+<li><a href="#orgd651111">11.3. org-noter</a></li>
+<li><a href="#org57e4456">11.4. org-roam</a></li>
+<li><a href="#org6fb4f52">11.5. rime</a></li>
+<li><a href="#org29d736e">11.6. youdao dictionary</a></li>
+<li><a href="#org2e525b3">11.7. plantuml绘图</a></li>
+<li><a href="#orgde999ef">11.8. gnuplot绘图</a></li>
+<li><a href="#org564bd19">11.9. org-capture快速记录设置</a></li>
+<li><a href="#orgf9732e0">11.10. whisper</a></li>
+<li><a href="#orge0bba10">11.11. init-note.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#orgf17473e">12. Init-language.el</a>
+<ul>
+<li><a href="#orgc5a11fa">12.1. init-language.el 文件头</a></li>
+<li><a href="#orga5b733e">12.2. Python-mode</a></li>
+<li><a href="#orgba25a1e">12.3. Rust-mode</a></li>
+<li><a href="#org3dcb68b">12.4. emacs-lisp-mode</a></li>
+<li><a href="#org359052b">12.5. lua-moode</a></li>
+<li><a href="#org9cd1dea">12.6. c-mode</a></li>
+<li><a href="#org652f294">12.7. init-language.el 文件尾</a></li>
+</ul>
+</li>
+<li><a href="#org8ed4ffd">13. init-hugo.el</a>
+<ul>
+<li><a href="#org9e728d8">13.1. init-hugo.el文件头</a></li>
+<li><a href="#org8b67b62">13.2. ox-hugo</a></li>
+<li><a href="#org019ff5a">13.3. deploy-hugo</a></li>
+<li><a href="#orga4143ba">13.4. init-hugo.el 文件尾</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 
-* early-init.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle early-init.el
-:END:
-
+<div id="outline-container-orgc234569" class="outline-2">
+<h2 id="orgc234569"><span class="section-number-2">1.</span> early-init.el</h2>
+<div class="outline-text-2" id="text-1">
+<p>
 在Emacs刚启动，还未加载主要配置文件时的配置文件。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-;;; early-init.el --- Emacs pre-initialization config -*- lexical-binding: t -*-
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; early-init.el --- Emacs pre-initialization config -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
@@ -48,29 +434,42 @@
 (provide 'early-init)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; early-init.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-* init.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle init.el
-:END:
+<div id="outline-container-org888f83b" class="outline-2">
+<h2 id="org888f83b"><span class="section-number-2">2.</span> init.el</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+<code>init.el</code> 是Emacs的主要配置文件。
+</p>
+</div>
 
-=init.el= 是Emacs的主要配置文件。
-
-** init.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init.el --- The main init entry for Emacs -*- lexical-binding: t -*-
+<div id="outline-container-orgb2dcb75" class="outline-3">
+<h3 id="orgb2dcb75"><span class="section-number-3">2.1.</span> init.el 文件头</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init.el --- The main init entry for Emacs -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** package包管理配置
+<div id="outline-container-org11e46aa" class="outline-3">
+<h3 id="org11e46aa"><span class="section-number-3">2.2.</span> package包管理配置</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
 设置镜像为中科大源
+</p>
 
-#+begin_src emacs-lisp
-(require 'package)
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(require 'package)
 (setq package-archives
 	  '(("melpa-stable" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/stable-melpa/")
         ("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
@@ -80,13 +479,20 @@
 	    ("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/")))
 
 (package-initialize)
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** 安装use-package插件
-[[https://github.com/jwiegley/use-package][use-package]] 是一个让Emacs配置更加结构化更加清晰的一个宏插件。
+<div id="outline-container-org34ff447" class="outline-3">
+<h3 id="org34ff447"><span class="section-number-3">2.3.</span> 安装use-package插件</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+<a href="https://github.com/jwiegley/use-package">use-package</a> 是一个让Emacs配置更加结构化更加清晰的一个宏插件。
+</p>
 
-#+begin_src emacs-lisp
-;; 安装 `use-package'
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 安装 `use-package'
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -110,12 +516,19 @@
   :ensure t)
 (use-package bind-key
   :ensure t)
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** quelpa包管理器
-[[https://github.com/quelpa/quelpa][quelpa]] 是配合 =package.el= 使用的，基于git的一个包管理器。
-#+BEGIN_SRC emacs-lisp
-;; 安装 `quelpa'
+<div id="outline-container-org3c84484" class="outline-3">
+<h3 id="org3c84484"><span class="section-number-3">2.4.</span> quelpa包管理器</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+<a href="https://github.com/quelpa/quelpa">quelpa</a> 是配合 <code>package.el</code> 使用的，基于git的一个包管理器。
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 安装 `quelpa'
 (use-package quelpa
   :ensure t
   :commands quelpa
@@ -129,25 +542,39 @@
 ;; `quelpa' 与 `use-package' 集成
 (use-package quelpa-use-package
   :ensure t)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** auto-package-update
-#+BEGIN_SRC emacs-lisp
-(use-package auto-package-update)
-#+END_SRC
-** find-config
-#+BEGIN_SRC emacs-lisp
-(defun open-custom-post-file()
+<div id="outline-container-orgafc2fe2" class="outline-3">
+<h3 id="orgafc2fe2"><span class="section-number-3">2.5.</span> auto-package-update</h3>
+<div class="outline-text-3" id="text-2-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package auto-package-update)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc513a0b" class="outline-3">
+<h3 id="orgc513a0b"><span class="section-number-3">2.6.</span> find-config</h3>
+<div class="outline-text-3" id="text-2-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun open-custom-post-file()
   "This functions dose finde custom-post.el."
   (interactive)
   (find-file "~/.emacs.d/emacs-config.org"))
-(global-set-key (kbd "<f5>") 'open-custom-post-file)
-#+END_SRC
+(global-set-key (kbd "&lt;f5&gt;") 'open-custom-post-file)
+</pre>
+</div>
+</div>
+</div>
 
-** 加载模块化配置
-
-#+BEGIN_SRC emacs-lisp
-  ;; 将lisp目录放到加载路径的前面以加快启动速度
+<div id="outline-container-orge2ebc97" class="outline-3">
+<h3 id="orge2ebc97"><span class="section-number-3">2.7.</span> 加载模块化配置</h3>
+<div class="outline-text-3" id="text-2-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">  ;; 将lisp目录放到加载路径的前面以加快启动速度
   (let ((dir (locate-user-emacs-file "lisp")))
     (add-to-list 'load-path (file-name-as-directory dir)))
 
@@ -165,36 +592,53 @@
     (require 'init-language)              ; 编程语言设置
     (require 'init-hugo)                  ; 发布博客设置
     )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** init.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+<div id="outline-container-orgae4695c" class="outline-3">
+<h3 id="orgae4695c"><span class="section-number-3">2.8.</span> init.el 文件尾</h3>
+<div class="outline-text-3" id="text-2-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* init-ui.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-ui.el :mkdirp yes
-:END:
+<div id="outline-container-org550120b" class="outline-2">
+<h2 id="org550120b"><span class="section-number-2">3.</span> init-ui.el</h2>
+<div class="outline-text-2" id="text-3">
+</div>
 
-** init-ui.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-ui.el --- UI settings -*- lexical-binding: t -*-
+<div id="outline-container-orge2e9622" class="outline-3">
+<h3 id="orge2e9622"><span class="section-number-3">3.1.</span> init-ui.el 文件头</h3>
+<div class="outline-text-3" id="text-3-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-ui.el --- UI settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** ef主题
+<div id="outline-container-orga072974" class="outline-3">
+<h3 id="orga072974"><span class="section-number-3">3.2.</span> ef主题</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+<a href="https://protesilaos.com/emacs/ef-themes">ef themes</a> 是我非常喜欢的一个主题包。
+</p>
 
-[[https://protesilaos.com/emacs/ef-themes][ef themes]] 是我非常喜欢的一个主题包。
-
-#+BEGIN_SRC emacs-lisp
-(use-package ef-themes
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package ef-themes
   :ensure t
   :bind (
          ( "C-c t" . ef-themes-toggle)
@@ -227,24 +671,48 @@
   ;;     (ef-themes-load-random)
   ;;   (ef-themes-load-random 'dark))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** 字体设置
+<div id="outline-container-org9c361e6" class="outline-3">
+<h3 id="org9c361e6"><span class="section-number-3">3.3.</span> 字体设置</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+<a href="https://protesilaos.com/emacs/fontaine">fontaine</a> 插件可以根据需要高度定制字体。
+</p>
 
-[[https://protesilaos.com/emacs/fontaine][fontaine]] 插件可以根据需要高度定制字体。
-
-#+BEGIN_QUOTE
+<blockquote>
+<p>
 这篇文章可以作为字体设置的参考：
-[[http://xahlee.info/emacs/emacs/emacs_list_and_set_font.html]]
-#+END_QUOTE
+<a href="http://xahlee.info/emacs/emacs/emacs_list_and_set_font.html">http://xahlee.info/emacs/emacs/emacs_list_and_set_font.html</a>
+</p>
+</blockquote>
 
-#+CAPTION: 测试中英文字体对齐
-#+NAME: 测试中英文字体对齐
-| 中文 |   |
-| abcd |   |
+<table id="org0cde88b" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> 测试中英文字体对齐</caption>
 
-#+BEGIN_SRC emacs-lisp
-(use-package fontaine
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">中文</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">abcd</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package fontaine
   :ensure t
   :when (display-graphic-p)
   ;; :hook (kill-emacs . fontaine-store-latest-preset)
@@ -280,7 +748,7 @@
   ;; set emoji font
   (set-fontset-font
    t
-   (if (version< emacs-version "28.1")
+   (if (version&lt; emacs-version "28.1")
        '(#x1f300 . #x1fad0)
      'emoji)
    (cond
@@ -347,13 +815,23 @@
             (select-frame frame)
             (when (window-system frame)
               (set-emacsclient-font))))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** 窗口设置
-*** 调整启动窗口大小
+<div id="outline-container-org9b73235" class="outline-3">
+<h3 id="org9b73235"><span class="section-number-3">3.4.</span> 窗口设置</h3>
+<div class="outline-text-3" id="text-3-4">
+</div>
+<div id="outline-container-org4ae72b5" class="outline-4">
+<h4 id="org4ae72b5"><span class="section-number-4">3.4.1.</span> 调整启动窗口大小</h4>
+<div class="outline-text-4" id="text-3-4-1">
+<p>
 在Mac下，我的默认启动窗口大小
-#+BEGIN_SRC emacs-lisp
-;; 设置窗口大小，仅仅在图形界面需要设置
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 设置窗口大小，仅仅在图形界面需要设置
 (when (display-graphic-p)
   (let ((top    0)                                     ; 顶不留空
         (left   (/ (x-display-pixel-width) 10))        ; 左边空10%
@@ -366,12 +844,17 @@
       (add-to-list 'default-frame-alist (cons 'left left))
       (add-to-list 'default-frame-alist (cons 'height height))
       (add-to-list 'default-frame-alist (cons 'width width)))))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-** 其他UI零散设置项
-
-#+begin_src emacs-lisp
-;; 禁用一些GUI特性
+<div id="outline-container-org25fe7f9" class="outline-3">
+<h3 id="org25fe7f9"><span class="section-number-3">3.5.</span> 其他UI零散设置项</h3>
+<div class="outline-text-3" id="text-3-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 禁用一些GUI特性
 (setq use-dialog-box nil)               ; 鼠标操作不使用对话框
 (setq inhibit-default-init t)           ; 不加载 `default' 库
 (setq inhibit-startup-screen t)         ; 不加载启动画面
@@ -486,14 +969,20 @@
 
 ;; 在模式栏上显示当前光标的列号
 (column-number-mode t)
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** 编码设置
-
+<div id="outline-container-org267fb70" class="outline-3">
+<h3 id="org267fb70"><span class="section-number-3">3.6.</span> 编码设置</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
 统一使用 UTF-8 编码。
+</p>
 
-#+begin_src emacs-lisp
-;; 配置所有的编码为UTF-8，参考：
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 配置所有的编码为UTF-8，参考：
 ;; https://thraxys.wordpress.com/2016/01/13/utf-8-in-emacs-everywhere-forever/
 (setq locale-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
@@ -508,15 +997,24 @@
 (modify-coding-system-alist 'process "*" 'utf-8)
 (when (display-graphic-p)
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** 模式栏设置
-*** doom-modeline插件
+<div id="outline-container-orgbaeea60" class="outline-3">
+<h3 id="orgbaeea60"><span class="section-number-3">3.7.</span> 模式栏设置</h3>
+<div class="outline-text-3" id="text-3-7">
+</div>
+<div id="outline-container-org982bbb6" class="outline-4">
+<h4 id="org982bbb6"><span class="section-number-4">3.7.1.</span> doom-modeline插件</h4>
+<div class="outline-text-4" id="text-3-7-1">
+<p>
+<a href="https://github.com/seagle0128/doom-modeline">doom-modeline</a> 是一个模式栏美化插件。
+</p>
 
-[[https://github.com/seagle0128/doom-modeline][doom-modeline]] 是一个模式栏美化插件。
-
-#+begin_src emacs-lisp
-(use-package doom-modeline
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package doom-modeline
   :ensure t
   :hook (after-init . doom-modeline-mode)
   :custom
@@ -528,22 +1026,36 @@
   (doom-modeline-persp-name nil)
   (doom-modeline-unicode-fallback t)
   (doom-modeline-enable-word-count nil))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-*** minions插件
-[[https://github.com/tarsius/minions][minions]] 插件能让模式栏变得清爽，将次要模式隐藏起来。
+<div id="outline-container-orgd72f7d7" class="outline-4">
+<h4 id="orgd72f7d7"><span class="section-number-4">3.7.2.</span> minions插件</h4>
+<div class="outline-text-4" id="text-3-7-2">
+<p>
+<a href="https://github.com/tarsius/minions">minions</a> 插件能让模式栏变得清爽，将次要模式隐藏起来。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package minions
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package minions
   :ensure t
   :hook (after-init . minions-mode))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-*** keycast按键展示
-[[https://github.com/tarsius/keycast][keycast mode]] 插件可以在模式栏上展示所有的按键，以及对应的函数。
+<div id="outline-container-org9422ee8" class="outline-4">
+<h4 id="org9422ee8"><span class="section-number-4">3.7.3.</span> keycast按键展示</h4>
+<div class="outline-text-4" id="text-3-7-3">
+<p>
+<a href="https://github.com/tarsius/keycast">keycast mode</a> 插件可以在模式栏上展示所有的按键，以及对应的函数。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package keycast
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package keycast
   :ensure t
   :hook (after-init . keycast-mode)
   :config
@@ -574,24 +1086,35 @@
         '((minibuffer . nil)))
   (setq keycast-log-newest-first t)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-** 图标设置
-
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
+<div id="outline-container-org631a7af" class="outline-3">
+<h3 id="org631a7af"><span class="section-number-3">3.8.</span> 图标设置</h3>
+<div class="outline-text-3" id="text-3-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package all-the-icons
   :ensure t
   :when (display-graphic-p)
   :commands all-the-icons-install-fonts
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** shackle窗口管理
+<div id="outline-container-org087b552" class="outline-3">
+<h3 id="org087b552"><span class="section-number-3">3.9.</span> shackle窗口管理</h3>
+<div class="outline-text-3" id="text-3-9">
+<p>
+<a href="https://depp.brause.cc/shackle/">shackle</a> 插件能自定义窗口的弹出方式。
+</p>
 
-[[https://depp.brause.cc/shackle/][shackle]] 插件能自定义窗口的弹出方式。
-
-#+BEGIN_SRC emacs-lisp
-(use-package shackle
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package shackle
   :ensure t
   :hook (after-init . shackle-mode)
   :init
@@ -612,17 +1135,23 @@
           (magit-log-mode                :select t   :inhibit-window-quit t                         :same t)
           ))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** popper窗口弹出管理
+<div id="outline-container-org6345e28" class="outline-3">
+<h3 id="org6345e28"><span class="section-number-3">3.10.</span> popper窗口弹出管理</h3>
+<div class="outline-text-3" id="text-3-10">
+<p>
+我们通过 <a href="https://github.com/karthink/popper">popper</a> 插件，来控制窗口的弹出行为，与 <a href="https://depp.brause.cc/shackle/">shackle</a> 一起配合使用。
+</p>
 
-我们通过 [[https://github.com/karthink/popper][popper]] 插件，来控制窗口的弹出行为，与 [[https://depp.brause.cc/shackle/][shackle]] 一起配合使用。
-
-#+BEGIN_SRC emacs-lisp
-(use-package popper
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package popper
   :ensure t
   :bind (("M-`"     . popper-toggle-latest)
-         ("M-<tab>" . popper-cycle)
+         ("M-&lt;tab&gt;" . popper-cycle)
          ("M-\\"    . popper-toggle-type)
          )
   :init
@@ -638,7 +1167,7 @@
           ;; derived from `fundamental-mode' and fewer than 10 lines will be considered a popup
           (lambda (buf) (with-current-buffer buf
                           (and (derived-mode-p 'fundamental-mode)
-                               (< (count-lines (point-min) (point-max))
+                               (&lt; (count-lines (point-min) (point-max))
                                   10))))
           )
         )
@@ -654,14 +1183,20 @@
   ;; use `shackle.el' to control popup
   (setq popper-display-control nil)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** winner窗口管理
+<div id="outline-container-org1858f7d" class="outline-3">
+<h3 id="org1858f7d"><span class="section-number-3">3.11.</span> winner窗口管理</h3>
+<div class="outline-text-3" id="text-3-11">
+<p>
+内置的 <code>winner</code> 插件是一个窗口管理器，可以通过 <code>winner-undo</code> 和 <code>winner-redo</code> 命令恢复或重做窗口布局。
+</p>
 
-内置的 =winner= 插件是一个窗口管理器，可以通过 =winner-undo= 和 =winner-redo= 命令恢复或重做窗口布局。
-
-#+BEGIN_SRC emacs-lisp
-(use-package winner
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package winner
   :ensure nil
   :hook (after-init . winner-mode)
   :commands (winner-undo winner-redo)
@@ -678,11 +1213,16 @@
           "*Ibuffer*"
           "*esh command on file*"))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** Dashboard
-#+BEGIN_SRC emacs-lisp
-(use-package dashboard
+<div id="outline-container-orgdaa4c83" class="outline-3">
+<h3 id="orgdaa4c83"><span class="section-number-3">3.12.</span> Dashboard</h3>
+<div class="outline-text-3" id="text-3-12">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package dashboard
   :ensure t
   :init
   (progn
@@ -704,19 +1244,29 @@
                           (bookmarks . 6)
                           (agenda . 6)))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** line-number-mode
-#+BEGIN_SRC emacs-lisp
-;; 在编程模式下显示行号
+<div id="outline-container-orgbe432bc" class="outline-3">
+<h3 id="orgbe432bc"><span class="section-number-3">3.13.</span> line-number-mode</h3>
+<div class="outline-text-3" id="text-3-13">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 在编程模式下显示行号
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 ;; 在其他模式下禁用行号显示
 (global-display-line-numbers-mode -1)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** ace-window
-#+BEGIN_SRC emacs-lisp
-  (use-package ace-window
+<div id="outline-container-org2470c9f" class="outline-3">
+<h3 id="org2470c9f"><span class="section-number-3">3.14.</span> ace-window</h3>
+<div class="outline-text-3" id="text-3-14">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">  (use-package ace-window
     :ensure t
     :init
     (setq aw-keys '(?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
@@ -728,11 +1278,16 @@
   )
 
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** 恢复单屏
-#+BEGIN_SRC emacs-lisp
-(defun my-kill-buffer-and-close-window ()
+<div id="outline-container-org8c0d2f2" class="outline-3">
+<h3 id="org8c0d2f2"><span class="section-number-3">3.15.</span> 恢复单屏</h3>
+<div class="outline-text-3" id="text-3-15">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun my-kill-buffer-and-close-window ()
   "Kill the current buffer and close its window."
   (interactive)
   (let ((current-window (selected-window))
@@ -741,52 +1296,84 @@
     (delete-window current-window)))
 
 (global-set-key (kbd "C-x k") 'my-kill-buffer-and-close-window)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** init-ui.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+<div id="outline-container-org911debf" class="outline-3">
+<h3 id="org911debf"><span class="section-number-3">3.16.</span> init-ui.el 文件尾</h3>
+<div class="outline-text-3" id="text-3-16">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-ui)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-ui.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* init-base.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-base.el :mkdirp yes
-:END:
+<div id="outline-container-orgfa82d3f" class="outline-2">
+<h2 id="orgfa82d3f"><span class="section-number-2">4.</span> init-base.el</h2>
+<div class="outline-text-2" id="text-4">
+</div>
 
-** init-base.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-base.el --- Basical settings -*- lexical-binding: t -*-
+<div id="outline-container-org08978e3" class="outline-3">
+<h3 id="org08978e3"><span class="section-number-3">4.1.</span> init-base.el 文件头</h3>
+<div class="outline-text-3" id="text-4-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-base.el --- Basical settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** no-littering让配置目录简洁
-[[https://github.com/emacscollective/no-littering][no-littering]] 插件将原本放在 =.emacs.d= 目录下的一些配置信息或动态信息，转移到 =etc= 或 =var= 子目录里，让配置目录更加简洁清爽。
+<div id="outline-container-orgcae5a60" class="outline-3">
+<h3 id="orgcae5a60"><span class="section-number-3">4.2.</span> no-littering让配置目录简洁</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+<a href="https://github.com/emacscollective/no-littering">no-littering</a> 插件将原本放在 <code>.emacs.d</code> 目录下的一些配置信息或动态信息，转移到 <code>etc</code> 或 <code>var</code> 子目录里，让配置目录更加简洁清爽。
+</p>
 
-#+begin_src emacs-lisp
-(use-package no-littering
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package no-littering
   :ensure t)
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** saveplace记住每个文件的光标位置
+<div id="outline-container-org9d010a0" class="outline-3">
+<h3 id="org9d010a0"><span class="section-number-3">4.3.</span> saveplace记住每个文件的光标位置</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
 自动记住每个文件的最后一次访问的光标位置。
+</p>
 
-#+begin_src emacs-lisp
-(use-package saveplace
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package saveplace
   :ensure nil
   :hook (after-init . save-place-mode))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** recentf最近打开的文件历史
+<div id="outline-container-org3745453" class="outline-3">
+<h3 id="org3745453"><span class="section-number-3">4.4.</span> recentf最近打开的文件历史</h3>
+<div class="outline-text-3" id="text-4-4">
+<p>
 记住最近打开的文件历史。
+</p>
 
-#+begin_src emacs-lisp
-(use-package recentf
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package recentf
   :ensure nil
   :defines no-littering-etc-directory no-littering-var-directory
   :hook (after-init . recentf-mode)
@@ -821,11 +1408,16 @@
                      "^/usr/include/"
                      "/TAGS\\'"
                      "COMMIT_EDITMSG\\'")))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** savehist
-#+BEGIN_SRC emacs-lisp
-(use-package savehist
+<div id="outline-container-orgaa7c52c" class="outline-3">
+<h3 id="orgaa7c52c"><span class="section-number-3">4.5.</span> savehist</h3>
+<div class="outline-text-3" id="text-4-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package savehist
   :ensure nil
   :hook (after-init . savehist-mode)
   :config
@@ -838,13 +1430,20 @@
                                         regexp-search-ring
                                         extended-command-history))
   (setq savehist-autosave-interval 300))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** crux系统增强
-[[https://github.com/bbatsov/crux][crux]] 插件提供一系列的增强，如移动增强、删除增强等优化功能。
+<div id="outline-container-org6a7b717" class="outline-3">
+<h3 id="org6a7b717"><span class="section-number-3">4.6.</span> crux系统增强</h3>
+<div class="outline-text-3" id="text-4-6">
+<p>
+<a href="https://github.com/bbatsov/crux">crux</a> 插件提供一系列的增强，如移动增强、删除增强等优化功能。
+</p>
 
-#+begin_src emacs-lisp
-(use-package crux
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package crux
   :ensure t
   :bind (("C-a" . crux-move-beginning-of-line)
          ("C-x 4 t" . crux-transpose-windows)
@@ -857,30 +1456,46 @@
   (crux-with-region-or-buffer untabify)
   (crux-with-region-or-point-to-eol kill-ring-save)
   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** restart-emacs
-#+BEGIN_SRC emacs-lisp
-(use-package restart-emacs
+<div id="outline-container-org25aede3" class="outline-3">
+<h3 id="org25aede3"><span class="section-number-3">4.7.</span> restart-emacs</h3>
+<div class="outline-text-3" id="text-4-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package restart-emacs
   :ensure t
   :bind
   (("C-c C-x r" . restart-emacs))
   )
-#+END_SRC
-** 个人函数定义
-
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc3ebbb5" class="outline-3">
+<h3 id="orgc3ebbb5"><span class="section-number-3">4.8.</span> 个人函数定义</h3>
+<div class="outline-text-3" id="text-4-8">
+<p>
 以下是一些个人的函数定义，配置文件的其他部分会用到这些函数。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-;; 将列表加入到列表
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 将列表加入到列表
 (defun add-list-to-list (dst src)
   "Similar to `add-to-list', but accepts a list as 2nd argument"
   (set dst
        (append (eval dst) src)))
-#+END_SRC
-** 设置代理
-#+BEGIN_SRC rust
-(defun set-proxy ()
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org22a44a8" class="outline-3">
+<h3 id="org22a44a8"><span class="section-number-3">4.9.</span> 设置代理</h3>
+<div class="outline-text-3" id="text-4-9">
+<div class="org-src-container">
+<pre class="src src-rust">(defun set-proxy ()
   "设置代理"
   (interactive)
   (setq url-proxy-services
@@ -889,79 +1504,118 @@
   (message "代理已设置为 127.0.0.1:7890"))
 
 (set-proxy)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** good-scroll
-#+BEGIN_SRC emacs-lisp
-(use-package good-scroll
+<div id="outline-container-orgc6d6ab3" class="outline-3">
+<h3 id="orgc6d6ab3"><span class="section-number-3">4.10.</span> good-scroll</h3>
+<div class="outline-text-3" id="text-4-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package good-scroll
   :ensure t
   :if window-system          ; 在图形化界面时才使用这个插件
   :init (good-scroll-mode))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** init-base.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+<div id="outline-container-org324a93c" class="outline-3">
+<h3 id="org324a93c"><span class="section-number-3">4.11.</span> init-base.el 文件尾</h3>
+<div class="outline-text-3" id="text-4-11">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-base)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-base.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* init-edit.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-edit.el :mkdirp yes
-:END:
+<div id="outline-container-org83d7719" class="outline-2">
+<h2 id="org83d7719"><span class="section-number-2">5.</span> init-edit.el</h2>
+<div class="outline-text-2" id="text-5">
+</div>
 
-** init-edit.el 文件头
-
-#+BEGIN_SRC emacs-lisp
-;;; init-edit.el --- Editing settings -*- lexical-binding: t -*-
+<div id="outline-container-org7312de2" class="outline-3">
+<h3 id="org7312de2"><span class="section-number-3">5.1.</span> init-edit.el 文件头</h3>
+<div class="outline-text-3" id="text-5-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-edit.el --- Editing settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** Emacs备份设置
-
+<div id="outline-container-orgc44c047" class="outline-3">
+<h3 id="orgc44c047"><span class="section-number-3">5.2.</span> Emacs备份设置</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
 不使用Emacs的自动备份设置。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(setq make-backup-files nil)                                  ; 不自动备份
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(setq make-backup-files nil)                                  ; 不自动备份
 (setq auto-save-default nil)                                  ; 不使用Emacs自带的自动保存
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** 解除一些不常用的快捷键
-
+<div id="outline-container-org0bbbf4c" class="outline-3">
+<h3 id="org0bbbf4c"><span class="section-number-3">5.3.</span> 解除一些不常用的快捷键</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
 将一些不常用的快捷键解除，防止误操作。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-;; 解除不常用的快捷键定义
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 解除不常用的快捷键定义
 (global-set-key (kbd "C-z") nil)
 (global-set-key (kbd "s-q") nil)
 (global-set-key (kbd "M-z") nil)
 (global-set-key (kbd "M-m") nil)
 (global-set-key (kbd "C-x C-z") nil)
 (global-set-key [mouse-2] nil)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** delsel选择文本输入时直接替换
+<div id="outline-container-org789cb5f" class="outline-3">
+<h3 id="org789cb5f"><span class="section-number-3">5.4.</span> delsel选择文本输入时直接替换</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+Emacs默认选择文本后直接输入，是不会直接删除所选择的文本进行替换的。通过内置的 <code>delsel</code> 插件来实现这个行为。
+</p>
 
-Emacs默认选择文本后直接输入，是不会直接删除所选择的文本进行替换的。通过内置的 =delsel= 插件来实现这个行为。
-
-#+begin_src emacs-lisp
-;; Directly modify when selecting text
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; Directly modify when selecting text
 (use-package delsel
   :ensure nil
   :hook (after-init . delete-selection-mode))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** 自动重载设置
-
+<div id="outline-container-orgcf9eb17" class="outline-3">
+<h3 id="orgcf9eb17"><span class="section-number-3">5.5.</span> 自动重载设置</h3>
+<div class="outline-text-3" id="text-5-5">
+<p>
 当我们的文件发生了改变后，我们希望Emacs里打开的永远是最新的文件，这个时候，我们需要对自动重载进行设置，让我们的Emacs在文件发生改变的时候自动重载文件。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package autorevert
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package autorevert
   :ensure nil
   :hook (after-init . global-auto-revert-mode)
   :bind ("s-u" . revert-buffer)
@@ -972,14 +1626,20 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   (auto-revert-remote-files t)
   (auto-revert-check-vc-info t)
   (global-auto-revert-non-file-buffers t))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** avy光标移动
+<div id="outline-container-org61b90dd" class="outline-3">
+<h3 id="org61b90dd"><span class="section-number-3">5.6.</span> avy光标移动</h3>
+<div class="outline-text-3" id="text-5-6">
+<p>
+<a href="https://github.com/abo-abo/avy">avy</a> 是一个光标移动插件，能快速将光标移动到屏幕上的任意字符，非常强大！
+</p>
 
-[[https://github.com/abo-abo/avy][avy]] 是一个光标移动插件，能快速将光标移动到屏幕上的任意字符，非常强大！
-
-#+begin_src emacs-lisp
-(use-package avy
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package avy
   :ensure t
   :bind (("C-." . my/avy-goto-char-timer)
          ("C-。" . my/avy-goto-char-timer)
@@ -988,7 +1648,7 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   :config
   ;; Make `avy-goto-char-timer' support pinyin, refer to:
   ;; https://emacs-china.org/t/avy-avy-goto-char-timer/20900/2
-  (defun my/avy-goto-char-timer (&optional arg)
+  (defun my/avy-goto-char-timer (&amp;optional arg)
     "Make avy-goto-char-timer support pinyin"
     (interactive "P")
     (let ((avy-all-windows (if arg
@@ -1100,21 +1760,28 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   )
 
 (ace-pinyin-global-mode +1)
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** multiple-cursors多光标编辑
-[[https://github.com/magnars/multiple-cursors.el][multiple-cursors]] 插件能让Emacs实现多光标编辑和移动。
+<div id="outline-container-orgb944446" class="outline-3">
+<h3 id="orgb944446"><span class="section-number-3">5.7.</span> multiple-cursors多光标编辑</h3>
+<div class="outline-text-3" id="text-5-7">
+<p>
+<a href="https://github.com/magnars/multiple-cursors.el">multiple-cursors</a> 插件能让Emacs实现多光标编辑和移动。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package multiple-cursors
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package multiple-cursors
   :ensure t
   :bind-keymap ("C-c o" . multiple-cursors-map)
   :bind (("C-`"   . mc/mark-next-like-this)
          ("C-\\"  . mc/unmark-next-like-this)
          :map multiple-cursors-map
               ("SPC" . mc/edit-lines)
-              (">"   . mc/mark-next-like-this)
-              ("<"   . mc/mark-previous-like-this)
+              ("&gt;"   . mc/mark-next-like-this)
+              ("&lt;"   . mc/mark-previous-like-this)
               ("a"   . mc/mark-all-like-this)
               ("n"   . mc/mark-next-like-this-word)
               ("p"   . mc/mark-previous-like-this-word)
@@ -1126,37 +1793,51 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   (setq mc/list-file (concat user-emacs-directory "/etc/mc-lists.el"))
   (setq mc/always-run-for-all t)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** init-edit.el 文件尾
-
-#+BEGIN_SRC emacs-lisp
-;; (message "init-base configuration: %.2fs"
+<div id="outline-container-org6ad596d" class="outline-3">
+<h3 id="org6ad596d"><span class="section-number-3">5.8.</span> init-edit.el 文件尾</h3>
+<div class="outline-text-3" id="text-5-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; (message "init-base configuration: %.2fs"
 ;;          (float-time (time-subtract (current-time) my/init-base-start-time)))
 
 (provide 'init-edit)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-edit.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* init-org.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-org.el :mkdirp yes
-:END:
+<div id="outline-container-org691c8bc" class="outline-2">
+<h2 id="org691c8bc"><span class="section-number-2">6.</span> init-org.el</h2>
+<div class="outline-text-2" id="text-6">
+</div>
 
-** init-org.el 文件头
-
-#+BEGIN_SRC emacs-lisp
-;;; init-org.el --- Org mode settings -*- lexical-binding: t -*-
+<div id="outline-container-org7ac216b" class="outline-3">
+<h3 id="org7ac216b"><span class="section-number-3">6.1.</span> init-org.el 文件头</h3>
+<div class="outline-text-3" id="text-6-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-org.el --- Org mode settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** org-mode
-#+BEGIN_SRC emacs-lisp
-(use-package org
+<div id="outline-container-org749ecb5" class="outline-3">
+<h3 id="org749ecb5"><span class="section-number-3">6.2.</span> org-mode</h3>
+<div class="outline-text-3" id="text-6-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org
   :ensure nil
   :mode ("\\.org\\'" . org-mode)
   :hook ((org-mode . visual-line-mode)
@@ -1231,7 +1912,7 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   ;; ======================================
   ;; 设置打开Org links的程序
   ;; ======================================
-  (defun my-func/open-and-play-gif-image (file &optional link)
+  (defun my-func/open-and-play-gif-image (file &amp;optional link)
 	"Open and play GIF image `FILE' in Emacs buffer.
 
 Optional for Org-mode file: `LINK'."
@@ -1269,7 +1950,7 @@ Optional for Org-mode file: `LINK'."
   ;; 标题行美化
   (org-fontify-whole-heading-line t)
   ;; 设置标题行折叠符号
-  (org-ellipsis " ▾")
+  (org-ellipsis "⤵")
   ;; 在活动区域内的所有标题栏执行某些命令
   (org-loop-over-headlines-in-active-region t)
   ;; TODO标签美化
@@ -1434,10 +2115,15 @@ Optional for Org-mode file: `LINK'."
 ;; Org mode的附加包，有诸多附加功能
 (use-package org-contrib
   :ensure t)
-#+END_SRC
-** Org-modern
-#+BEGIN_SRC emacs-lisp
-(use-package org-modern
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6d2f243" class="outline-3">
+<h3 id="org6d2f243"><span class="section-number-3">6.3.</span> Org-modern</h3>
+<div class="outline-text-3" id="text-6-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-modern
   :ensure t
   :hook (after-init . (lambda ()
                         (setq org-modern-hide-stars 'leading)
@@ -1470,10 +2156,15 @@ Optional for Org-mode file: `LINK'."
   ;; #+关键字美化，我们使用了 `prettify-symbols-mode'
   (setq org-modern-keyword nil)
   )
-#+END_SRC
-** org-appear
-#+BEGIN_SRC emacs-lis
-(use-package org-appear
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd547c98" class="outline-3">
+<h3 id="orgd547c98"><span class="section-number-3">6.4.</span> org-appear</h3>
+<div class="outline-text-3" id="text-6-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lis">(use-package org-appear
   :ensure t
   :hook (org-mode . org-appear-mode)
   :config
@@ -1483,21 +2174,31 @@ Optional for Org-mode file: `LINK'."
   (setq org-appear-autokeywords t)
   (setq org-appear-inside-latex t)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** org-auto-tangle
-#+BEGIN_SRC emacs-lis
-(use-package org-auto-tangle
+<div id="outline-container-org2742824" class="outline-3">
+<h3 id="org2742824"><span class="section-number-3">6.5.</span> org-auto-tangle</h3>
+<div class="outline-text-3" id="text-6-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lis">(use-package org-auto-tangle
   :ensure t
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** org-src
-#+BEGIN_SRC emacs-lisp
-(use-package org-src
+<div id="outline-container-org70d71c4" class="outline-3">
+<h3 id="org70d71c4"><span class="section-number-3">6.6.</span> org-src</h3>
+<div class="outline-text-3" id="text-6-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-src
   :ensure nil
   :hook (org-babel-after-execute . org-redisplay-inline-images)
   :bind (("s-l" . show-line-number-in-src-block)
@@ -1563,7 +2264,7 @@ Optional for Org-mode file: `LINK'."
   ;; 执行结果后，如果结果所在的文件夹不存在将自动创建
   ;; =================================================
   (defun check-directory-exists-before-src-execution (orig-fun
-                                                      &optional arg
+                                                      &amp;optional arg
                                                       info
                                                       params)
     (when (and (assq ':file (cadr (cdr (org-babel-get-src-block-info))))
@@ -1586,7 +2287,7 @@ Optional for Org-mode file: `LINK'."
                     "\n#+ATTR_ORG: :width "
                     original-image-width-before-del
                     "\n#+ATTR_LATEX: :width "
-                    (if (>= (/ (string-to-number original-image-width-before-del) 800.0) 1)
+                    (if (&gt;= (/ (string-to-number original-image-width-before-del) 800.0) 1)
                         "1.0"
                       (number-to-string (/ (string-to-number original-image-width-before-del) 800.0)))
                     "\\linewidth :float nil"
@@ -1603,7 +2304,7 @@ Optional for Org-mode file: `LINK'."
             (insert-attr-decls)))))
 
   (defun insert-attr-decls-at-results (orig-fun
-                                       &optional arg
+                                       &amp;optional arg
                                        info
                                        param)
     "insert extra image attributes after babel execution"
@@ -1619,7 +2320,7 @@ Optional for Org-mode file: `LINK'."
 
   ;; 再次执行时需要将旧的图片相关参数行删除，并从中头参数中获得宽度参数，参考
   ;; https://emacs.stackexchange.com/questions/57710/how-to-set-image-size-in-result-of-src-block-in-org-mode
-  (defun get-attributes-from-src-block-result (&rest args)
+  (defun get-attributes-from-src-block-result (&amp;rest args)
     "get information via last babel execution"
     (let ((location (org-babel-where-is-src-block-result))
           ;; 主要获取的是图示文字和宽度信息，下面这个正则就是为了捕获这两个信息
@@ -1676,15 +2377,20 @@ Optional for Org-mode file: `LINK'."
                               (css             . t)
                               ))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** limit the babel result length
-#+BEGIN_SRC emacs-lisp
-;; limit the babel result length
+<div id="outline-container-org94435be" class="outline-3">
+<h3 id="org94435be"><span class="section-number-3">6.7.</span> limit the babel result length</h3>
+<div class="outline-text-3" id="text-6-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; limit the babel result length
 (defvar org-babel-result-lines-limit 40)
 (defvar org-babel-result-length-limit 6000)
 
-(defun org-babel-insert-result@limit (orig-fn result &rest args)
+(defun org-babel-insert-result@limit (orig-fn result &amp;rest args)
   (if (not (member (car (org-babel-get-src-block-info)) '("jupyter-python"))) ; not for jupyter-python etc.
     (if (and result (or org-babel-result-lines-limit org-babel-result-length-limit))
         (let (new-result plines plenght limit)
@@ -1698,17 +2404,22 @@ Optional for Org-mode file: `LINK'."
                             (point-max)))
             (setq limit (min plines plenght))
             (setq new-result (concat (buffer-substring (point-min) limit)
-                                     (if (< limit (point-max)) "..."))))
+                                     (if (&lt; limit (point-max)) "..."))))
           (apply orig-fn new-result args))
       (apply orig-fn result args))
     (apply orig-fn result args)))
 
 (advice-add 'org-babel-insert-result :around #'org-babel-insert-result@limit)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** 导出为中文
-#+BEGIN_SRC emacs-lisp
-;; 使用xelatex，配合当前org文件最开始的配置来正常输出中文
+<div id="outline-container-org88c3c04" class="outline-3">
+<h3 id="org88c3c04"><span class="section-number-3">6.8.</span> 导出为中文</h3>
+<div class="outline-text-3" id="text-6-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 使用xelatex，配合当前org文件最开始的配置来正常输出中文
 (setq org-latex-pdf-process
       '("xelatex -interaction nonstopmode -output-directory %o %f"
         "xelatex -interaction nonstopmode -output-directory %o %f"
@@ -1716,11 +2427,16 @@ Optional for Org-mode file: `LINK'."
 
 ;; 图片默认宽度
 (setq org-image-actual-width '(400))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** 显示数学公式
-#+BEGIN_SRC emacs-lisp
-(defun my/latex-hook ()
+<div id="outline-container-org2a820b9" class="outline-3">
+<h3 id="org2a820b9"><span class="section-number-3">6.9.</span> 显示数学公式</h3>
+<div class="outline-text-3" id="text-6-9">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun my/latex-hook ()
   (interactive)
   (turn-on-cdlatex)
   (turn-on-reftex))
@@ -1746,15 +2462,17 @@ Optional for Org-mode file: `LINK'."
 
 (setq TeX-source-correlate-mode t) ;; 编译后开启正反向搜索
 (setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
-(setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
+(setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索 
+</pre>
+</div>
+</div>
+</div>
 
-(add-hook 'org-mode-hook 'org-cdlatex-mode)
-#+END_SRC
-
-** org-download实现粘贴复制图片到orgmode
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-download
+<div id="outline-container-orgf8561e1" class="outline-3">
+<h3 id="orgf8561e1"><span class="section-number-3">6.10.</span> org-download实现粘贴复制图片到orgmode</h3>
+<div class="outline-text-3" id="text-6-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-download
   :defer t ;; 延迟加载
   :bind
   (:map org-mode-map
@@ -1765,23 +2483,35 @@ Optional for Org-mode file: `LINK'."
   (setq-default org-download-image-dir "./img")) ;; 用同级 ./img 目录放置截图文件
 
 (add-hook 'dired-mode-hook 'org-download-enable)
-#+END_SRC
-** toc-org目录自动生成
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgbd5ba66" class="outline-3">
+<h3 id="orgbd5ba66"><span class="section-number-3">6.11.</span> toc-org目录自动生成</h3>
+<div class="outline-text-3" id="text-6-11">
+<p>
+<a href="https://github.com/snosov1/toc-org">toc-org</a> 插件可以在Org文件里自动生成目录，只需给一个标题行设置一个标签为 <code>toc</code> 或 <code>toc_2</code> 即可（后者只生成2层）。
+</p>
 
-[[https://github.com/snosov1/toc-org][toc-org]] 插件可以在Org文件里自动生成目录，只需给一个标题行设置一个标签为 =toc= 或 =toc_2= 即可（后者只生成2层）。
-
-#+BEGIN_SRC emacs-lisp
-(use-package toc-org
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package toc-org
   :ensure t
   :hook (org-mode . toc-org-mode))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** ol新增链接类型
+<div id="outline-container-org3c5bcdc" class="outline-3">
+<h3 id="org3c5bcdc"><span class="section-number-3">6.12.</span> ol新增链接类型</h3>
+<div class="outline-text-3" id="text-6-12">
+<p>
+<a href="https://google.com/search?q=Org%20mode">google Org mode</a>
+</p>
 
-[[google:Org mode][google Org mode]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package ol
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package ol
   :ensure nil
   :defer t
   :custom
@@ -1794,53 +2524,74 @@ Optional for Org-mode file: `LINK'."
                            ("wiki"          . "https://en.wikipedia.org/wiki/")
                            ("youtube"       . "https://youtube.com/watch?v=")
                            ("zhihu"         . "https://zhihu.com/question/"))))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** org mode auto update date
-#+BEGIN_SRC emacs-lisp
-(defun update-org-date ()
+<div id="outline-container-org343076d" class="outline-3">
+<h3 id="org343076d"><span class="section-number-3">6.13.</span> org mode auto update date</h3>
+<div class="outline-text-3" id="text-6-13">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun update-org-date ()
   "Update the DATE property to the current date."
   (interactive)
   (save-excursion
     (goto-char (point-min))
     (when (re-search-forward "^#\\+DATE:.*$" nil t)
-      (replace-match (format-time-string "#+DATE: <%Y-%m-%d %a>" (current-time))))))
+      (replace-match (format-time-string "#+DATE: &lt;%Y-%m-%d %a&gt;" (current-time))))))
   
 (defun my-org-mode-config ()
   "Custom configurations for Org Mode."
   (add-hook 'before-save-hook 'update-org-date nil t))
   
 (add-hook 'org-mode-hook 'my-org-mode-config)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** init-org.el 文件尾
-
-#+BEGIN_SRC emacs-lisp
-
+<div id="outline-container-org2e46fa9" class="outline-3">
+<h3 id="org2e46fa9"><span class="section-number-3">6.14.</span> init-org.el 文件尾</h3>
+<div class="outline-text-3" id="text-6-14">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-org)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-org.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* init-completion.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-completion.el :mkdirp yes
-:END:
-
+<div id="outline-container-org9bedd77" class="outline-2">
+<h2 id="org9bedd77"><span class="section-number-2">7.</span> init-completion.el</h2>
+<div class="outline-text-2" id="text-7">
+<p>
 Emacs的补全设置。
+</p>
+</div>
 
-** init-completion.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-completion.el --- Completion settings -*- lexical-binding: t -*-
+<div id="outline-container-org61e1cda" class="outline-3">
+<h3 id="org61e1cda"><span class="section-number-3">7.1.</span> init-completion.el 文件头</h3>
+<div class="outline-text-3" id="text-7-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-completion.el --- Completion settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** consult
-#+BEGIN_SRC emacs-lisp
-;; Example configuration for Consult
+<div id="outline-container-org0046bf8" class="outline-3">
+<h3 id="org0046bf8"><span class="section-number-3">7.2.</span> consult</h3>
+<div class="outline-text-3" id="text-7-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; Example configuration for Consult
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
@@ -1924,7 +2675,7 @@ Emacs的补全设置。
   ;; is 'any, such that any key triggers the preview.
   ;; (setq consult-preview-key 'any)
   ;; (setq consult-preview-key "M-.")
-  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; (setq consult-preview-key '("S-&lt;down&gt;" "S-&lt;up&gt;"))
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
@@ -1937,8 +2688,8 @@ Emacs的补全设置。
    :preview-key '(:debounce 0.4 any))
 
   ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; "C-+"
+  ;; Both &lt; and C-+ work reasonably well.
+  (setq consult-narrow-key "&lt;") ;; "C-+"
 
   ;; Optionally make narrowing help available in the minibuffer.
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
@@ -1958,15 +2709,22 @@ Emacs的补全设置。
   ;;;; 5. No project support
   ;; (setq consult-project-function nil)
 )
-#+END_SRC
-** vertico
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdbf61ca" class="outline-3">
+<h3 id="orgdbf61ca"><span class="section-number-3">7.3.</span> vertico</h3>
+<div class="outline-text-3" id="text-7-3">
+<p>
 为M-x命令行提供补全的功能
-#+BEGIN_SRC emacs-lisp
-(use-package vertico
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package vertico
   :ensure t
   :hook (after-init . vertico-mode)
   :bind (:map minibuffer-local-map
-              ("M-<DEL>" . my/minibuffer-backward-kill)
+              ("M-&lt;DEL&gt;" . my/minibuffer-backward-kill)
               :map vertico-map
               ("M-q" . vertico-quick-insert)) ; use C-g to exit
   :config
@@ -1990,39 +2748,57 @@ folder, otherwise delete a word"
   :custom
   (vertico-count 15)                    ; number of candidates to display, default is 10
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** orderless
+<div id="outline-container-org2de9125" class="outline-3">
+<h3 id="org2de9125"><span class="section-number-3">7.4.</span> orderless</h3>
+<div class="outline-text-3" id="text-7-4">
+<p>
+<a href="https://github.com/oantolin/orderless">oderless</a> 插件提供一种无序的补全新姿势，将一个搜索的范式变成数个以空格分隔的部分，各部分之间没有顺序，你要做的就是根据记忆输入关键词、空格、关键词。
+</p>
 
-[[https://github.com/oantolin/orderless][oderless]] 插件提供一种无序的补全新姿势，将一个搜索的范式变成数个以空格分隔的部分，各部分之间没有顺序，你要做的就是根据记忆输入关键词、空格、关键词。
-
-#+BEGIN_SRC emacs-lisp
-(use-package orderless
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package orderless
   :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** marginalia
+<div id="outline-container-orgbc5f19e" class="outline-3">
+<h3 id="orgbc5f19e"><span class="section-number-3">7.5.</span> marginalia</h3>
+<div class="outline-text-3" id="text-7-5">
+<p>
+<a href="https://github.com/minad/marginalia">marginalia</a> 插件给迷你缓冲区的补全候选条目添加一些提示。
+</p>
 
-[[https://github.com/minad/marginalia][marginalia]] 插件给迷你缓冲区的补全候选条目添加一些提示。
-
-#+BEGIN_SRC emacs-lisp
-;; minibuffer helpful annotations
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; minibuffer helpful annotations
 (use-package marginalia
   :ensure t
   :hook (after-init . marginalia-mode)
   :custom
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** corfu
+<div id="outline-container-org828223e" class="outline-3">
+<h3 id="org828223e"><span class="section-number-3">7.6.</span> corfu</h3>
+<div class="outline-text-3" id="text-7-6">
+<p>
+<a href="https://github.com/minad/corfu">corfu</a> 通过弹窗进行补全。
+</p>
 
-[[https://github.com/minad/corfu][corfu]] 通过弹窗进行补全。
-
-#+BEGIN_SRC emacs-lisp
-(use-package corfu
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package corfu
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -2049,13 +2825,20 @@ folder, otherwise delete a word"
         ("SPC" . corfu-insert-separator)
         )
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** cape
-[[https://github.com/minad/cape][Cape]] 提供了一系列开箱即用的补全后端，跟corfu联合使用。
+<div id="outline-container-org99e7aa3" class="outline-3">
+<h3 id="org99e7aa3"><span class="section-number-3">7.7.</span> cape</h3>
+<div class="outline-text-3" id="text-7-7">
+<p>
+<a href="https://github.com/minad/cape">Cape</a> 提供了一系列开箱即用的补全后端，跟corfu联合使用。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package cape
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package cape
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :bind (("C-c p p" . completion-at-point) ;; capf
@@ -2071,7 +2854,7 @@ folder, otherwise delete a word"
          ("C-c p \\" . cape-tex)
          ("C-c p _" . cape-tex)
          ("C-c p ^" . cape-tex)
-         ("C-c p &" . cape-sgml)
+         ("C-c p &amp;" . cape-sgml)
          ("C-c p r" . cape-rfc1345))
   :init
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
@@ -2089,16 +2872,26 @@ folder, otherwise delete a word"
   (add-to-list 'completion-at-point-functions #'cape-symbol)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
 )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** completion
-#+BEGIN_SRC emacs-lisp
-(use-package company)
-#+END_SRC
+<div id="outline-container-org42ec777" class="outline-3">
+<h3 id="org42ec777"><span class="section-number-3">7.8.</span> completion</h3>
+<div class="outline-text-3" id="text-7-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package company)
+</pre>
+</div>
+</div>
+</div>
 
-** lsp-mode
-#+BEGIN_SRC emacs-lisp
-(use-package lsp-mode
+<div id="outline-container-orgdfdcb8a" class="outline-3">
+<h3 id="orgdfdcb8a"><span class="section-number-3">7.9.</span> lsp-mode</h3>
+<div class="outline-text-3" id="text-7-9">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package lsp-mode
   :init
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
@@ -2115,19 +2908,30 @@ folder, otherwise delete a word"
 ;; if you are ivy user
 ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eglot
-#+BEGIN_SRC emacs-lisp
-(use-package eglot)
-#+END_SRC
+<div id="outline-container-org867c76b" class="outline-3">
+<h3 id="org867c76b"><span class="section-number-3">7.10.</span> eglot</h3>
+<div class="outline-text-3" id="text-7-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package eglot)
+</pre>
+</div>
+</div>
+</div>
 
-** yasnippet模板补全
+<div id="outline-container-orge34daa2" class="outline-3">
+<h3 id="orge34daa2"><span class="section-number-3">7.11.</span> yasnippet模板补全</h3>
+<div class="outline-text-3" id="text-7-11">
+<p>
+<a href="https://github.com/joaotavora/yasnippet">yasnippet</a> 插件是一个非常强大的模板补全系统。
+</p>
 
-[[https://github.com/joaotavora/yasnippet][yasnippet]] 插件是一个非常强大的模板补全系统。
-
-#+begin_src emacs-lisp
-;; yasnippet settings
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; yasnippet settings
 (use-package yasnippet
   :ensure t
   :diminish yas-minor-mode
@@ -2148,20 +2952,30 @@ folder, otherwise delete a word"
       (when (and (eq old-point (point))
                  (eq old-tick (buffer-chars-modified-tick)))
         (ignore-errors (yas-next-field))))))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** all-the-icons-completion补全图标美化
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons-completion
+<div id="outline-container-org00f73d0" class="outline-3">
+<h3 id="org00f73d0"><span class="section-number-3">7.12.</span> all-the-icons-completion补全图标美化</h3>
+<div class="outline-text-3" id="text-7-12">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package all-the-icons-completion
   :ensure t
   :hook ((after-init . all-the-icons-completion-mode)
          (marginalia-mode . all-the-icons-completion-marginalia-setup))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** smartparens
-#+BEGIN_SRC emacs-lisp
-(use-package smartparens
+<div id="outline-container-org3ff2979" class="outline-3">
+<h3 id="org3ff2979"><span class="section-number-3">7.13.</span> smartparens</h3>
+<div class="outline-text-3" id="text-7-13">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package smartparens
   :ensure t
   :config
   (progn
@@ -2176,79 +2990,119 @@ folder, otherwise delete a word"
 
 (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
 (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** paren高亮匹配的括号
-
-#+BEGIN_SRC emacs-lisp
-(use-package paren
+<div id="outline-container-org5570d6d" class="outline-3">
+<h3 id="org5570d6d"><span class="section-number-3">7.14.</span> paren高亮匹配的括号</h3>
+<div class="outline-text-3" id="text-7-14">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package paren
   :ensure nil
   :hook (after-init . show-paren-mode)
   :custom
   (show-paren-when-point-inside-paren t)
   (show-paren-when-point-in-periphery t))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** rainbow-delimeters多彩括号
+<div id="outline-container-org0205921" class="outline-3">
+<h3 id="org0205921"><span class="section-number-3">7.15.</span> rainbow-delimeters多彩括号</h3>
+<div class="outline-text-3" id="text-7-15">
+<p>
+<a href="https://github.com/Fanael/rainbow-delimiters">rainbow-delimiters</a> 插件将多彩显示括号等分隔符。
+</p>
 
-[[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] 插件将多彩显示括号等分隔符。
-
-#+begin_src emacs-lisp
-(use-package rainbow-delimiters
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
-#+end_src
-** init-completion.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7601500" class="outline-3">
+<h3 id="org7601500"><span class="section-number-3">7.16.</span> init-completion.el 文件尾</h3>
+<div class="outline-text-3" id="text-7-16">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-completion)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-completion.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* init-dired.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-dired.el :mkdirp yes
-:END:
-
+<div id="outline-container-orgd2ca19c" class="outline-2">
+<h2 id="orgd2ca19c"><span class="section-number-2">8.</span> init-dired.el</h2>
+<div class="outline-text-2" id="text-8">
+<p>
 Emacs文件管理设置。
+</p>
+</div>
 
-** init-dired.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-dired.el --- Dired settings -*- lexical-binding: t -*-
+<div id="outline-container-org5951f20" class="outline-3">
+<h3 id="org5951f20"><span class="section-number-3">8.1.</span> init-dired.el 文件头</h3>
+<div class="outline-text-3" id="text-8-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-dired.el --- Dired settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** diredfl多彩美化
+<div id="outline-container-orgf698e73" class="outline-3">
+<h3 id="orgf698e73"><span class="section-number-3">8.2.</span> diredfl多彩美化</h3>
+<div class="outline-text-3" id="text-8-2">
+<p>
+默认的Dired只有两种颜色以区分文件和文件夹，我们可以使用 <a href="https://github.com/purcell/diredfl">diredfl</a> 插件让Dired变得更加多彩一些：
+</p>
 
-默认的Dired只有两种颜色以区分文件和文件夹，我们可以使用 [[https://github.com/purcell/diredfl][diredfl]] 插件让Dired变得更加多彩一些：
-
-#+BEGIN_SRC emacs-lisp
-(use-package diredfl
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package diredfl
   :ensure t
   :hook (dired-mode . diredfl-mode))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** all-the-icons-dired图标美化
+<div id="outline-container-orge68481b" class="outline-3">
+<h3 id="orge68481b"><span class="section-number-3">8.3.</span> all-the-icons-dired图标美化</h3>
+<div class="outline-text-3" id="text-8-3">
+<p>
+我们通过 <a href="https://github.com/jtbm37/all-the-icons-dired">all-the-icons-dired</a> 插件给Dired添加好看的图标。
+</p>
 
-我们通过 [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]] 插件给Dired添加好看的图标。
-
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons-dired
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package all-the-icons-dired
   :ensure t
   :hook (dired-mode . all-the-icons-dired-mode)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** dirvish文件管理
+<div id="outline-container-orgf220757" class="outline-3">
+<h3 id="orgf220757"><span class="section-number-3">8.4.</span> dirvish文件管理</h3>
+<div class="outline-text-3" id="text-8-4">
+<p>
+<a href="https://github.com/alexluigit/dirvish">dirvish</a> 是在Dired基础之上的文件管理增强插件。需要安装 <code>poppler</code> 来预览PDF；安装 <code>ffmpegthumbnailer</code> 来预览视频。
+</p>
 
-[[https://github.com/alexluigit/dirvish][dirvish]] 是在Dired基础之上的文件管理增强插件。需要安装 =poppler= 来预览PDF；安装 =ffmpegthumbnailer= 来预览视频。
-
-#+BEGIN_SRC emacs-lisp
-(use-package dirvish
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package dirvish
   :ensure t
   :hook (dired-mode . dirvish-mode)
   :config
@@ -2257,36 +3111,51 @@ Emacs文件管理设置。
     :config
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
 ;; (dirvish-override-dired-mode)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** init-dired.el 文件尾
-
-#+BEGIN_SRC emacs-lisp
-(provide 'init-dired)
+<div id="outline-container-orgcacc9cc" class="outline-3">
+<h3 id="orgcacc9cc"><span class="section-number-3">8.5.</span> init-dired.el 文件尾</h3>
+<div class="outline-text-3" id="text-8-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(provide 'init-dired)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dired.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* Init-shell.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-shell.el :mkdirp yes
-:END:
-
+<div id="outline-container-orge0bd352" class="outline-2">
+<h2 id="orge0bd352"><span class="section-number-2">9.</span> Init-shell.el</h2>
+<div class="outline-text-2" id="text-9">
+<p>
 Emacs里的shell设置。
+</p>
+</div>
 
-** init-shell.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-shell.el --- (E)shell settings -*- lexical-binding: t -*-
+<div id="outline-container-orgbc7a20d" class="outline-3">
+<h3 id="orgbc7a20d"><span class="section-number-3">9.1.</span> init-shell.el 文件头</h3>
+<div class="outline-text-3" id="text-9-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-shell.el --- (E)shell settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eshell 基本配置
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell
+<div id="outline-container-orga5ab39a" class="outline-3">
+<h3 id="orga5ab39a"><span class="section-number-3">9.2.</span> eshell 基本配置</h3>
+<div class="outline-text-3" id="text-9-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package eshell
   :ensure nil
   :functions eshell/alias
   :hook ((eshell-mode . (lambda ()
@@ -2325,7 +3194,7 @@ Emacs里的shell设置。
       (eshell/cd dir)))
 
   ;; 查找文件
-  (defun eshell/f (filename &optional dir)
+  (defun eshell/f (filename &amp;optional dir)
     "Search for files matching FILENAME in either DIR or the
 current directory."
     (let ((cmd (concat
@@ -2358,12 +3227,16 @@ current directory."
   (eshell-rc-script (locate-user-emacs-file "etc/eshell/profile"))
   (eshell-login-script (locate-user-emacs-file "etc/eshell/login"))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eshell alias 设置
-
-#+BEGIN_SRC text :tangle etc/eshell/aliases
-alias ff find-file $1
+<div id="outline-container-org931576b" class="outline-3">
+<h3 id="org931576b"><span class="section-number-3">9.3.</span> eshell alias 设置</h3>
+<div class="outline-text-3" id="text-9-3">
+<div class="org-src-container">
+<pre class="src src-text">alias ff find-file $1
 alias fo find-file-other-window $1
 alias d dired $1
 alias ll ls -alh
@@ -2372,14 +3245,20 @@ alias up eshell-up $1
 alias pk eshell-up-peek $1
 alias less view-file $1
 alias more view-file $1
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eshell 里的 C-d
+<div id="outline-container-org34e8ffd" class="outline-3">
+<h3 id="org34e8ffd"><span class="section-number-3">9.4.</span> eshell 里的 C-d</h3>
+<div class="outline-text-3" id="text-9-4">
+<p>
+让 <code>C-d</code> 更智能：
+</p>
 
-让 =C-d= 更智能：
-
-#+BEGIN_SRC emacs-lisp
-(use-package em-rebind
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package em-rebind
   :ensure nil
   :commands eshell-delchar-or-maybe-eof)
 
@@ -2390,26 +3269,36 @@ alias more view-file $1
               ("C-r" . consult-history)
               ("C-l" . eshell/clear))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** Eshell 的命令历史
-
-#+BEGIN_SRC emacs-lisp
-(use-package em-hist
+<div id="outline-container-orgc6eb8b3" class="outline-3">
+<h3 id="orgc6eb8b3"><span class="section-number-3">9.5.</span> Eshell 的命令历史</h3>
+<div class="outline-text-3" id="text-9-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package em-hist
   :ensure nil
   :defer t
   :custom
   (eshell-history-size 1024)
   (eshell-hist-ignoredups t)
   (eshell-save-history-on-exit t))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** 有些命令使用 term
-
+<div id="outline-container-orgc85f77e" class="outline-3">
+<h3 id="orgc85f77e"><span class="section-number-3">9.6.</span> 有些命令使用 term</h3>
+<div class="outline-text-3" id="text-9-6">
+<p>
 有一些命令如 top，我们还是使用 term：
+</p>
 
-#+BEGIN_SRC emacs-lisp
-;; following commands will run on term instead
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; following commands will run on term instead
 (use-package em-term
   :ensure nil
   :defer t
@@ -2418,14 +3307,20 @@ alias more view-file $1
   (eshell-visual-subcommands '(("git" "help" "lg" "log" "diff" "show")))
   (eshell-visual-options '(("git" "--help" "--paginate")))
   (eshell-destroy-buffer-when-process-dies t))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eshell-git-prompt 命令行主题
+<div id="outline-container-org7b83cb5" class="outline-3">
+<h3 id="org7b83cb5"><span class="section-number-3">9.7.</span> eshell-git-prompt 命令行主题</h3>
+<div class="outline-text-3" id="text-9-7">
+<p>
+<a href="https://github.com/xuchunyang/eshell-git-prompt">eshell-git-prompt</a> 插件提供了数个好看的 Eshell 命令行主题。
+</p>
 
-[[https://github.com/xuchunyang/eshell-git-prompt][eshell-git-prompt]] 插件提供了数个好看的 Eshell 命令行主题。
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell-git-prompt
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package eshell-git-prompt
   :ensure t
   :after esh-mode
   :custom-face
@@ -2433,54 +3328,79 @@ alias more view-file $1
   :config
   (eshell-git-prompt-use-theme 'powerline)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eshell-syntax-highlighting 语法高亮
+<div id="outline-container-orgcd02a61" class="outline-3">
+<h3 id="orgcd02a61"><span class="section-number-3">9.8.</span> eshell-syntax-highlighting 语法高亮</h3>
+<div class="outline-text-3" id="text-9-8">
+<p>
+<a href="https://github.com/akreisher/eshell-syntax-highlighting">eshell-syntax-highlighting</a> 插件为Eshell提供语法高亮。
+</p>
 
-[[https://github.com/akreisher/eshell-syntax-highlighting][eshell-syntax-highlighting]] 插件为Eshell提供语法高亮。
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell-syntax-highlighting
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package eshell-syntax-highlighting
   :after esh-mode
   :ensure t
   :hook (eshell-mode . eshell-syntax-highlighting-global-mode)
   :custom-face
   (eshell-syntax-highlighting-shell-command-face ((t (:foreground "#7cc77f" :bold t))))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** esh-autosuggest自动补全
+<div id="outline-container-org35b5856" class="outline-3">
+<h3 id="org35b5856"><span class="section-number-3">9.9.</span> esh-autosuggest自动补全</h3>
+<div class="outline-text-3" id="text-9-9">
+<p>
+<a href="https://github.com/dieggsy/esh-autosuggest">esh-autosuggest</a> 提供Fish类似的Eshell命令自动补全功能。类似的插件还有 <a href="https://github.com/emacsmirror/capf-autosuggest">capf-autosuggest</a>。
+</p>
 
-[[https://github.com/dieggsy/esh-autosuggest][esh-autosuggest]] 提供Fish类似的Eshell命令自动补全功能。类似的插件还有 [[https://github.com/emacsmirror/capf-autosuggest][capf-autosuggest]]。
+<blockquote>
+<p>
+使用 <code>C-f</code> 来补全整句，使用 <code>M-f</code> 来补全一个词。
+</p>
+</blockquote>
 
-#+BEGIN_QUOTE
-使用 =C-f= 来补全整句，使用 =M-f= 来补全一个词。
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-(use-package esh-autosuggest
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package esh-autosuggest
   :ensure t
   :hook (eshell-mode . esh-autosuggest-mode)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eshell-up快速进入父级文件夹
+<div id="outline-container-org94c2d3b" class="outline-3">
+<h3 id="org94c2d3b"><span class="section-number-3">9.10.</span> eshell-up快速进入父级文件夹</h3>
+<div class="outline-text-3" id="text-9-10">
+<p>
+<a href="https://github.com/peterwvj/eshell-up">eshell-up</a> 插件可以快速进入当前文件夹的任何一个父级文件夹。通过 <code>up</code> 命令（已经设置了alias）进入当前文件夹的任何一级父目录。
+</p>
 
-[[https://github.com/peterwvj/eshell-up][eshell-up]] 插件可以快速进入当前文件夹的任何一个父级文件夹。通过 =up= 命令（已经设置了alias）进入当前文件夹的任何一级父目录。
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell-up
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package eshell-up
   :ensure t
   :commands (eshell-up eshell-up-peek)
   :config
   ;; to print the matching parent directory before changing to it
   (setq eshell-up-print-parent-dir t)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eshell 快捷键
-#+BEGIN_SRC emacs-lisp
-(defun my-start-eshell-mode ()
+<div id="outline-container-org5924556" class="outline-3">
+<h3 id="org5924556"><span class="section-number-3">9.11.</span> eshell 快捷键</h3>
+<div class="outline-text-3" id="text-9-11">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun my-start-eshell-mode ()
   "启动 eshell 模式并将其放置在上方的窗口中"
   (interactive)
   (split-window-below)
@@ -2488,12 +3408,17 @@ alias more view-file $1
   (eshell)
   (enlarge-window (- 15)))
 
-(global-set-key (kbd "<f9>") 'my-start-eshell-mode)
-#+END_SRC
+(global-set-key (kbd "&lt;f9&gt;") 'my-start-eshell-mode)
+</pre>
+</div>
+</div>
+</div>
 
-** shell
-#+BEGIN_SRC emacs-lisp
-(defun my-start-shell-mode ()
+<div id="outline-container-org4656b35" class="outline-3">
+<h3 id="org4656b35"><span class="section-number-3">9.12.</span> shell</h3>
+<div class="outline-text-3" id="text-9-12">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun my-start-shell-mode ()
   "启动 Shell 模式并将其放置在上方的窗口中"
   (interactive)
   (split-window-below)
@@ -2501,37 +3426,53 @@ alias more view-file $1
   (term "/bin/zsh")
   (enlarge-window (- 15)))
 
-(global-set-key (kbd "<f10>") 'my-start-shell-mode)
-#+END_SRC
+(global-set-key (kbd "&lt;f10&gt;") 'my-start-shell-mode)
+</pre>
+</div>
+</div>
+</div>
 
-** init-shell.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+<div id="outline-container-orga42a7b8" class="outline-3">
+<h3 id="orga42a7b8"><span class="section-number-3">9.13.</span> init-shell.el 文件尾</h3>
+<div class="outline-text-3" id="text-9-13">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-shell)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-shell.el ends here
-#+END_SRC
-* init-tools.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-tools.el :mkdirp yes
-:END:
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org682629a" class="outline-2">
+<h2 id="org682629a"><span class="section-number-2">10.</span> init-tools.el</h2>
+<div class="outline-text-2" id="text-10">
+</div>
 
-** init-tools.el 文件头
-
-#+BEGIN_SRC emacs-lisp
-;;; init-tools.el --- Tools settings -*- lexical-binding: t -*-
+<div id="outline-container-org0b26027" class="outline-3">
+<h3 id="org0b26027"><span class="section-number-3">10.1.</span> init-tools.el 文件头</h3>
+<div class="outline-text-3" id="text-10-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-tools.el --- Tools settings -*- lexical-binding: t -*-
 ;;; Commentary: Useful tools to make Emacs efficient!
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** helpful帮助增强
+<div id="outline-container-org6ea8c1b" class="outline-3">
+<h3 id="org6ea8c1b"><span class="section-number-3">10.2.</span> helpful帮助增强</h3>
+<div class="outline-text-3" id="text-10-2">
+<p>
+<a href="https://github.com/Wilfred/helpful">helpful</a> 插件提供了帮助增强。
+</p>
 
-[[https://github.com/Wilfred/helpful][helpful]] 插件提供了帮助增强。
-
-#+begin_src emacs-lisp
-(use-package helpful
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package helpful
   :ensure t
   :commands (helpful-callable helpful-variable helpful-command helpful-key helpful-mode)
   :bind (([remap describe-command] . helpful-command)
@@ -2543,14 +3484,20 @@ alias more view-file $1
          ("C-h F" . describe-face)
          ([remap describe-key] . helpful-key))
   )
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** which-key快捷键
+<div id="outline-container-orgb135492" class="outline-3">
+<h3 id="orgb135492"><span class="section-number-3">10.3.</span> which-key快捷键</h3>
+<div class="outline-text-3" id="text-10-3">
+<p>
+<a href="https://github.com/justbur/emacs-which-key">which-key</a> 插件将提示快捷键。
+</p>
 
-[[https://github.com/justbur/emacs-which-key][which-key]] 插件将提示快捷键。
-
-#+begin_src emacs-lisp
-(use-package which-key
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package which-key
   :ensure t
   :hook (after-init . which-key-mode)
   :config
@@ -2565,35 +3512,51 @@ alias more view-file $1
   :custom
   (which-key-idle-delay 0.7)
   (which-key-add-column-padding 1))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** pyvenv-auto
-
-#+BEGIN_SRC emacs-lisp
-(use-package pyvenv-auto)
+<div id="outline-container-orgaf1a904" class="outline-3">
+<h3 id="orgaf1a904"><span class="section-number-3">10.4.</span> pyvenv-auto</h3>
+<div class="outline-text-3" id="text-10-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package pyvenv-auto)
 (setenv "WORKON_HOME" "/home/elon/anaconda3/envs/")
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** vc设置
-
+<div id="outline-container-orgd79e723" class="outline-3">
+<h3 id="orgd79e723"><span class="section-number-3">10.5.</span> vc设置</h3>
+<div class="outline-text-3" id="text-10-5">
+<p>
 Emacs自带的vc设置。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package vc
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package vc
   :ensure nil
   :custom
   ;; 打开链接文件时，不进行追问
   (vc-follow-symlinks t)
   (vc-allow-async-revert t)
   (vc-handled-backends '(Git)))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** magit版本管理
+<div id="outline-container-orgf6f87b3" class="outline-3">
+<h3 id="orgf6f87b3"><span class="section-number-3">10.6.</span> magit版本管理</h3>
+<div class="outline-text-3" id="text-10-6">
+<p>
+<a href="https://github.com/magit/magit">magit</a> 是Emacs里的另一个杀手级应用！可以直接在Emacs里进行基于git的版本管理。
+</p>
 
-[[https://github.com/magit/magit][magit]] 是Emacs里的另一个杀手级应用！可以直接在Emacs里进行基于git的版本管理。
-
-#+begin_src emacs-lisp
-(use-package magit
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package magit
   :ensure t
   :hook (git-commit-mode . flyspell-mode)
   :bind (("C-x g"   . magit-status)
@@ -2602,14 +3565,20 @@ Emacs自带的vc设置。
   :custom
   (magit-diff-refine-hunk t)
   (magit-ediff-dwim-show-on-hunks t))
-#+end_src
+</pre>
+</div>
+</div>
+</div>
 
-** diff-hl高亮显示修改的部分
+<div id="outline-container-org7934282" class="outline-3">
+<h3 id="org7934282"><span class="section-number-3">10.7.</span> diff-hl高亮显示修改的部分</h3>
+<div class="outline-text-3" id="text-10-7">
+<p>
+<a href="https://github.com/dgutov/diff-hl">diff-hl</a> 插件可以在左侧高亮显示相对于远程仓库的修改部分。
+</p>
 
-[[https://github.com/dgutov/diff-hl][diff-hl]] 插件可以在左侧高亮显示相对于远程仓库的修改部分。
-
-#+BEGIN_SRC emacs-lisp
-(use-package diff-hl
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package diff-hl
   :ensure t
   :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
          (magit-pre-refresh  . diff-hl-magit-pre-refresh)
@@ -2620,33 +3589,49 @@ Emacs自带的vc设置。
   ;; When Emacs runs in terminal, show the indicators in margin instead.
   (unless (display-graphic-p)
     (diff-hl-margin-mode)))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** magit-delta增强git diff
+<div id="outline-container-orga04833e" class="outline-3">
+<h3 id="orga04833e"><span class="section-number-3">10.8.</span> magit-delta增强git diff</h3>
+<div class="outline-text-3" id="text-10-8">
+<p>
+<a href="https://github.com/dandavison/magit-delta">magit-delta</a> 插件可以通过 <code>git-delta</code> 来更优化的方式显示diff内容（需要提前安装 <code>brew install git-delta</code> ）。
+</p>
 
-[[https://github.com/dandavison/magit-delta][magit-delta]] 插件可以通过 =git-delta= 来更优化的方式显示diff内容（需要提前安装 =brew install git-delta= ）。
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit-delta
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package magit-delta
   :ensure t
   :hook (magit-mode . magit-delta-mode)
   :config
   (setq magit-delta-hide-plus-minus-markers nil)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** swiper(find-help)
-#+BEGIN_SRC emacs-lisp
-(use-package swiper
+<div id="outline-container-org685ceda" class="outline-3">
+<h3 id="org685ceda"><span class="section-number-3">10.9.</span> swiper(find-help)</h3>
+<div class="outline-text-3" id="text-10-9">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package swiper
   :ensure t
   :bind (("C-s" . swiper)
          )
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** eaf
-#+BEGIN_SRC emacs-lisp
-(use-package eaf
+<div id="outline-container-orgf478be9" class="outline-3">
+<h3 id="orgf478be9"><span class="section-number-3">10.10.</span> eaf</h3>
+<div class="outline-text-3" id="text-10-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package eaf
   :load-path "~/emacs-application-framework"
   :config
   (require 'eaf-browser)                ; 启用浏览器
@@ -2664,34 +3649,53 @@ Emacs自带的vc设置。
 (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
 (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
 (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
-#+END_SRC
-** init-tools.el 文件尾
-
-#+BEGIN_SRC emacs-lisp
-
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga0e0d09" class="outline-3">
+<h3 id="orga0e0d09"><span class="section-number-3">10.11.</span> init-tools.el 文件尾</h3>
+<div class="outline-text-3" id="text-10-11">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-tools)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-tools.el ends here
-#+END_SRC
-* init-note.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-note.el :mkdirp yes
-:END:
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdd70590" class="outline-2">
+<h2 id="orgdd70590"><span class="section-number-2">11.</span> init-note.el</h2>
+<div class="outline-text-2" id="text-11">
+<p>
 emacs 写作助手
-** init-note.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-note.el --- Noting settings -*- lexical-binding: t -*-
+</p>
+</div>
+<div id="outline-container-orgd55de26" class="outline-3">
+<h3 id="orgd55de26"><span class="section-number-3">11.1.</span> init-note.el 文件头</h3>
+<div class="outline-text-3" id="text-11-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-note.el --- Noting settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** org-ai
-[[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
+<div id="outline-container-org547cafd" class="outline-3">
+<h3 id="org547cafd"><span class="section-number-3">11.2.</span> org-ai</h3>
+<div class="outline-text-3" id="text-11-2">
+<p>
+<a href="https://github.com/rksm/org-ai">org-ai</a> 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package org-ai
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-ai
   :ensure t
   :commands (org-ai-mode
              org-ai-global-mode)
@@ -2707,10 +3711,29 @@ emacs 写作助手
 
 (load-file "~/.emacs.d/keys/chatai-key.el")
 (require 'chatai-key)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** org-noter
-#+BEGIN_SRC emacs-lisp
+<div id="outline-container-orgd651111" class="outline-3">
+<h3 id="orgd651111"><span class="section-number-3">11.3.</span> org-noter</h3>
+<div class="outline-text-3" id="text-11-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-noter
+  :ensure t
+  :custom
+  (org-noter-notes-search-path '("~/Documents/Notes")) ;; 默认笔记路径
+  (org-noter-auto-save-last-location t) ;; 自动保存上次阅读位置
+  (org-noter-highlight-selected-text t)
+  (org-noter-max-short-selected-text-length 20) ;; 默认为 80
+  (org-noter-default-heading-title "第 $p$ 页的笔记") ;; 默认短标题格式
+  :bind
+  (("C-c n n" . org-noter) ;; 与 org-roam 配合
+   :map org-noter-doc-mode-map ;; 加入左手键位
+   ("e" . org-noter-insert-note)
+   ("M-e" . org-noter-insert-precise-note)))
+
 (defun replace-and-translate ()
   "将 org-mode 中的 BEGIN_QUOTE 替换为 begin_ai，换行加入 [SYS]: 你是一个擅长英文翻译为中文的翻译专家，请将下面的英文句子翻译为中文."
   (interactive)
@@ -2726,11 +3749,16 @@ emacs 写作助手
     (replace-match "[SYS]: " nil t))
   (shell-command-on-region (point-min) (point-max) "trans -b -no-auto -s en -t zh" t t))
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** org-roam
-#+BEGIN_SRC emacs-lisp
-(use-package org-roam
+<div id="outline-container-org57e4456" class="outline-3">
+<h3 id="org57e4456"><span class="section-number-3">11.4.</span> org-roam</h3>
+<div class="outline-text-3" id="text-11-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-roam
   :ensure t
   :custom
   (org-roam-directory (file-truename "~/org-roam"))
@@ -2767,7 +3795,7 @@ emacs 写作助手
 
   (setq org-roam-capture-templates
         '(("n" "笔记" plain "%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+           :if-new (file+head "%&lt;%Y%m%d%H%M%S&gt;-${slug}.org"
                               "#+title: ${title}\n#+date: %U\n")
            :unnarrowed t)))
 
@@ -2787,36 +3815,59 @@ emacs 写作助手
   (org-roam-ui-sync-theme t)
   (org-roam-ui-follow-mode t)
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** rime
+<div id="outline-container-org6fb4f52" class="outline-3">
+<h3 id="org6fb4f52"><span class="section-number-3">11.5.</span> rime</h3>
+<div class="outline-text-3" id="text-11-5">
+<p>
 输入法设置
-#+BEGIN_SRC emacs-lisp
-(use-package rime
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package rime
   :custom
   (default-input-method "rime")
   )
 
 (global-set-key (kbd "C-\\") 'toggle-input-method)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** youdao dictionary
+<div id="outline-container-org29d736e" class="outline-3">
+<h3 id="org29d736e"><span class="section-number-3">11.6.</span> youdao dictionary</h3>
+<div class="outline-text-3" id="text-11-6">
+<p>
 有道翻译
-#+BEGIN_SRC emacs-lisp
-(use-package youdao-dictionary)
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package youdao-dictionary)
 (global-set-key (kbd "C-c y") 'youdao-dictionary-search-at-point-tooltip)
 (setq url-automatic-caching t)
 (setq youdao-dictionary-search-history-file "~/.emacs.d/.youdao")
 (setq youdao-dictionary-use-chinese-word-segmentation t)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** plantuml绘图
-[[https://plantuml.com/zh/][plantuml]] 可以让我们在Org mode里通过纯文本画各种图，具体参考：[[https://plantuml.com/zh/emacs][PlantUML integration with Emacs]]。
+<div id="outline-container-org2e525b3" class="outline-3">
+<h3 id="org2e525b3"><span class="section-number-3">11.7.</span> plantuml绘图</h3>
+<div class="outline-text-3" id="text-11-7">
+<p>
+<a href="https://plantuml.com/zh/">plantuml</a> 可以让我们在Org mode里通过纯文本画各种图，具体参考：<a href="https://plantuml.com/zh/emacs">PlantUML integration with Emacs</a>。
+</p>
 
-需要提前通过 =brew install plantuml= 安装 =plantuml= 。
+<p>
+需要提前通过 <code>brew install plantuml</code> 安装 <code>plantuml</code> 。
+</p>
 
-#+BEGIN_SRC emacs-lisp
-(use-package plantuml-mode
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package plantuml-mode
   :ensure t
   :mode ("\\.plantuml\\'" . plantuml-mode)
   :init
@@ -2836,14 +3887,20 @@ emacs 写作助手
           (:results . "file")
           ))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** gnuplot绘图
+<div id="outline-container-orgde999ef" class="outline-3">
+<h3 id="orgde999ef"><span class="section-number-3">11.8.</span> gnuplot绘图</h3>
+<div class="outline-text-3" id="text-11-8">
+<p>
+<a href="https://github.com/emacs-gnuplot/gnuplot">gnuplot</a> 插件可以让Emacs通过gnuplot绘图。
+</p>
 
-[[https://github.com/emacs-gnuplot/gnuplot][gnuplot]] 插件可以让Emacs通过gnuplot绘图。
-
-#+BEGIN_SRC emacs-lisp
-(use-package gnuplot
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package gnuplot
   :ensure t
   :mode ("\\.gp$" . gnuplot-mode)
   :init
@@ -2857,11 +3914,15 @@ emacs 写作助手
       '((:exports . "results")
         (:results . "file")))
   )
-#+END_SRC
-** org-capture快速记录设置
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-capture
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org564bd19" class="outline-3">
+<h3 id="org564bd19"><span class="section-number-3">11.9.</span> org-capture快速记录设置</h3>
+<div class="outline-text-3" id="text-11-9">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package org-capture
   :ensure nil
   :bind ("\e\e c" . (lambda () (interactive) (org-capture)))
   :hook ((org-capture-mode . (lambda ()
@@ -2893,11 +3954,16 @@ emacs 写作助手
                             :jump-to-captured t)
                            ))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** whisper
-#+BEGIN_SRC emacs-lisp
- (use-package whisper
+<div id="outline-container-orgf9732e0" class="outline-3">
+<h3 id="orgf9732e0"><span class="section-number-3">11.10.</span> whisper</h3>
+<div class="outline-text-3" id="text-11-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"> (use-package whisper
   :load-path "/home/elon/.emacs.d/whisper.el"
   :bind ("M-s-r" . whisper-run)
   :config
@@ -2907,35 +3973,52 @@ emacs 写作助手
   )
 
 (use-package greader :ensure)
-#+END_SRC
-** init-note.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge0bba10" class="outline-3">
+<h3 id="orge0bba10"><span class="section-number-3">11.11.</span> init-note.el 文件尾</h3>
+<div class="outline-text-3" id="text-11-11">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-note)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
+</div>
 
-* Init-language.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-language.el :mkdirp yes
-:END:
-
+<div id="outline-container-orgf17473e" class="outline-2">
+<h2 id="orgf17473e"><span class="section-number-2">12.</span> Init-language.el</h2>
+<div class="outline-text-2" id="text-12">
+<p>
 Emacs里的language设置。
+</p>
+</div>
 
 
-** init-language.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-language.el --- language settings -*- lexical-binding: t -*-
+<div id="outline-container-orgc5a11fa" class="outline-3">
+<h3 id="orgc5a11fa"><span class="section-number-3">12.1.</span> init-language.el 文件头</h3>
+<div class="outline-text-3" id="text-12-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-language.el --- language settings -*- lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
 
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** Python-mode
-#+BEGIN_SRC emacs-lisp
-(use-package python
+<div id="outline-container-orga5b733e" class="outline-3">
+<h3 id="orga5b733e"><span class="section-number-3">12.2.</span> Python-mode</h3>
+<div class="outline-text-3" id="text-12-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package python
   :ensure t
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
@@ -2979,10 +4062,15 @@ Emacs里的language设置。
 (use-package blacken
   :ensure t
   :hook (python-mode . blacken-mode))
-#+END_SRC
-** Rust-mode
-#+BEGIN_SRC emacs-lisp
-;; (use-package rust-mode)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgba25a1e" class="outline-3">
+<h3 id="orgba25a1e"><span class="section-number-3">12.3.</span> Rust-mode</h3>
+<div class="outline-text-3" id="text-12-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; (use-package rust-mode)
 ;; (add-hook 'rust-mode-hook
 ;;           (lambda () (setq indent-tabs-mode nil)))
 ;; (setq rust-format-on-save t)
@@ -3039,11 +4127,15 @@ Emacs里的language设置。
 
 ;; 设置 Rust 语言的执行命令
 (setq org-babel-rust-command "rustc")
-#+END_SRC
-** emacs-lisp-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package elisp-mode
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3dcb68b" class="outline-3">
+<h3 id="org3dcb68b"><span class="section-number-3">12.4.</span> emacs-lisp-mode</h3>
+<div class="outline-text-3" id="text-12-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package elisp-mode
   :ensure nil
   :after org
   :bind (:map emacs-lisp-mode-map
@@ -3060,7 +4152,7 @@ Emacs里的language设置。
              '(:results . "value pp"))
   :config
   (defconst eval-as-comment-prefix " ⇒ ")
-  (defun eval-to-comment (&optional arg)
+  (defun eval-to-comment (&amp;optional arg)
     (interactive "P")
     ;; (if (not (looking-back ";\\s*"))
     ;;     (call-interactively 'comment-dwim))
@@ -3075,16 +4167,26 @@ Emacs里的language设置。
     (insert eval-as-comment-prefix)
     (end-of-line 1))
   )
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** lua-moode
-#+BEGIN_SRC emacs-lisp
-(use-package lua-mode)
-#+END_SRC
+<div id="outline-container-org359052b" class="outline-3">
+<h3 id="org359052b"><span class="section-number-3">12.5.</span> lua-moode</h3>
+<div class="outline-text-3" id="text-12-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package lua-mode)
+</pre>
+</div>
+</div>
+</div>
 
-** c-mode
-#+BEGIN_SRC emacs-lisp
-;; 配置 C/C++ 开发环境
+<div id="outline-container-org9cd1dea" class="outline-3">
+<h3 id="org9cd1dea"><span class="section-number-3">12.6.</span> c-mode</h3>
+<div class="outline-text-3" id="text-12-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;; 配置 C/C++ 开发环境
 (use-package cc-mode
   :config
   ;; 启用语法检查
@@ -3109,40 +4211,63 @@ Emacs里的language设置。
   
   ;; 设置快捷键
   (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
-#+END_SRC
-** init-language.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org652f294" class="outline-3">
+<h3 id="org652f294"><span class="section-number-3">12.7.</span> init-language.el 文件尾</h3>
+<div class="outline-text-3" id="text-12-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-language)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here
-#+END_SRC
-* init-hugo.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-hugo.el :mkdirp yes
-:END:
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org8ed4ffd" class="outline-2">
+<h2 id="org8ed4ffd"><span class="section-number-2">13.</span> init-hugo.el</h2>
+<div class="outline-text-2" id="text-13">
+<p>
 hugo设置
+</p>
+</div>
 
-** init-hugo.el文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-hugo.el -- hugo settings -*-  lexical-binding: t -*-
+<div id="outline-container-org9e728d8" class="outline-3">
+<h3 id="org9e728d8"><span class="section-number-3">13.1.</span> init-hugo.el文件头</h3>
+<div class="outline-text-3" id="text-13-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">;;; init-hugo.el -- hugo settings -*-  lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
 
-** ox-hugo
-#+BEGIN_SRC emacs-lisp
-(use-package ox-hugo
+<div id="outline-container-org8b67b62" class="outline-3">
+<h3 id="org8b67b62"><span class="section-number-3">13.2.</span> ox-hugo</h3>
+<div class="outline-text-3" id="text-13-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(use-package ox-hugo
   :ensure t   ;Auto-install the package from Melpa
   :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
   :after ox)
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** deploy-hugo
-#+BEGIN_SRC emacs-lisp
-(defun execute-hugo-deploy-script (args)
+<div id="outline-container-org019ff5a" class="outline-3">
+<h3 id="org019ff5a"><span class="section-number-3">13.3.</span> deploy-hugo</h3>
+<div class="outline-text-3" id="text-13-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun execute-hugo-deploy-script (args)
   "执行 deploy.sh 脚本文件并将结果输出到 *Shell Output* 缓冲区"
   (interactive "sArguments: ")
   (let ((script-file "/home/elon/hugo_blog/blogsite/deploy.sh"))
@@ -3151,13 +4276,30 @@ hugo设置
           (message "Running deploy.sh script...")
           (shell-command (concat script-file " " args) "*Shell Output*"))
       (message "deploy.sh script file not found"))))
-#+END_SRC
+</pre>
+</div>
+</div>
+</div>
 
-** init-hugo.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
+<div id="outline-container-orga4143ba" class="outline-3">
+<h3 id="orga4143ba"><span class="section-number-3">13.4.</span> init-hugo.el 文件尾</h3>
+<div class="outline-text-3" id="text-13-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
 (provide 'init-hugo)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here
-#+END_SRC
-
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: 2023-07-09 Sun 00:00</p>
+<p class="author">Author: Elon Li</p>
+<p class="date">Created: 2023-07-09 Sun 13:01</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

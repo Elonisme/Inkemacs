@@ -78,6 +78,25 @@
          )
   )
 
+(use-package eaf
+  :load-path "~/emacs-application-framework"
+  :config
+  (require 'eaf-browser)                ; 启用浏览器
+  (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
+  (require 'eaf-video-player)
+  (require 'eaf-terminal)
+  (require 'eaf-file-manager)
+  (require 'eaf-music-player)
+  (require 'eaf-markdown-previewer)
+  (require 'eaf-rss-reader)
+  (require 'eaf-org-previewer)
+  )
+
+;;;LaTeX config
+(add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
+(add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
+(add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
+
 (provide 'init-tools)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-tools.el ends here
