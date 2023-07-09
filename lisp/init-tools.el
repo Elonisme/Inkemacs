@@ -3,6 +3,8 @@
 
 ;;; Code:
 
+(use-package cl-lib)
+
 (use-package helpful
   :ensure t
   :commands (helpful-callable helpful-variable helpful-command helpful-key helpful-mode)
@@ -83,13 +85,13 @@
   :config
   (require 'eaf-browser)                ; 启用浏览器
   (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
-  (require 'eaf-video-player)
-  (require 'eaf-terminal)
-  (require 'eaf-file-manager)
+  ;; (require 'eaf-video-player)
+  ;; (require 'eaf-terminal)
+  ;; (require 'eaf-file-manager)
   (require 'eaf-music-player)
-  (require 'eaf-markdown-previewer)
-  (require 'eaf-rss-reader)
-  (require 'eaf-org-previewer)
+  ;; (require 'eaf-markdown-previewer)
+  ;; (require 'eaf-rss-reader)
+  ;; (require 'eaf-org-previewer)
   )
 
 ;;;LaTeX config
