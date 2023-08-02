@@ -19,3 +19,6 @@ url/
 .cache/
 whisper.el/
 history
+.cask/28.2/bootstrap
+eaf/
+ltximg/
