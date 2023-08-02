@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: addcn
+# key: <cn
+# --
+#+LATEX_HEADER: \usepackage{ctex}
