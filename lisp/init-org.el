@@ -561,7 +561,11 @@ Optional for Org-mode file: `LINK'."
   (setq-default TeX-master t) ; 默认询问主文件
   (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
 
-(use-package cdlatex)
+(use-package cdlatex
+  :ensure t
+  :defer t
+  :hook
+  (LaTeX-mode . turn-on-cdlatex)) ;; 在 LaTeX 模式下自动开启 cdlatex
 
 (use-package texfrag
   :ensure t

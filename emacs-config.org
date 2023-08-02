@@ -946,10 +946,6 @@
       (avy-background t)
       (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?l ?q ?e ?r ?u ?i ?p ?n))
       )
-
-  (use-package ace-pinyin)
-
-  (ace-pinyin-global-mode +1)
 #+END_SRC
 ** init-edit.el 文件尾
 #+BEGIN_SRC emacs-lisp
@@ -1554,7 +1550,11 @@ Optional for Org-mode file: `LINK'."
   (setq-default TeX-master t) ; 默认询问主文件
   (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
 
-(use-package cdlatex)
+(use-package cdlatex
+  :ensure t
+  :defer t
+  :hook
+  (LaTeX-mode . turn-on-cdlatex)) ;; 在 LaTeX 模式下自动开启 cdlatex
 
 (use-package texfrag
   :ensure t
@@ -1709,33 +1709,11 @@ folder, otherwise delete a word"
 
 ** corfu
 #+BEGIN_SRC emacs-lisp
+;; 使用 `use-package` 来安装和配置 `corfu`
 (use-package corfu
-  ;; Optional customizations
-  :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  ;; (corfu-auto t)                 ;; Enable auto completion
-  ;; (corfu-separator ?\s)          ;; Orderless field separator
-  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  (corfu-scroll-margin 5)        ;; Use scroll margin
-
-  ;; Enable Corfu only for certain modes.
-  :hook ( (shell-mode . corfu-mode)
-          (eshell-mode . corfu-mode))
-
-  ;; Recommended: Enable Corfu globally.
-  ;; This is recommended since Dabbrev can be used globally (M-/).
-  ;; See also `corfu-exclude-modes'.
-  :init
-  (global-corfu-mode)
-  :bind
-  (:map corfu-map
-        ("SPC" . corfu-insert-separator)
-        )
-  )
+  :ensure t
+  :config
+  (global-corfu-mode)) ;; 全局启用 corfu 补全
 #+END_SRC
 
 ** cape
@@ -2026,126 +2004,17 @@ folder, otherwise delete a word"
   )
 #+END_SRC
 
-** denote
-#+BEGIN_SRC emacs-lisp
-(use-package denote
-  :ensure t
-  :hook (dired-mode . denote-dired-mode-in-directories)
-  :bind (("C-c d n" . denote)
-         ("C-c d d" . denote-date)
-         ("C-c d t" . denote-type)
-         ("C-c d s" . denote-subdirectory)
-         ("C-c d f" . denote-open-or-create)
-         ("C-c d r" . denote-dired-rename-file))
-  :init
-  (with-eval-after-load 'org-capture
-    (setq denote-org-capture-specifiers "%l\n%i\n%?")
-    (add-to-list 'org-capture-templates
-                 '("N" "New note (with denote.el)" plain
-                   (file denote-last-path)
-                   #'denote-org-capture
-                   :no-save t
-                   :immediate-finish nil
-                   :kill-buffer t
-                   :jump-to-captured t)))
-  :config
-  (setq denote-directory (expand-file-name "~/org/"))
-  (setq denote-known-keywords '("emacs" "entertainment" "reading" "studying"))
-  (setq denote-infer-keywords t)
-  (setq denote-sort-keywords t)
-  ;; org is default, set others such as text, markdown-yaml, markdown-toml
-  (setq denote-file-type nil)
-  (setq denote-prompts '(title keywords))
-
-  ;; We allow multi-word keywords by default.  The author's personal
-  ;; preference is for single-word keywords for a more rigid workflow.
-  (setq denote-allow-multi-word-keywords t)
-  (setq denote-date-format nil)
-
-  ;; If you use Markdown or plain text files (Org renders links as buttons
-  ;; right away)
-  (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
-  (setq denote-dired-rename-expert nil)
-
-  ;; OR if only want it in `denote-dired-directories':
-  (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
-  )
-
-(use-package consult-notes
-  :ensure t
-  :commands (consult-notes
-             consult-notes-search-in-all-notes)
-  :bind (("C-c c n" . consult-notes)
-         ("C-c c s" . consult-notes-search-in-all-notes))
-  :config
-  (setq consult-notes-file-dir-sources
-        `(
-          ("work"    ?w ,(concat org-directory "/midea/"))
-          ("article" ?a ,(concat org-directory "/article/"))
-          ("org"     ?o ,(concat org-directory "/"))
-          ("hugo"    ?h ,(concat org-directory "/hugo/"))
-          ("books"   ?b ,(concat (getenv "HOME") "/Books/"))
-          ))
-
-  ;; embark support
-  (with-eval-after-load 'embark
-    (defun consult-notes-open-dired (cand)
-      "Open notes directory dired with point on file CAND."
-      (interactive "fNote: ")
-      ;; dired-jump is in dired-x.el but is moved to dired in Emacs 28
-      (dired-jump nil cand))
-
-    (defun consult-notes-marked (cand)
-      "Open a notes file CAND in Marked 2.
-Marked 2 is a mac app that renders markdown."
-      (interactive "fNote: ")
-      (call-process-shell-command (format "open -a \"Marked 2\" \"%s\"" (expand-file-name cand))))
-
-    (defun consult-notes-grep (cand)
-      "Run grep in directory of notes file CAND."
-      (interactive "fNote: ")
-      (consult-grep (file-name-directory cand)))
-
-    (embark-define-keymap consult-notes-map
-                          "Keymap for Embark notes actions."
-                          :parent embark-file-map
-                          ("d" consult-notes-dired)
-                          ("g" consult-notes-grep)
-                          ("m" consult-notes-marked))
-
-    (add-to-list 'embark-keymap-alist `(,consult-notes-category . consult-notes-map))
-
-    ;; make embark-export use dired for notes
-    (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired)
-    )
-  )
-
-(defun my/consult-find-org-headings (&optional match)
-      "find headngs in all org files."
-      (interactive)
-      (consult-org-heading match (directory-files org-directory t "^[0-9]\\{8\\}.+\\.org$")))
-
-
-(use-package org-super-links
-  :quelpa (org-super-links :fetcher github :repo "toshism/org-super-links")
-  :bind (("C-c s s"   . org-super-links-link)
-         ("C-c s l"   . org-super-links-store-link)
-         ("C-c s C-l" . org-super-links-insert-link)
-         ("C-c s d"   . org-super-links-quick-insert-drawer-link)
-         ("C-c s i"   . org-super-links-quick-insert-inline-link)
-         ("C-c s C-d" . org-super-links-delete-link))
-  :config
-  (setq org-super-links-related-into-drawer t)
-  (setq	org-super-links-link-prefix 'org-super-links-link-prefix-timestamp))
-#+END_SRC
-
 ** rime
 #+BEGIN_SRC emacs-lisp
 (use-package rime
+  :ensure t
+  
   :custom
-  (default-input-method "rime"))
+  (default-input-method "rime")
 
-(global-set-key (kbd "C-\\") 'toggle-input-method)
+  :config
+  (global-set-key (kbd "C-\\") 'toggle-input-method)
+  )
 #+END_SRC
 
 
@@ -2293,18 +2162,19 @@ Marked 2 is a mac app that renders markdown."
   :ensure t
   :hook (rust-mode . cargo-minor-mode))
 
+(use-package ob-rust
+  :ensure t)
+
 (org-babel-do-load-languages 'org-babel-load-languages
                                (append org-babel-load-languages
                                        '((rust . t))))
-
-(use-package ob-rust)
-
 ;; 设置 Rust 语言的执行命令
 (setq org-babel-rust-command "rustc")
 #+END_SRC
 ** Lua-moode
 #+BEGIN_SRC emacs-lisp
-(use-package lua-mode)
+(use-package lua-mode
+  :ensure t)
 #+END_SRC
 ** C/Cpp-mode
 #+BEGIN_SRC emacs-lisp
@@ -2364,7 +2234,6 @@ hugo设置
           (shell-command (concat script-file " " args) "*Shell Output*"))
       (message "deploy.sh script file not found"))))
 #+END_SRC
-
 
 ** init-hugo.el 文件尾
 #+BEGIN_SRC emacs-lisp

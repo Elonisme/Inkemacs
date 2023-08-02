@@ -64,16 +64,17 @@
   :ensure t
   :hook (rust-mode . cargo-minor-mode))
 
+(use-package ob-rust
+  :ensure t)
+
 (org-babel-do-load-languages 'org-babel-load-languages
                                (append org-babel-load-languages
                                        '((rust . t))))
-
-(use-package ob-rust)
-
 ;; 设置 Rust 语言的执行命令
 (setq org-babel-rust-command "rustc")
 
-(use-package lua-mode)
+(use-package lua-mode
+  :ensure t)
 
 (provide 'init-language)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
