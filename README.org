@@ -15,9 +15,10 @@
 [[./imgs/emacs.png]]
 
 
+** 配置介绍
+这是我的 Emacs 配置,我取名为Inkwell Emacs。我的配置主要用于笔记和编写代码( =主要是写笔记= )， =不是一个全能的配置= 。我尽量使得我的配置都是我真正需要用的，使之尽量美观，快速，以及简单。
 
-
-这是我的 Emacs 配置, 在我阅读[[https://remacs.cc/][Remacs 的世界]]中的《面向产品经理的 Emacs 教程》后结合子龙山人的教程以及诸多配置之后所编写的配置，部分配置，我也采用了ChatGPT的建议。我也是一个emacs新手（断断续续玩了差不多一年多），对于很多包也不会使用，但是我会持续更新配置。
+这份配置是我在阅读[[https://remacs.cc/][Remacs的世界]]中的《面向产品经理的Emacs教程》后，结合子龙山人的教程以及诸多配置之后所编写的配置。部分配置，我也采用了ChatGPT的建议。我也是一个emacs新手（断断续续玩了差不多一年多），对于很多包也不会使用，但是我会持续更新配置。
 
 ** 环境
 - Arch Linux。
@@ -46,23 +47,19 @@ git clone git@github.com:iDvel/rime-ice.git ~/.emacs.d/var/rime
   
 ** 配置详情
 
-我的配置主要用于编写代码和笔记，不是一个全能的配置。我尽量使得我的配置都是我真正需要用的，使之尽量美观，快速，以及简单。
+- 笔记方面：
+笔记主要是使用Org mode来实现日常的笔记记录。抓取笔记主要是使用Org-roam包进行管理。使用 ~rime~ 进行中文输入，我使用 ~rime-ice~ 配置。截图显示在Org mode功能使用 ~org-download~ 包实现。在上面的基础上使用 ~ox-hugo~ 包发布到hugo服务器上以实现快速发布博客的功能。
 
-- 使用 $eglot$ 作为代码补全的工具，主要用于 Python 开发。
+- 代码方面
 
-- 使用 $org-roam$ 进行笔记管理和链接，以建立知识图谱。
+代码补全主要是使用 ~eglot~ 作为代码补全的工具。
 
-- 使用 $org-noter$ 在 Emacs 中阅读和注释 PDF 文档。
-
-- 使用 $dashboard$ 插件来提供一个个性化的启动界面，方便快速访问最近的文件和项目。
-
-- 使用 $rime$ 进行中文输入，我使用 rime-ice 配置。
-
-请注意，我的配置使用 org-mode 来生成 el 文件。因此，你需要使用 $org-babel-tangle$ 命令来生成配置文件。具体使用方法可以参考 [[https://remacs.cc/][Remacs 的世界]] 中的教程。
+- 注意方面
+请注意，我的配置使用 org-mode 来生成 el 文件。因此，你需要使用 ~org-babel-tangle~ 命令来生成配置文件。具体使用方法可以参考 [[https://remacs.cc/][Remacs 的世界]] 中的教程。
 
 如果你是 Emacs 新手，我推荐你阅读[[https://remacs.cc/][《面向产品经理的 Emacs 教程》]] ,[[https://zilongshanren.com/learnemacs/][《21 天学会 Emacs》]]，[[https://zhuanlan.zhihu.com/p/385214753][《专业 Emacs 入门》]]，视频课程我推荐你观看[[https://www.bilibili.com/video/BV13g4y167Zn/?spm_id_from=333.337.search-card.all.click&vd_source=d83ad6cd9dee24b176d485ce73eb5379][Emacs高手修炼手册]]。哔哩哔哩 Up主 [[https://space.bilibili.com/314984514?spm_id_from=333.337.search-card.all.click][金色飞贼小米]]， [[https://space.bilibili.com/27137545?spm_id_from=333.337.search-card.all.click][美味的樱桃菌]]等人视频也不错，我相信你会从中受益。
 
-需要注意的是，我的配置中关于 `use-package` 的使用还不够熟练，如果遇到不能下载的包，请麻烦手动下载。
+需要注意的是，我的配置中关于 ~use-package~  的使用还不够熟练。下载配置后运行，会遇到不能下载的包，请麻烦手动使用 ~package-list-packages~ 下载。
 
 Emacs 社区非常欢迎新人。毕竟在专有软件还在世界上横行霸道的情况下，我们Emacs hacker要团结一切可以团结的力量。
 
@@ -103,7 +100,6 @@ Emacs 社区非常欢迎新人。毕竟在专有软件还在世界上横行霸�
 | 编辑emacs-config.org | F5        |
 | 激活rime输入法       | C-\       |
 | 启动番茄时钟         | C-c C-X ; |
-| 打开eshell           | F9        |
 | org-roam find        | C-c n f   |
 | org-roam node insert | C-c n i   |
 | org-roam-ui open     | C-c n u   |
