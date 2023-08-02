@@ -1,9 +1,9 @@
-;;; early-init.el --- Emacs pre-initialization config -*- lexical-binding: t -*-
-;;; Commentary:
+  ;;; early-init.el --- Emacs pre-initialization config -*- lexical-binding: t -*-
+  ;;; Commentary:
 
-;;; Code:
+  ;;; Code:
 
-;; 设置垃圾回收参数
+  ;; 设置垃圾回收参数
 (setq gc-cons-threshold most-positive-fixnum)
 (setq gc-cons-percentage 0.6)
 
@@ -31,5 +31,5 @@
 (setq comp-deferred-compilation nil)
 
 (provide 'early-init)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; early-init.el ends here
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;; early-init.el ends here

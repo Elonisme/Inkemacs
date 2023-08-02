@@ -5,12 +5,12 @@
 
 (require 'package)
 (setq package-archives
-	  '(("melpa-stable" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/stable-melpa/")
-        ("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
-	    ("gnu"    . "https://mirrors.ustc.edu.cn/elpa/gnu/")
-        ("gnu-devel" . "https://mirrors.ustc.edu.cn/elpa/gnu-devel/")
-        ("nognu-devel" . "https://mirrors.ustc.edu.cn/elpa/nongnu-devel/")
-	    ("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/")))
+      '(("melpa-stable" . "https://mirrors.ustc.edu.cn/elpa/stable-melpa/")
+	("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
+	("gnu"    . "https://mirrors.ustc.edu.cn/elpa/gnu/")
+	("gnu-devel" . "https://mirrors.ustc.edu.cn/elpa/gnu-devel/")
+	("nognu-devel" . "https://mirrors.ustc.edu.cn/elpa/nongnu-devel/")
+	("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/")))
 
 (package-initialize)
 
@@ -54,8 +54,6 @@
 (use-package quelpa-use-package
   :ensure t)
 
-(use-package auto-package-update)
-
 (defun open-custom-post-file()
   "This functions dose finde custom-post.el."
   (interactive)
@@ -69,18 +67,29 @@
   ;; 加载各模块化配置
   ;; 不要在`*message*'缓冲区显示加载模块化配置的信息
   (with-temp-message ""
+    (require 'init-base)                  ; 基础设置
     (require 'init-ui)                    ; UI交互
-    (require 'init-edit)                  ; 编辑行为
-    (require 'init-org)                   ; org相关设置
-    (require 'init-completion)            ; 补全系统
-    (require 'init-tools)                 ; 相关工具
-    (require 'init-base)                  ; 一些基本配置
-    (require 'init-shell)                 ;shell设置
-    (require 'init-note)                  ; 写作相关配置
-    (require 'init-language)              ; 编程语言设置
+    (require 'init-edit)                  ; 编辑设置
+    (require 'init-org)                   ; org配置
+    (require 'init-complete)              ; 补全设置
+    (require 'init-tools)                 ; 常用工具
+    (require 'init-language)              ; 编程语言
     (require 'init-hugo)                  ; 发布博客设置
     )
 
 (provide 'init)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(youdao-dictionary which-key vertico toc-org texfrag swiper smartparens shackle rust-mode rime restart-emacs rainbow-delimiters quelpa-use-package pyvenv-auto popper plantuml-mode ox-hugo org-super-links org-roam-ui org-modern org-download org-contrib org-auto-tangle org-appear org-ai orderless ob-rust no-littering multiple-cursors minions marginalia magit-delta lua-mode lsp-ui lsp-treemacs keycast helpful greader good-scroll gnuplot fontaine flycheck eshell-up eshell-syntax-highlighting eshell-git-prompt esh-autosuggest elpy ef-themes doom-themes doom-modeline diminish diff-hl denote dashboard crux corfu consult-notes company-anaconda cdlatex cargo blacken auto-package-update all-the-icons-completion ace-pinyin ace-jump-mode)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

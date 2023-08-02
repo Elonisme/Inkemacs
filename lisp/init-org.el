@@ -7,7 +7,7 @@
   :ensure nil
   :mode ("\\.org\\'" . org-mode)
   :hook ((org-mode . visual-line-mode)
-		 (org-mode . my/org-prettify-symbols))
+	 (org-mode . my/org-prettify-symbols))
   :commands (org-find-exact-headline-in-buffer org-set-tags)
   :custom-face
   ;; 设置Org mode标题以及每级标题行的大小
@@ -21,57 +21,55 @@
   (org-level-7 ((t (:height 1.0 :weight bold))))
   (org-level-8 ((t (:height 1.0 :weight bold))))
   (org-level-9 ((t (:height 1.0 :weight bold))))
-  ;; 设置代码块用上下边线包裹
-  (org-block-begin-line ((t (:underline t :background unspecified))))
-  (org-block-end-line ((t (:overline t :underline nil :background unspecified))))
   :config
   ;; ================================
   ;; 在org mode里美化字符串
   ;; ================================
   (defun my/org-prettify-symbols ()
-	(setq prettify-symbols-alist
-		  (mapcan (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
-				  '(
-					("[ ]"              . 9744)         ; ☐
-					("[X]"              . 9745)         ; ☑
-					("[-]"              . 8863)         ; ⊟
-					("#+begin_src"      . 9998)         ; ✎
-					("#+end_src"        . 9633)         ; □
-                    ("#+begin_ai"       . 9883)         ; ⚛
-                    ("#+end_ai"         . 9998)         ; ✎
-					("#+begin_example"  . 129083)       ; 🌛
-					("#+end_example"    . 129081)       ; 🌙
-					("#+results:"       . 9776)         ; ☰
-					("#+attr_latex:"    . "🄛")
-					("#+attr_html:"     . "🄗")
-					("#+attr_org:"      . "🄞")
-					("#+name:"          . "🄝")         ; 127261
-					("#+caption:"       . "🄒")         ; 127250
-					("#+date:"          . "📅")         ; 128197
-					("#+author:"        . "💁")         ; 128100
-					("#+setupfile:"     . 128221)       ; 📝
-					("#+email:"         . 128231)       ; 📧
-					("#+startup:"       . 10034)        ; ✲
-					("#+options:"       . 9965)         ; ⛭
-					("#+title:"         . 10162)        ; ➲
-					("#+subtitle:"      . 11146)        ; ⮊
-					("#+downloaded:"    . 8650)         ; ⇊
-					("#+language:"      . 128441)       ; 🖹
-					("#+begin_quote"    . 187)          ; »
-					("#+end_quote"      . 171)          ; «
+    (interactive)
+    (setq prettify-symbols-alist
+	  (mapcan (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
+		  '(
+		    ("[ ]"              . 9744)         ; ☐
+		    ("[X]"              . 9745)         ; ☑
+		    ("[-]"              . 8863)         ; ⊟
+		    ("#+begin_src"      . 9998)         ; ✎
+		    ("#+end_src"        . 9633)         ; □
+		    ("#+begin_ai"       . 9883)         ; ⚛
+		    ("#+end_ai"         . 9998)         ; ✎
+		    ("#+begin_example"  . 129083)       ; 🌛
+		    ("#+end_example"    . 129081)       ; 🌙
+		    ("#+results:"       . 9776)         ; ☰
+		    ("#+attr_latex:"    . "🄛")
+		    ("#+attr_html:"     . "🄗")
+		    ("#+attr_org:"      . "🄞")
+		    ("#+name:"          . "🄝")         ; 127261
+		    ("#+caption:"       . "🄒")         ; 127250
+		    ("#+date:"          . "📅")         ; 128197
+		    ("#+author:"        . "💁")         ; 128100
+		    ("#+setupfile:"     . 128221)       ; 📝
+		    ("#+email:"         . 128231)       ; 📧
+		    ("#+startup:"       . 10034)        ; ✲
+		    ("#+options:"       . 9965)         ; ⛭
+		    ("#+title:"         . 10162)        ; ➲
+		    ("#+subtitle:"      . 11146)        ; ⮊
+		    ("#+downloaded:"    . 8650)         ; ⇊
+		    ("#+language:"      . 128441)       ; 🖹
+		    ("#+begin_quote"    . 187)          ; »
+		    ("#+end_quote"      . 171)          ; «
                     ("#+begin_results"  . 8943)         ; ⋯
                     ("#+end_results"    . 8943)         ; ⋯
-					)))
+		    )))
     (setq prettify-symbols-unprettify-at-point t)
-	(prettify-symbols-mode 1))
+    (prettify-symbols-mode 1))
 
   ;; 提升latex预览的图片清晰度
   (plist-put org-format-latex-options :scale 1.8)
 
   ;; 设置标题行之间总是有空格；列表之间根据情况自动加空格
   (setq org-blank-before-new-entry '((heading . t)
-									 (plain-list-item . auto)
-									 ))
+				     (plain-list-item . auto)
+				     ))
 
   (setq org-clock-sound "~/.emacs.d/ding.wav")
 
@@ -79,17 +77,17 @@
   ;; 设置打开Org links的程序
   ;; ======================================
   (defun my-func/open-and-play-gif-image (file &optional link)
-	"Open and play GIF image `FILE' in Emacs buffer.
+    "Open and play GIF image `FILE' in Emacs buffer.
 
 Optional for Org-mode file: `LINK'."
-	(let ((gif-image (create-image file))
-		  (tmp-buf (get-buffer-create "*Org-mode GIF image animation*")))
-	  (switch-to-buffer tmp-buf)
-	  (erase-buffer)
-	  (insert-image gif-image)
-	  (image-animate gif-image nil t)
-	  (local-set-key (kbd "q") 'bury-buffer)
-	  ))
+    (let ((gif-image (create-image file))
+	  (tmp-buf (get-buffer-create "*Org-mode GIF image animation*")))
+      (switch-to-buffer tmp-buf)
+      (erase-buffer)
+      (insert-image gif-image)
+      (image-animate gif-image nil t)
+      (local-set-key (kbd "q") 'bury-buffer)
+      ))
   (setq org-file-apps '(("\\.png\\'"     . default)
                         (auto-mode       . emacs)
                         (directory       . emacs)
@@ -149,10 +147,10 @@ Optional for Org-mode file: `LINK'."
   (org-list-allow-alphabetical t)
   ;; 列表的下一级设置
   (org-list-demote-modify-bullet '(
-								   ("-"  . "+")
+				   ("-"  . "+")
                                    ("+"  . "1.")
-								   ("1." . "a.")
-								   ))
+				   ("1." . "a.")
+				   ))
   ;; 编辑时检查是否在折叠的不可见区域
   (org-fold-catch-invisible-edits 'smart)
   ;; 在当前位置插入新标题行还是在当前标题行后插入，这里设置为当前位置
@@ -173,18 +171,18 @@ Optional for Org-mode file: `LINK'."
 
   ;; TOOD的关键词设置，可以设置不同的组
   (org-todo-keywords '((sequence "TODO(t)" "HOLD(h!)" "WIP(i!)" "WAIT(w!)" "|" "DONE(d!)" "CANCELLED(c@/!)")
-					   (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f!)")))
+		       (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f!)")))
   ;; TODO关键词的样式设置
   (org-todo-keyword-faces '(("TODO"       :foreground "#7c7c75" :weight bold)
-							("HOLD"       :foreground "#feb24c" :weight bold)
-							("WIP"        :foreground "#0098dd" :weight bold)
-							("WAIT"       :foreground "#9f7efe" :weight bold)
-							("DONE"       :foreground "#50a14f" :weight bold)
-							("CANCELLED"  :foreground "#ff6480" :weight bold)
-							("REPORT"     :foreground "magenta" :weight bold)
-							("BUG"        :foreground "red"     :weight bold)
-							("KNOWNCAUSE" :foreground "yellow"  :weight bold)
-							("FIXED"      :foreground "green"   :weight bold)))
+			    ("HOLD"       :foreground "#feb24c" :weight bold)
+			    ("WIP"        :foreground "#0098dd" :weight bold)
+			    ("WAIT"       :foreground "#9f7efe" :weight bold)
+			    ("DONE"       :foreground "#50a14f" :weight bold)
+			    ("CANCELLED"  :foreground "#ff6480" :weight bold)
+			    ("REPORT"     :foreground "magenta" :weight bold)
+			    ("BUG"        :foreground "red"     :weight bold)
+			    ("KNOWNCAUSE" :foreground "yellow"  :weight bold)
+			    ("FIXED"      :foreground "green"   :weight bold)))
   ;; 当标题行状态变化时标签同步发生的变化
   ;; Moving a task to CANCELLED adds a CANCELLED tag
   ;; Moving a task to WAIT adds a WAIT tag
@@ -194,11 +192,11 @@ Optional for Org-mode file: `LINK'."
   ;; Moving a task to DONE removes WAIT, CANCELLED, and HOLD tags
   (org-todo-state-tags-triggers
    (quote (("CANCELLED" ("CANCELLED" . t))
-		   ("WAIT" ("WAIT" . t))
-		   ("HOLD" ("WAIT") ("HOLD" . t))
-		   (done ("WAIT") ("HOLD"))
-		   ("TODO" ("WAIT") ("CANCELLED") ("HOLD"))
-		   ("DONE" ("WAIT") ("CANCELLED") ("HOLD")))))
+	   ("WAIT" ("WAIT" . t))
+	   ("HOLD" ("WAIT") ("HOLD" . t))
+	   (done ("WAIT") ("HOLD"))
+	   ("TODO" ("WAIT") ("CANCELLED") ("HOLD"))
+	   ("DONE" ("WAIT") ("CANCELLED") ("HOLD")))))
   ;; 使用专家模式选择标题栏状态
   (org-use-fast-todo-selection 'expert)
   ;; 父子标题栏状态有依赖
@@ -207,13 +205,13 @@ Optional for Org-mode file: `LINK'."
   (org-enforce-todo-checkbox-dependencies t)
   ;; 优先级样式设置
   (org-priority-faces '((?A :foreground "red")
-						(?B :foreground "orange")
-						(?C :foreground "yellow")))
+			(?B :foreground "orange")
+			(?C :foreground "yellow")))
   ;; 标题行全局属性设置
   (org-global-properties '(("EFFORT_ALL" . "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 7:00 8:00")
-						   ("APPT_WARNTIME_ALL" . "0 5 10 15 20 25 30 45 60")
-						   ("RISK_ALL" . "Low Medium High")
-						   ("STYLE_ALL" . "habit")))
+			   ("APPT_WARNTIME_ALL" . "0 5 10 15 20 25 30 45 60")
+			   ("RISK_ALL" . "Low Medium High")
+			   ("STYLE_ALL" . "habit")))
   ;; Org columns的默认格式
   (org-columns-default-format "%25ITEM %TODO %SCHEDULED %DEADLINE %3PRIORITY %TAGS %CLOCKSUM %EFFORT{:}")
   ;; 当状态从DONE改成其他状态时，移除 CLOSED: [timestamp]
@@ -258,19 +256,19 @@ Optional for Org-mode file: `LINK'."
   (org-track-ordered-property-with-tag t)
   ;; 始终存在的的标签
   (org-tag-persistent-alist '(("read"     . ?r)
-							  ("mail"     . ?m)
-							  ("emacs"    . ?e)
-							  ("study"    . ?s)
-							  ("work"     . ?w)))
+			      ("mail"     . ?m)
+			      ("emacs"    . ?e)
+			      ("study"    . ?s)
+			      ("work"     . ?w)))
   ;; 预定义好的标签
   (org-tag-alist '((:startgroup)
-				   ("crypt"    . ?c)
-				   ("linux"    . ?l)
-				   ("apple"    . ?a)
-				   ("noexport" . ?n)
-				   ("ignore"   . ?i)
-				   ("TOC"      . ?t)
-				   (:endgroup)))
+		   ("crypt"    . ?c)
+		   ("linux"    . ?l)
+		   ("apple"    . ?a)
+		   ("noexport" . ?n)
+		   ("ignore"   . ?i)
+		   ("TOC"      . ?t)
+		   (:endgroup)))
 
   ;; 归档设置
   (org-archive-location "%s_archive::datetree/")
@@ -298,7 +296,8 @@ Optional for Org-mode file: `LINK'."
   (setq org-modern-table-vertical 2)
   ;; 设置表格横线为0，默认为0.1
   (setq org-modern-table-horizontal 0)
-  ;; 复选框美化
+
+   ;; 复选框美化
   (setq org-modern-checkbox
         '((?X . #("▢✓" 0 2 (composition ((2)))))
           (?- . #("▢–" 0 2 (composition ((2)))))
@@ -308,8 +307,7 @@ Optional for Org-mode file: `LINK'."
         '((?- . "•")
           (?+ . "◦")
           (?* . "▹")))
-  ;; 代码块左边加上一条竖边线（需要Org mode顶头，如果启用了 `visual-fill-column-mode' 会很难看）
-  (setq org-modern-block-fringe t)
+  
   ;; 代码块类型美化，我们使用了 `prettify-symbols-mode'
   (setq org-modern-block-name nil)
   ;; #+关键字美化，我们使用了 `prettify-symbols-mode'

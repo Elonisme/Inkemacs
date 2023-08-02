@@ -1,8 +1,3 @@
-;;; init-language.el --- language settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
 (use-package python
   :ensure t
   :mode ("\\.py\\'" . python-mode)
@@ -19,92 +14,9 @@
   :config
   (add-hook 'python-mode-hook 'pyvenv-mode))
 
-(use-package anaconda-mode
-  :ensure t
-  :hook (python-mode . anaconda-mode)
-  :init
-  (setq anaconda-mode-eldoc-as-single-line t))
-
-(use-package company-anaconda
-  :ensure t
-  :after anaconda-mode
-  :config
-  (eval-after-load "company"
-    '(add-to-list 'company-backends 'company-anaconda)))
-
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable)
-  :config
-  (setq elpy-rpc-python-command "python3") ;; 设置 Python 解释器路径
-  (setq python-shell-interpreter "python3")) ;; 设置 Python 解释器路径
-
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
-
 (use-package blacken
   :ensure t
   :hook (python-mode . blacken-mode))
-
-;; (use-package rust-mode)
-;; (add-hook 'rust-mode-hook
-;;           (lambda () (setq indent-tabs-mode nil)))
-;; (setq rust-format-on-save t)
-
-;; ;; (add-hook 'rust-mode-hook 'eglot-ensure)
-;; (add-hook 'rust-mode-hook 'lsp-deferred)
-
-;; Rust 开发配置
-(use-package rust-mode
-  :ensure t
-  :hook (rust-mode . lsp-deferred)
-  :config
-  (setq rust-format-on-save t))
-
-(add-hook 'rust-mode-hook
-           (lambda () (prettify-symbols-mode)))
-
-(use-package lsp-mode
-  :ensure t
-  :commands lsp
-  :hook (rust-mode . lsp-deferred)
-  :init
-  (setq lsp-rust-server 'rust-analyzer))
-
-(use-package company
-  :ensure t
-  :hook (prog-mode . company-mode)
-  :config
-  (setq company-tooltip-align-annotations t)
-  (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.0))
-
-(use-package lsp-ui
-  :ensure t
-  :hook (lsp-mode . lsp-ui-mode)
-  :config
-  (setq lsp-ui-doc-enable nil)
-  (setq lsp-ui-peek-enable t)
-  (setq lsp-ui-sideline-enable nil))
-
-(use-package lsp-treemacs
-  :ensure t
-  :commands lsp-treemacs-errors-list)
-
-(use-package cargo
-  :ensure t
-  :hook (rust-mode . cargo-minor-mode))
-
-
-
-(org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((rust . t))))
-
-;; 设置 Rust 语言的执行命令
-(setq org-babel-rust-command "rustc")
 
 (use-package elisp-mode
   :ensure nil
@@ -139,34 +51,30 @@
     (end-of-line 1))
   )
 
-(use-package lua-mode)
-
-;; 配置 C/C++ 开发环境
-(use-package cc-mode
+;; Rust 开发配置
+(use-package rust-mode
+  :ensure t
   :config
-  ;; 启用语法检查
-  (add-hook 'c-mode-hook 'flycheck-mode)
-  (add-hook 'c++-mode-hook 'flycheck-mode)
-  
-  ;; 使用 company 补全
-  (add-hook 'c-mode-hook 'company-mode)
-  (add-hook 'c++-mode-hook 'company-mode)
-  
-  ;; 使用 clangd 作为 LSP 服务器
-  (use-package lsp-mode
-    :config
-    (add-hook 'c-mode-hook 'lsp)
-    (add-hook 'c++-mode-hook 'lsp))
-  
-  ;; 配置代码风格
-  (setq c-default-style "linux"
-        c-basic-offset 4
-        tab-width 4
-        indent-tabs-mode t)
-  
-  ;; 设置快捷键
-  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
+  (setq rust-format-on-save t))
+
+(add-hook 'rust-mode-hook
+           (lambda () (prettify-symbols-mode)))
+
+(use-package cargo
+  :ensure t
+  :hook (rust-mode . cargo-minor-mode))
+
+(org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((rust . t))))
+
+(use-package ob-rust)
+
+;; 设置 Rust 语言的执行命令
+(setq org-babel-rust-command "rustc")
+
+(use-package lua-mode)
 
 (provide 'init-language)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-dev.el ends here
+;;; init-language.el ends here

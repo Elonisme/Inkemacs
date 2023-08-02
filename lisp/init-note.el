@@ -78,116 +78,6 @@
   (org-roam-ui-follow-mode t)
   )
 
-(use-package denote
-  :ensure t
-  :hook (dired-mode . denote-dired-mode-in-directories)
-  :bind (("C-c d n" . denote)
-         ("C-c d d" . denote-date)
-         ("C-c d t" . denote-type)
-         ("C-c d s" . denote-subdirectory)
-         ("C-c d f" . denote-open-or-create)
-         ("C-c d r" . denote-dired-rename-file))
-  :init
-  (with-eval-after-load 'org-capture
-    (setq denote-org-capture-specifiers "%l\n%i\n%?")
-    (add-to-list 'org-capture-templates
-                 '("N" "New note (with denote.el)" plain
-                   (file denote-last-path)
-                   #'denote-org-capture
-                   :no-save t
-                   :immediate-finish nil
-                   :kill-buffer t
-                   :jump-to-captured t)))
-  :config
-  (setq denote-directory (expand-file-name "~/org/"))
-  (setq denote-known-keywords '("emacs" "entertainment" "reading" "studying"))
-  (setq denote-infer-keywords t)
-  (setq denote-sort-keywords t)
-  ;; org is default, set others such as text, markdown-yaml, markdown-toml
-  (setq denote-file-type nil)
-  (setq denote-prompts '(title keywords))
-
-  ;; We allow multi-word keywords by default.  The author's personal
-  ;; preference is for single-word keywords for a more rigid workflow.
-  (setq denote-allow-multi-word-keywords t)
-  (setq denote-date-format nil)
-
-  ;; If you use Markdown or plain text files (Org renders links as buttons
-  ;; right away)
-  (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
-  (setq denote-dired-rename-expert nil)
-
-  ;; OR if only want it in `denote-dired-directories':
-  (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
-  )
-
-(use-package consult-notes
-  :ensure t
-  :commands (consult-notes
-             consult-notes-search-in-all-notes)
-  :bind (("C-c n f" . consult-notes)
-         ("C-c n c" . consult-notes-search-in-all-notes))
-  :config
-  (setq consult-notes-file-dir-sources
-        `(
-          ("work"    ?w ,(concat org-directory "/midea/"))
-          ("article" ?a ,(concat org-directory "/article/"))
-          ("org"     ?o ,(concat org-directory "/"))
-          ("hugo"    ?h ,(concat org-directory "/hugo/"))
-          ("books"   ?b ,(concat (getenv "HOME") "/Books/"))
-          ))
-
-  ;; embark support
-  (with-eval-after-load 'embark
-    (defun consult-notes-open-dired (cand)
-      "Open notes directory dired with point on file CAND."
-      (interactive "fNote: ")
-      ;; dired-jump is in dired-x.el but is moved to dired in Emacs 28
-      (dired-jump nil cand))
-
-    (defun consult-notes-marked (cand)
-      "Open a notes file CAND in Marked 2.
-Marked 2 is a mac app that renders markdown."
-      (interactive "fNote: ")
-      (call-process-shell-command (format "open -a \"Marked 2\" \"%s\"" (expand-file-name cand))))
-
-    (defun consult-notes-grep (cand)
-      "Run grep in directory of notes file CAND."
-      (interactive "fNote: ")
-      (consult-grep (file-name-directory cand)))
-
-    (embark-define-keymap consult-notes-map
-                          "Keymap for Embark notes actions."
-                          :parent embark-file-map
-                          ("d" consult-notes-dired)
-                          ("g" consult-notes-grep)
-                          ("m" consult-notes-marked))
-
-    (add-to-list 'embark-keymap-alist `(,consult-notes-category . consult-notes-map))
-
-    ;; make embark-export use dired for notes
-    (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired)
-    )
-  )
-
-(defun my/consult-find-org-headings (&optional match)
-      "find headngs in all org files."
-      (interactive)
-      (consult-org-heading match (directory-files org-directory t "^[0-9]\\{8\\}.+\\.org$")))
-
-
-(use-package org-super-links
-  :quelpa (org-super-links :fetcher github :repo "toshism/org-super-links")
-  :bind (("C-c s s"   . org-super-links-link)
-         ("C-c s l"   . org-super-links-store-link)
-         ("C-c s C-l" . org-super-links-insert-link)
-         ("C-c s d"   . org-super-links-quick-insert-drawer-link)
-         ("C-c s i"   . org-super-links-quick-insert-inline-link)
-         ("C-c s C-d" . org-super-links-delete-link))
-  :config
-  (setq org-super-links-related-into-drawer t)
-  (setq	org-super-links-link-prefix 'org-super-links-link-prefix-timestamp))
-
 (use-package rime
   :custom
   (default-input-method "rime")
@@ -269,17 +159,6 @@ Marked 2 is a mac app that renders markdown."
                             :jump-to-captured t)
                            ))
   )
-
- (use-package whisper
-  :load-path "/home/elon/.emacs.d/whisper.el"
-  :bind ("M-s-r" . whisper-run)
-  :config
-  (setq whisper-model "base"
-        whisper-language "en"
-        whisper-translate nil)
-  )
-
-(use-package greader :ensure)
 
 (provide 'init-note)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,7 +1,7 @@
-#+TITLE: Emacs配置文件
-#+SUBTITLE: Fast and modern emacs dotfile
-#+AUTHOR: Elon Li
-#+DATE: <2023-07-09 SUN>
+#+TITLE: Emacs Config
+#+SUBTITLE: One modern, fast, and visually appealing Emacs configuration
+#+AUTHOR:  Elon Li
+#+DATE: <2023-08-02 WED>
 
 #+STARTUP: overview
 
@@ -13,12 +13,12 @@
 在Emacs刚启动，还未加载主要配置文件时的配置文件。
 
 #+BEGIN_SRC emacs-lisp
-;;; early-init.el --- Emacs pre-initialization config -*- lexical-binding: t -*-
-;;; Commentary:
+  ;;; early-init.el --- Emacs pre-initialization config -*- lexical-binding: t -*-
+  ;;; Commentary:
 
-;;; Code:
+  ;;; Code:
 
-;; 设置垃圾回收参数
+  ;; 设置垃圾回收参数
 (setq gc-cons-threshold most-positive-fixnum)
 (setq gc-cons-percentage 0.6)
 
@@ -46,8 +46,8 @@
 (setq comp-deferred-compilation nil)
 
 (provide 'early-init)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; early-init.el ends here
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;; early-init.el ends here
 #+END_SRC
 
 * init.el
@@ -72,12 +72,12 @@
 #+begin_src emacs-lisp
 (require 'package)
 (setq package-archives
-	  '(("melpa-stable" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/stable-melpa/")
-        ("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
-	    ("gnu"    . "https://mirrors.ustc.edu.cn/elpa/gnu/")
-        ("gnu-devel" . "https://mirrors.ustc.edu.cn/elpa/gnu-devel/")
-        ("nognu-devel" . "https://mirrors.ustc.edu.cn/elpa/nongnu-devel/")
-	    ("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/")))
+      '(("melpa-stable" . "https://mirrors.ustc.edu.cn/elpa/stable-melpa/")
+	("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
+	("gnu"    . "https://mirrors.ustc.edu.cn/elpa/gnu/")
+	("gnu-devel" . "https://mirrors.ustc.edu.cn/elpa/gnu-devel/")
+	("nognu-devel" . "https://mirrors.ustc.edu.cn/elpa/nongnu-devel/")
+	("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/")))
 
 (package-initialize)
 #+end_src
@@ -131,10 +131,6 @@
   :ensure t)
 #+END_SRC
 
-** auto-package-update
-#+BEGIN_SRC emacs-lisp
-(use-package auto-package-update)
-#+END_SRC
 ** find-config
 #+BEGIN_SRC emacs-lisp
 (defun open-custom-post-file()
@@ -154,15 +150,13 @@
   ;; 加载各模块化配置
   ;; 不要在`*message*'缓冲区显示加载模块化配置的信息
   (with-temp-message ""
+    (require 'init-base)                  ; 基础设置
     (require 'init-ui)                    ; UI交互
-    (require 'init-edit)                  ; 编辑行为
-    (require 'init-org)                   ; org相关设置
-    (require 'init-completion)            ; 补全系统
-    (require 'init-tools)                 ; 相关工具
-    (require 'init-base)                  ; 一些基本配置
-    (require 'init-shell)                 ;shell设置
-    (require 'init-note)                  ; 写作相关配置
-    (require 'init-language)              ; 编程语言设置
+    (require 'init-edit)                  ; 编辑设置
+    (require 'init-org)                   ; org配置
+    (require 'init-complete)              ; 补全设置
+    (require 'init-tools)                 ; 常用工具
+    (require 'init-language)              ; 编程语言
     (require 'init-hugo)                  ; 发布博客设置
     )
 #+END_SRC
@@ -175,202 +169,22 @@
 ;;; init.el ends here
 #+END_SRC
 
-* init-ui.el
+* init-base.el
 :PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-ui.el :mkdirp yes
+:HEADER-ARGS: :tangle lisp/init-base.el :mkdirp yes
 :END:
+基础设置
 
-** init-ui.el 文件头
+** init-base.el文件头
 #+BEGIN_SRC emacs-lisp
-;;; init-ui.el --- UI settings -*- lexical-binding: t -*-
+;;; init-base.el -- hugo settings -*-  lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
-
 #+END_SRC
 
-** ef主题
-
-[[https://protesilaos.com/emacs/ef-themes][ef themes]] 是我非常喜欢的一个主题包。
-
+** 基本设置
 #+BEGIN_SRC emacs-lisp
-(use-package ef-themes
-  :ensure t
-  :bind (
-         ( "C-c t" . ef-themes-toggle)
-         ("C-c e r" . ef-themes-load-random)
-         )
-  :init
-  ;; set two specific themes and switch between them
-  (setq ef-themes-to-toggle '(ef-summer ef-winter))
-  ;; set org headings and function syntax
-  (setq ef-themes-headings
-        '((0 . (bold 1))
-          (1 . (bold 1))
-          (2 . (rainbow bold 1))
-          (3 . (rainbow bold 1))
-          (4 . (rainbow bold 1))
-          (t . (rainbow bold 1))))
-  (setq ef-themes-region '(intense no-extend neutral))
-  ;; Disable all other themes to avoid awkward blending:
-  (mapc #'disable-theme custom-enabled-themes)
-
-  ;; Load the theme of choice:
-  ;; The themes we provide are recorded in the `ef-themes-dark-themes',
-  ;; `ef-themes-light-themes'.
-  
-  ;; 如果你不喜欢随机主题，也可以直接固定选择一个主题，如下：
-  (ef-themes-select 'ef-summer)
-
-  ;; 随机挑选一款主题，如果是命令行打开Emacs，则随机挑选一款黑色主题
-  ;; (if (display-graphic-p)
-  ;;     (ef-themes-load-random)
-  ;;   (ef-themes-load-random 'dark))
-  )
-#+END_SRC
-
-** 字体设置
-
-[[https://protesilaos.com/emacs/fontaine][fontaine]] 插件可以根据需要高度定制字体。
-
-#+BEGIN_QUOTE
-这篇文章可以作为字体设置的参考：
-[[http://xahlee.info/emacs/emacs/emacs_list_and_set_font.html]]
-#+END_QUOTE
-
-#+CAPTION: 测试中英文字体对齐
-#+NAME: 测试中英文字体对齐
-| 中文 |   |
-| abcd |   |
-
-#+BEGIN_SRC emacs-lisp
-(use-package fontaine
-  :ensure t
-  :when (display-graphic-p)
-  ;; :hook (kill-emacs . fontaine-store-latest-preset)
-  :config
-  (setq fontaine-latest-state-file
-        (locate-user-emacs-file "etc/fontaine-latest-state.eld"))
-  (setq fontaine-presets
-        '((regular
-           :default-height 140
-           :default-weight regular
-           :fixed-pitch-height 1.0
-           :variable-pitch-height 1.0
-           )
-          (large
-           :default-height 180
-           :default-weight normal
-           :fixed-pitch-height 1.0
-           :variable-pitch-height 1.05
-           )
-          (t
-           :default-family "Source Code Pro"
-           :fixed-pitch-family "Source Code Pro"
-           :variable-pitch-family "Source Code Pro"
-           :italic-family "Source Code Pro"
-           :variable-pitch-weight normal
-           :bold-weight normal
-           :italic-slant italic
-           :line-spacing 0.1)
-          ))
-  ;; (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
-  (fontaine-set-preset 'regular)
-
-  ;; set emoji font
-  (set-fontset-font
-   t
-   (if (version< emacs-version "28.1")
-       '(#x1f300 . #x1fad0)
-     'emoji)
-   (cond
-    ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
-    ((member "Symbola" (font-family-list)) "Symbola")
-    ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
-    ((member "Segoe UI Emoji" (font-family-list)) "Segoe UI Emoji")
-    ))
-
-  ;; set Chinese font
-  (dolist (charset '(kana han symbol cjk-misc bopomofo))
-    (set-fontset-font
-     (frame-parameter nil 'font)
-     charset
-     (font-spec :family
-                (cond
-                 ((eq system-type 'darwin)
-                  (cond
-                   ((member "Sarasa Mono SC Nerd" (font-family-list)) "Sarasa Mono SC Nerd")
-                   ((member "PingFang SC" (font-family-list)) "PingFang SC")
-                   ((member "WenQuanYi Zen Hei" (font-family-list)) "WenQuanYi Zen Hei")
-                   ))
-                 ((eq system-type 'gnu/linux)
-                  (cond
-                   ((member "Sarasa Mono SC Nerd" (font-family-list)) "Sarasa Mono SC Nerd")
-                   ((member "WenQuanYi Zen Hei" (font-family-list)) "WenQuanYi Zen Hei")
-                   ))
-                 (t
-                  (cond
-                   ((member "Sarasa Mono SC Nerd" (font-family-list)) "Sarasa Mono SC Nerd")
-                   ((member "Microsoft YaHei" (font-family-list)) "Microsoft YaHei")
-                   )))
-                )))
-
-  ;; set Chinese font scale
-  (setq face-font-rescale-alist `(
-                                  ("Symbola"             . 1.3)
-                                  ("WenQuanYi Zen Hei"   . 1.2)
-                                  ("Sarasa Mono SC Nerd" . 1.2)
-                                  ("PingFang SC"         . 1.16)
-                                  ("Lantinghei SC"       . 1.16)
-                                  ("Kaiti SC"            . 1.16)
-                                  ("Yuanti SC"           . 1.16)
-                                  ))
-  )
-
-
-(defun set-emacsclient-font ()
-  "Set the font for Emacs client frames."
-  (let ((chinese-font "WenQuanYi Zen Hei")   ; 设置中文字体名称
-        (english-font "Source Code Pro")        ; 设置英文字体名称
-        (font-size 18)                         ; 设置字体大小
-        (chinese-font-scale 1.2))               ; 设置中文字体缩放比例
-    (set-face-attribute 'default nil :family english-font :height (* font-size 10))
-    (set-fontset-font t 'han (font-spec :family chinese-font))
-    (setq face-font-rescale-alist `(
-                                     ("WenQuanYi Zen Hei"   . 1.2)
-                                    ))
-    )
-  )
-
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (select-frame frame)
-            (when (window-system frame)
-              (set-emacsclient-font))))
-#+END_SRC
-
-** 窗口设置
-*** 调整启动窗口大小
-在Mac下，我的默认启动窗口大小
-#+BEGIN_SRC emacs-lisp
-;; 设置窗口大小，仅仅在图形界面需要设置
-(when (display-graphic-p)
-  (let ((top    0)                                     ; 顶不留空
-        (left   (/ (x-display-pixel-width) 10))        ; 左边空10%
-        (height (round (* 0.8                          ; 窗体高度为0.8倍的显示高度
-                          (/ (x-display-pixel-height)
-                             (frame-char-height))))))
-    (let ((width  (round (* 2.5 height))))             ; 窗体宽度为2.5倍高度
-      (setq default-frame-alist nil)
-      (add-to-list 'default-frame-alist (cons 'top top))
-      (add-to-list 'default-frame-alist (cons 'left left))
-      (add-to-list 'default-frame-alist (cons 'height height))
-      (add-to-list 'default-frame-alist (cons 'width width)))))
-#+END_SRC
-
-** 其他UI零散设置项
-
-#+begin_src emacs-lisp
 ;; 禁用一些GUI特性
 (setq use-dialog-box nil)               ; 鼠标操作不使用对话框
 (setq inhibit-default-init t)           ; 不加载 `default' 库
@@ -478,315 +292,99 @@
 (put 'list-timers 'disabled nil)
 (put 'list-threads 'disabled nil)
 
-;; 在命令行里支持鼠标
+;; (that uses mouse-select/middle-button-click)
+(setq x-select-enable-clipboard t)
+
+;; If emacs is run in a terminal, the clipboard- functions have no
+;; effect. Instead, we use of xsel, see
+;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
+;; program for getting and setting the contents of the X selection"
+(unless window-system
+ (when (getenv "DISPLAY")
+  ;; Callback for when user cuts
+  (defun xsel-cut-function (text &optional push)
+    ;; Insert text to temp-buffer, and "send" content to xsel stdin
+    (with-temp-buffer
+      (insert text)
+      ;; I prefer using the "clipboard" selection (the one the
+      ;; typically is used by c-c/c-v) before the primary selection
+      ;; (that uses mouse-select/middle-button-click)
+      (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
+  ;; Call back for when user pastes
+  (defun xsel-paste-function()
+    ;; Find out what is current selection by xsel. If it is different
+    ;; from the top of the kill-ring (car kill-ring), then return
+    ;; it. Else, nil is returned, so whatever is in the top of the
+    ;; kill-ring will be used.
+    (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+      (unless (string= (car kill-ring) xsel-output)
+	xsel-output )))
+  ;; Attach callbacks to hooks
+  (setq interprogram-cut-function 'xsel-cut-function)
+  (setq interprogram-paste-function 'xsel-paste-function)
+  ;; Idea from
+  ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
+  ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
+ ))
+
+
+;; 启用xterm-mouse-mode以支持鼠标选择文本
 (xterm-mouse-mode 1)
+
+;; 启用x-clipboard集成
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;; 退出Emacs时进行确认
 (setq confirm-kill-emacs 'y-or-n-p)
 
 ;; 在模式栏上显示当前光标的列号
 (column-number-mode t)
-#+end_src
+
+#+END_SRC
 
 ** 编码设置
-
-统一使用 UTF-8 编码。
-
-#+begin_src emacs-lisp
-;; 配置所有的编码为UTF-8，参考：
-;; https://thraxys.wordpress.com/2016/01/13/utf-8-in-emacs-everywhere-forever/
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-language-environment 'utf-8)
-(set-clipboard-coding-system 'utf-8)
-(set-file-name-coding-system 'utf-8)
-(set-buffer-file-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(modify-coding-system-alist 'process "*" 'utf-8)
-(when (display-graphic-p)
-  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-#+end_src
-
-** 模式栏设置
-*** doom-modeline插件
-
-[[https://github.com/seagle0128/doom-modeline][doom-modeline]] 是一个模式栏美化插件。
-
-#+begin_src emacs-lisp
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode)
-  :custom
-  (doom-modeline-irc nil)
-  (doom-modeline-mu4e nil)
-  (doom-modeline-gnus nil)
-  (doom-modeline-github nil)
-  (doom-modeline-buffer-file-name-style 'truncate-upto-root) ; : auto
-  (doom-modeline-persp-name nil)
-  (doom-modeline-unicode-fallback t)
-  (doom-modeline-enable-word-count nil))
-#+end_src
-
-*** minions插件
-[[https://github.com/tarsius/minions][minions]] 插件能让模式栏变得清爽，将次要模式隐藏起来。
-
 #+BEGIN_SRC emacs-lisp
-(use-package minions
-  :ensure t
-  :hook (after-init . minions-mode))
-#+END_SRC
-
-*** keycast按键展示
-[[https://github.com/tarsius/keycast][keycast mode]] 插件可以在模式栏上展示所有的按键，以及对应的函数。
-
-#+BEGIN_SRC emacs-lisp
-(use-package keycast
-  :ensure t
-  :hook (after-init . keycast-mode)
-  :config
-  ;; set for doom-modeline support
-  ;; With the latest change 72d9add, mode-line-keycast needs to be modified to keycast-mode-line.
-  (define-minor-mode keycast-mode
-    "Show current command and its key binding in the mode line (fix for use with doom-mode-line)."
-    :global t
-    (if keycast-mode
-        (progn
-          (add-hook 'pre-command-hook 'keycast--update t)
-          (add-to-list 'global-mode-string '("" keycast-mode-line "  ")))
-      (remove-hook 'pre-command-hook 'keycast--update)
-      (setq global-mode-string (delete '("" keycast-mode-line "  ") global-mode-string))
-      ))
-
-  (dolist (input '(self-insert-command
-                   org-self-insert-command))
-    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
-
-  (dolist (event '(mouse-event-p
-                   mouse-movement-p
-                   mwheel-scroll))
-    (add-to-list 'keycast-substitute-alist `(,event nil)))
-
-  (setq keycast-log-format "%-20K%C\n")
-  (setq keycast-log-frame-alist
-        '((minibuffer . nil)))
-  (setq keycast-log-newest-first t)
-  )
-#+END_SRC
-
-** 图标设置
-
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
-  :ensure t
-  :when (display-graphic-p)
-  :commands all-the-icons-install-fonts
-  )
-#+END_SRC
-
-** shackle窗口管理
-
-[[https://depp.brause.cc/shackle/][shackle]] 插件能自定义窗口的弹出方式。
-
-#+BEGIN_SRC emacs-lisp
-(use-package shackle
-  :ensure t
-  :hook (after-init . shackle-mode)
-  :init
-  (setq shackle-lighter "")
-  (setq shackle-select-reused-windows nil) ; default nil
-  (setq shackle-default-alignment 'below)  ; default below
-  (setq shackle-default-size 0.4)          ; default 0.5
-  (setq shackle-rules
-        ;; CONDITION(:regexp)            :select     :inhibit-window-quit   :size+:align|:other     :same|:popup
-        '((compilation-mode              :ignore t)
-          ("\\*Async Shell.*\\*" :regexp t :ignore t)
-          ("\\*corfu.*\\*"       :regexp t :ignore t)
-          (helpful-mode                  :select t                          :size 0.3  :align below :popup t)
-          ("*Messages*"                  :select t                          :size 0.4  :align t     :popup t)
-          ("*Calendar*"                  :select t                          :size 0.3  :align t     :popup t)
-          ("*info*"                      :select t                                                  :same t)
-          (magit-status-mode             :select t   :inhibit-window-quit t                         :same t)
-          (magit-log-mode                :select t   :inhibit-window-quit t                         :same t)
-          ))
-  )
-#+END_SRC
-
-** popper窗口弹出管理
-
-我们通过 [[https://github.com/karthink/popper][popper]] 插件，来控制窗口的弹出行为，与 [[https://depp.brause.cc/shackle/][shackle]] 一起配合使用。
-
-#+BEGIN_SRC emacs-lisp
-(use-package popper
-  :ensure t
-  :bind (("M-`"     . popper-toggle-latest)
-         ("M-<tab>" . popper-cycle)
-         ("M-\\"    . popper-toggle-type)
-         )
-  :init
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "\\*Async Shell Command\\*"
-          help-mode
-          helpful-mode
-          occur-mode
-          pass-view-mode
-          ("\\*corfu\\*" . hide)
-          (compilation-mode . hide)
-          ;; derived from `fundamental-mode' and fewer than 10 lines will be considered a popup
-          (lambda (buf) (with-current-buffer buf
-                          (and (derived-mode-p 'fundamental-mode)
-                               (< (count-lines (point-min) (point-max))
-                                  10))))
-          )
-        )
-  (popper-mode +1)
-  (popper-echo-mode +1)
-  :config
-  ;; group by project.el, projectile, directory or perspective
-  (setq popper-group-function nil)
-  
-  ;; pop in child frame or not
-  (setq popper-display-function #'display-buffer-in-child-frame)
-
-  ;; use `shackle.el' to control popup
-  (setq popper-display-control nil)
-  )
-#+END_SRC
-
-** winner窗口管理
-
-内置的 =winner= 插件是一个窗口管理器，可以通过 =winner-undo= 和 =winner-redo= 命令恢复或重做窗口布局。
-
-#+BEGIN_SRC emacs-lisp
-(use-package winner
-  :ensure nil
-  :hook (after-init . winner-mode)
-  :commands (winner-undo winner-redo)
-  :config
-  (setq winner-boring-buffers
-        '("*Completions*"
-          "*Compile-Log*"
-          "*inferior-lisp*"
-          "*Fuzzy Completions*"
-          "*Apropos*"
-          "*Help*"
-          "*cvs*"
-          "*Buffer List*"
-          "*Ibuffer*"
-          "*esh command on file*"))
-  )
-#+END_SRC
-
-** Dashboard
-#+BEGIN_SRC emacs-lisp
-(use-package dashboard
-  :ensure t
-  :init
-  (progn
-    ;; Set the title
-    (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
-    ;; Set the banner
-    (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
-    ;; Content is not centered by default. To center, set
-    (setq dashboard-center-content t)
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-icon-type 'all-the-icons)
-    (setq dashboard-set-file-icons t)
-    )
-  :config
-  (dashboard-setup-startup-hook)
-
-  ;; Customize the dashboard items
-  (setq dashboard-items '((recents . 6)
-                          (bookmarks . 6)
-                          (agenda . 6)))
-  )
+  ;; 配置所有的编码为UTF-8，参考：
+  ;; https://thraxys.wordpress.com/2016/01/13/utf-8-in-emacs-everywhere-forever/
+  (setq locale-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-language-environment 'utf-8)
+  (set-clipboard-coding-system 'utf-8)
+  (set-file-name-coding-system 'utf-8)
+  (set-buffer-file-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (modify-coding-system-alist 'process "*" 'utf-8)
+  (when (display-graphic-p)
+    (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+END_SRC
 
 ** line-number-mode
 #+BEGIN_SRC emacs-lisp
-;; 在编程模式下显示行号
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-;; 在其他模式下禁用行号显示
-(global-display-line-numbers-mode -1)
-#+END_SRC
-
-** ace-window
-#+BEGIN_SRC emacs-lisp
-  (use-package ace-window
-    :ensure t
-    :init
-    (setq aw-keys '(?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
-    :config
-    ;; 增大数字跳转显示的字体大小
-    (custom-set-faces
-     '(aw-leading-char-face ((t (:height 2.0 :foreground "red")))))
-    :bind (("C-x o" . ace-window))
-  )
-
-
-#+END_SRC
-
-** 恢复单屏
-#+BEGIN_SRC emacs-lisp
-(defun my-kill-buffer-and-close-window ()
-  "Kill the current buffer and close its window."
-  (interactive)
-  (let ((current-window (selected-window))
-        (buffer-to-kill (current-buffer)))
-    (kill-buffer buffer-to-kill)
-    (delete-window current-window)))
-
-(global-set-key (kbd "C-x k") 'my-kill-buffer-and-close-window)
-#+END_SRC
-
-** init-ui.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
-(provide 'init-ui)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-ui.el ends here
-#+END_SRC
-
-* init-base.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-base.el :mkdirp yes
-:END:
-
-** init-base.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-base.el --- Basical settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
+  ;; 在编程模式下显示行号
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  ;; 在其他模式下禁用行号显示
+  (global-display-line-numbers-mode -1)
 #+END_SRC
 
 ** no-littering让配置目录简洁
-[[https://github.com/emacscollective/no-littering][no-littering]] 插件将原本放在 =.emacs.d= 目录下的一些配置信息或动态信息，转移到 =etc= 或 =var= 子目录里，让配置目录更加简洁清爽。
-
-#+begin_src emacs-lisp
-(use-package no-littering
-  :ensure t)
-#+end_src
+#+BEGIN_SRC emacs-lisp
+  (use-package no-littering
+    :ensure t)
+#+END_SRC
 
 ** saveplace记住每个文件的光标位置
-自动记住每个文件的最后一次访问的光标位置。
-
-#+begin_src emacs-lisp
-(use-package saveplace
-  :ensure nil
-  :hook (after-init . save-place-mode))
-#+end_src
+#+BEGIN_SRC emacs-lisp
+  (use-package saveplace
+    :ensure nil
+    :hook (after-init . save-place-mode))
+#+END_SRC
 
 ** recentf最近打开的文件历史
-记住最近打开的文件历史。
-
-#+begin_src emacs-lisp
-(use-package recentf
+#+BEGIN_SRC emacs-lisp
+  (use-package recentf
   :ensure nil
   :defines no-littering-etc-directory no-littering-var-directory
   :hook (after-init . recentf-mode)
@@ -821,29 +419,27 @@
                      "^/usr/include/"
                      "/TAGS\\'"
                      "COMMIT_EDITMSG\\'")))
-#+end_src
+#+END_SRC
 
 ** savehist
 #+BEGIN_SRC emacs-lisp
-(use-package savehist
-  :ensure nil
-  :hook (after-init . savehist-mode)
-  :config
-  ;; Allow commands in minibuffers, will affect `dired-do-dired-do-find-regexp-and-replace' command:
-  (setq enable-recursive-minibuffers t)
-  (setq history-length 1000)
-  (setq savehist-additional-variables '(mark-ring
-                                        global-mark-ring
-                                        search-ring
-                                        regexp-search-ring
-                                        extended-command-history))
-  (setq savehist-autosave-interval 300))
+  (use-package savehist
+    :ensure nil
+    :hook (after-init . savehist-mode)
+    :config
+    ;; Allow commands in minibuffers, will affect `dired-do-dired-do-find-regexp-and-replace' command:
+    (setq enable-recursive-minibuffers t)
+    (setq history-length 1000)
+    (setq savehist-additional-variables '(mark-ring
+                                          global-mark-ring
+                                          search-ring
+                                          regexp-search-ring
+                                          extended-command-history))
+    (setq savehist-autosave-interval 300))
 #+END_SRC
 
-** crux系统增强
-[[https://github.com/bbatsov/crux][crux]] 插件提供一系列的增强，如移动增强、删除增强等优化功能。
-
-#+begin_src emacs-lisp
+** crux
+#+BEGIN_SRC emacs-lisp
 (use-package crux
   :ensure t
   :bind (("C-a" . crux-move-beginning-of-line)
@@ -857,109 +453,26 @@
   (crux-with-region-or-buffer untabify)
   (crux-with-region-or-point-to-eol kill-ring-save)
   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
-#+end_src
+#+END_SRC
 
 ** restart-emacs
+
 #+BEGIN_SRC emacs-lisp
-(use-package restart-emacs
+  (use-package restart-emacs
   :ensure t
   :bind
   (("C-c C-x r" . restart-emacs))
   )
 #+END_SRC
-** 个人函数定义
 
-以下是一些个人的函数定义，配置文件的其他部分会用到这些函数。
-
-#+BEGIN_SRC emacs-lisp
-;; 将列表加入到列表
-(defun add-list-to-list (dst src)
-  "Similar to `add-to-list', but accepts a list as 2nd argument"
-  (set dst
-       (append (eval dst) src)))
-#+END_SRC
-** 设置代理
-#+BEGIN_SRC rust
-(defun set-proxy ()
-  "设置代理"
-  (interactive)
-  (setq url-proxy-services
-        '(("http" . "127.0.0.1:7890")
-          ("https" . "127.0.0.1:7890")))
-  (message "代理已设置为 127.0.0.1:7890"))
-
-(set-proxy)
-#+END_SRC
-
-** good-scroll
-#+BEGIN_SRC emacs-lisp
-(use-package good-scroll
-  :ensure t
-  :if window-system          ; 在图形化界面时才使用这个插件
-  :init (good-scroll-mode))
-#+END_SRC
-
-** init-base.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
-(provide 'init-base)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-base.el ends here
-#+END_SRC
-
-* init-edit.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-edit.el :mkdirp yes
-:END:
-
-** init-edit.el 文件头
-
-#+BEGIN_SRC emacs-lisp
-;;; init-edit.el --- Editing settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
-#+END_SRC
-
-** Emacs备份设置
-
-不使用Emacs的自动备份设置。
+** 关闭自动备份
 
 #+BEGIN_SRC emacs-lisp
 (setq make-backup-files nil)                                  ; 不自动备份
 (setq auto-save-default nil)                                  ; 不使用Emacs自带的自动保存
 #+END_SRC
 
-** 解除一些不常用的快捷键
-
-将一些不常用的快捷键解除，防止误操作。
-
-#+BEGIN_SRC emacs-lisp
-;; 解除不常用的快捷键定义
-(global-set-key (kbd "C-z") nil)
-(global-set-key (kbd "s-q") nil)
-(global-set-key (kbd "M-z") nil)
-(global-set-key (kbd "M-m") nil)
-(global-set-key (kbd "C-x C-z") nil)
-(global-set-key [mouse-2] nil)
-#+END_SRC
-
-** delsel选择文本输入时直接替换
-
-Emacs默认选择文本后直接输入，是不会直接删除所选择的文本进行替换的。通过内置的 =delsel= 插件来实现这个行为。
-
-#+begin_src emacs-lisp
-;; Directly modify when selecting text
-(use-package delsel
-  :ensure nil
-  :hook (after-init . delete-selection-mode))
-#+end_src
-
-** 自动重载设置
-
-当我们的文件发生了改变后，我们希望Emacs里打开的永远是最新的文件，这个时候，我们需要对自动重载进行设置，让我们的Emacs在文件发生改变的时候自动重载文件。
-
+** 自动加载
 #+BEGIN_SRC emacs-lisp
 (use-package autorevert
   :ensure nil
@@ -974,143 +487,319 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   (global-auto-revert-non-file-buffers t))
 #+END_SRC
 
-** avy光标移动
-
-[[https://github.com/abo-abo/avy][avy]] 是一个光标移动插件，能快速将光标移动到屏幕上的任意字符，非常强大！
-
-#+begin_src emacs-lisp
-(use-package avy
+** Swiper
+#+BEGIN_SRC emacs-lisp
+(use-package swiper
   :ensure t
-  :bind (("C-." . my/avy-goto-char-timer)
-         ("C-。" . my/avy-goto-char-timer)
-         :map isearch-mode-map
-         ("C-." . avy-isearch))
-  :config
-  ;; Make `avy-goto-char-timer' support pinyin, refer to:
-  ;; https://emacs-china.org/t/avy-avy-goto-char-timer/20900/2
-  (defun my/avy-goto-char-timer (&optional arg)
-    "Make avy-goto-char-timer support pinyin"
-    (interactive "P")
-    (let ((avy-all-windows (if arg
-                               (not avy-all-windows)
-                             avy-all-windows)))
-      (avy-with avy-goto-char-timer
-        (setq avy--old-cands (avy--read-candidates
-                              'pinyinlib-build-regexp-string))
-        (avy-process avy--old-cands))))
-
-  (defun avy-action-kill-whole-line (pt)
-    "avy action: kill the whole line where avy selection is"
-    (save-excursion
-      (goto-char pt)
-      (kill-whole-line))
-    (select-window
-     (cdr
-      (ring-ref avy-ring 0)))
-    t)
-
-  (defun avy-action-copy-whole-line (pt)
-    "avy action: copy the whole line where avy selection is"
-    (save-excursion
-      (goto-char pt)
-      (cl-destructuring-bind (start . end)
-          (bounds-of-thing-at-point 'line)
-        (copy-region-as-kill start end)))
-    (select-window
-     (cdr
-      (ring-ref avy-ring 0)))
-    t)
-
-  (defun avy-action-yank-whole-line (pt)
-    "avy action: copy the line where avy selection is and paste to current point"
-    (avy-action-copy-whole-line pt)
-    (save-excursion (yank))
-    t)
-
-  (defun avy-action-teleport-whole-line (pt)
-    "avy action: kill the line where avy selection is and paste to current point"
-    (avy-action-kill-whole-line pt)
-    (save-excursion (yank)) t)
-
-  (defun avy-action-helpful (pt)
-    "avy action: get helpful information at point"
-    (save-excursion
-      (goto-char pt)
-      (helpful-at-point))
-    ;; (select-window
-    ;;  (cdr (ring-ref avy-ring 0)))
-    t)
-
-  (defun avy-action-mark-to-char (pt)
-    "avy action: mark from current point to avy selection"
-    (activate-mark)
-    (goto-char pt))
-
-  (defun avy-action-flyspell (pt)
-    "avy action: flyspell the word where avy selection is"
-    (save-excursion
-      (goto-char pt)
-      (when (require 'flyspell nil t)
-        (flyspell-correct-wrapper))))
-
-  (defun avy-action-define (pt)
-    "avy action: define the word in dictionary where avy selection is"
-    (save-excursion
-      (goto-char pt)
-      (fanyi-dwim2)))
-
-  (defun avy-action-embark (pt)
-    "avy action: embark where avy selection is"
-    (unwind-protect
-        (save-excursion
-          (goto-char pt)
-          (embark-act))
-      (select-window
-       (cdr (ring-ref avy-ring 0))))
-    t)
-
-  (defun avy-action-google (pt)
-    "avy action: google the avy selection when it is a word or browse it when it is a link"
-    (save-excursion
-      (goto-char pt)
-      (my/search-or-browse)))
-
-  (setf (alist-get ?k avy-dispatch-alist) 'avy-action-kill-stay
-        (alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
-        (alist-get ?w avy-dispatch-alist) 'avy-action-copy
-        (alist-get ?W avy-dispatch-alist) 'avy-action-copy-whole-line
-        (alist-get ?y avy-dispatch-alist) 'avy-action-yank
-        (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line
-        (alist-get ?t avy-dispatch-alist) 'avy-action-teleport
-        (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line
-        (alist-get ?H avy-dispatch-alist) 'avy-action-helpful
-        (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char
-        (alist-get ?\; avy-dispatch-alist) 'avy-action-flyspell
-        (alist-get ?= avy-dispatch-alist) 'avy-action-define
-        (alist-get ?o avy-dispatch-alist) 'avy-action-embark
-        (alist-get ?G avy-dispatch-alist) 'avy-action-google
-        )
-
-  :custom
-  ;; (avy-case-fold-search t)              ; default is t
-  (avy-timeout-seconds 1.0)
-  (avy-all-windows t)
-  (avy-background t)
-  (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?l ?q ?e ?r ?u ?i ?p ?n))
+  :bind (("C-s" . swiper)
+         )
   )
+#+END_SRC
 
-(ace-pinyin-global-mode +1)
-#+end_src
+
+** init-base.el 文件尾
+#+BEGIN_SRC emacs-lisp
+
+(provide 'init-base)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-base.el ends here
+#+END_SRC
+
+* init-ui.el
+:PROPERTIES:
+:HEADER-ARGS: :tangle lisp/init-ui.el :mkdirp yes
+:END:
+外观设置
+
+** init-ui.el文件头
+#+BEGIN_SRC emacs-lisp
+;;; init-ui.el -- hugo settings -*-  lexical-binding: t -*-
+;;; Commentary:
+
+;;; Code:
+#+END_SRC
+
+** Dashboard
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :init
+    (progn
+      ;; Set the title
+      (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
+      ;; Set the banner
+      (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
+      ;; Content is not centered by default. To center, set
+      (setq dashboard-center-content t)
+      (setq dashboard-set-heading-icons t)
+      (setq dashboard-icon-type 'all-the-icons)
+      (setq dashboard-set-file-icons t)
+      )
+    :config
+    (dashboard-setup-startup-hook)
+
+    ;; Customize the dashboard items
+    (setq dashboard-items '((recents . 6)
+                            (bookmarks . 6)
+                            (agenda . 6)))
+    )
+#+END_SRC
+
+** keycast按键展示
+#+BEGIN_SRC emacs-lisp
+(use-package keycast
+  :ensure t
+  :hook (after-init . keycast-mode)
+  :config
+  ;; set for doom-modeline support
+  ;; With the latest change 72d9add, mode-line-keycast needs to be modified to keycast-mode-line.
+  (define-minor-mode keycast-mode
+    "Show current command and its key binding in the mode line (fix for use with doom-mode-line)."
+    :global t
+    (if keycast-mode
+        (progn
+          (add-hook 'pre-command-hook 'keycast--update t)
+          (add-to-list 'global-mode-string '("" keycast-mode-line "  ")))
+      (remove-hook 'pre-command-hook 'keycast--update)
+      (setq global-mode-string (delete '("" keycast-mode-line "  ") global-mode-string))
+      ))
+
+  (dolist (input '(self-insert-command
+                   org-self-insert-command))
+    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+
+  (dolist (event '(mouse-event-p
+                   mouse-movement-p
+                   mwheel-scroll))
+    (add-to-list 'keycast-substitute-alist `(,event nil)))
+
+  (setq keycast-log-format "%-20K%C\n")
+  (setq keycast-log-frame-alist
+        '((minibuffer . nil)))
+  (setq keycast-log-newest-first t)
+  )
+#+END_SRC
+
+** doom-modelien
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode))
+#+END_SRC
+
+** doom-themes
+#+BEGIN_SRC emacs-lisp
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-one-light t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+#+END_SRC
+
+** font-setting
+#+BEGIN_SRC emacs-lisp
+  (use-package fontaine
+    :ensure t
+    :when (display-graphic-p)
+    ;; :hook (kill-emacs . fontaine-store-latest-preset)
+    :config
+    (setq fontaine-latest-state-file
+	  (locate-user-emacs-file "etc/fontaine-latest-state.eld"))
+    (setq fontaine-presets
+	  '((regular
+	     :default-height 140
+	     :default-weight regular
+	     :fixed-pitch-height 1.0
+	     :variable-pitch-height 1.0
+	     )
+	    (large
+	     :default-height 180
+	     :default-weight normal
+	     :fixed-pitch-height 1.0
+	     :variable-pitch-height 1.05
+	     )
+	    (t
+	     :default-family "Source Code Pro"
+             :fixed-pitch-family "Source Code Pro"
+             :variable-pitch-family "Source Code Pro"
+             :italic-family "Source Code Pro"
+	     :variable-pitch-weight normal
+	     :bold-weight normal
+	     :italic-slant italic
+	     :line-spacing 0.1)
+	    ))
+    ;; (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+    (fontaine-set-preset 'regular)
+
+    ;; set emoji font
+    (set-fontset-font
+     t
+     (if (version< emacs-version "28.2")
+	 '(#x1f300 . #x1fad0)
+       'emoji)
+     (cond
+      ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
+      ((member "Symbola" (font-family-list)) "Symbola")
+      ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
+      ((member "Segoe UI Emoji" (font-family-list)) "Segoe UI Emoji")
+      ))
+
+     ;; set Chinese font
+    (dolist (charset '(kana han symbol cjk-misc bopomofo))
+      (set-fontset-font
+       (frame-parameter nil 'font)
+       charset
+       (font-spec :family
+		  (cond
+		   ((eq system-type 'darwin)
+		    (cond
+		     ((member "Sarasa Term SC Nerd" (font-family-list)) "Sarasa Term SC Nerd")
+		     ((member "PingFang SC" (font-family-list)) "PingFang SC")
+		     ((member "WenQuanYi Zen Hei" (font-family-list)) "WenQuanYi Zen Hei")
+		     ((member "Microsoft YaHei" (font-family-list)) "Microsoft YaHei")
+		     ))
+		   ((eq system-type 'gnu/linux)
+		    (cond
+		     ((member "Sarasa Term SC Nerd" (font-family-list)) "Sarasa Term SC Nerd")
+		     ((member "WenQuanYi Zen Hei" (font-family-list)) "WenQuanYi Zen Hei")		     
+		     ))
+		   (t
+		    (cond
+		     ((member "Sarasa Term SC Nerd" (font-family-list)) "Sarasa Term SC Nerd")
+		     ((member "Microsoft YaHei" (font-family-list)) "Microsoft YaHei")
+		     )))
+		  )))
+    
+    ;; set Chinese font scale
+ (setq face-font-rescale-alist `(
+                                  ("Symbola"             . 1.3)
+                                  ("Microsoft YaHei"     . 1.2)
+                                  ("WenQuanYi Zen Hei"   . 1.2)
+                                  ("Sarasa Term SC Nerd" . 1.2)
+                                  ("PingFang SC"         . 1.16)
+                                  ("Lantinghei SC"       . 1.16)
+                                  ("Kaiti SC"            . 1.16)
+                                  ("Yuanti SC"           . 1.16)
+                                  ("Apple Color Emoji"   . 0.91)
+                                  ))
+    
+ )
+
+(defun set-emacsclient-font ()
+  "Set the font for Emacs client frames."
+  (let ((chinese-font "Sarasa Term SC Nerd")   ; 设置中文字体名称
+        (english-font "Source Code Pro")        ; 设置英文字体名称
+        (font-size 18)                         ; 设置字体大小
+        (chinese-font-scale 1.2))               ; 设置中文字体缩放比例
+    (set-face-attribute 'default nil :family english-font :height (* font-size 10))
+    (set-fontset-font t 'han (font-spec :family chinese-font))
+    (setq face-font-rescale-alist `((,chinese-font . ,chinese-font-scale)))))
+
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (select-frame frame)
+            (when (window-system frame)
+              (set-emacsclient-font))))
+
+(set-emacsclient-font) ; 在非 GUI 模式下设置默认字体
+
+
+
+#+END_SRC
+
+#+CAPTION: 测试中英文字体对齐
+#+NAME: 测试中英文字体对齐
+| 中文 |   |
+| abcd |   |
+
+** nerd-icons
+#+BEGIN_SRC emacs-lisp
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
+#+END_SRC
+
+** init-ui.el 文件尾
+#+BEGIN_SRC emacs-lisp
+
+(provide 'init-ui)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-ui.el ends here
+#+END_SRC
+
+* init-edit.el
+:PROPERTIES:
+:HEADER-ARGS: :tangle lisp/init-edit.el :mkdirp yes
+:END:
+编辑设置
+
+** init-edit.el文件头
+#+BEGIN_SRC emacs-lisp
+;;; init-edit.el -- hugo settings -*-  lexical-binding: t -*-
+;;; Commentary:
+
+;;; Code:
+#+END_SRC
+
+** ace-window
+#+BEGIN_SRC emacs-lisp
+    (use-package ace-window
+    :ensure t
+    :init
+    (setq aw-keys '(?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
+    :config
+    ;; 增大数字跳转显示的字体大小
+    (custom-set-faces
+     '(aw-leading-char-face ((t (:height 2.0 :foreground "red")))))
+    :bind (("C-x o" . ace-window))
+    )
+  
+#+END_SRC
+
+** 恢复单屏
+#+BEGIN_SRC emacs-lisp
+(defun my-kill-buffer-and-close-window ()
+  "Kill the current buffer and close its window."
+  (interactive)
+  (let ((current-window (selected-window))
+        (buffer-to-kill (current-buffer)))
+    (kill-buffer buffer-to-kill)
+    (delete-window current-window)))
+
+(global-set-key (kbd "C-x k") 'my-kill-buffer-and-close-window)
+#+END_SRC
+
+** good-scroll
+#+BEGIN_SRC emacs-lisp
+(use-package good-scroll
+  :ensure t
+  :if window-system          ; 在图形化界面时才使用这个插件
+  :init (good-scroll-mode))
+#+END_SRC
 
 ** multiple-cursors多光标编辑
-[[https://github.com/magnars/multiple-cursors.el][multiple-cursors]] 插件能让Emacs实现多光标编辑和移动。
-
 #+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
   :ensure t
   :bind-keymap ("C-c o" . multiple-cursors-map)
   :bind (("C-`"   . mc/mark-next-like-this)
-         ("C-\\"  . mc/unmark-next-like-this)
+         ;;("C-\\"  . mc/unmark-next-like-this)
          :map multiple-cursors-map
               ("SPC" . mc/edit-lines)
               (">"   . mc/mark-next-like-this)
@@ -1128,11 +817,142 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   )
 #+END_SRC
 
-** init-edit.el 文件尾
-
+** delsel选择文本输入时直接替换
 #+BEGIN_SRC emacs-lisp
-;; (message "init-base configuration: %.2fs"
-;;          (float-time (time-subtract (current-time) my/init-base-start-time)))
+;; Directly modify when selecting text
+(use-package delsel
+  :ensure nil
+  :hook (after-init . delete-selection-mode))
+#+END_SRC
+
+** avy光标移动
+#+BEGIN_SRC emacs-lisp
+    (use-package avy
+      :ensure t
+      :bind (("C-." . my/avy-goto-char-timer)
+	     ("C-。" . my/avy-goto-char-timer)
+	     :map isearch-mode-map
+	     ("C-." . avy-isearch))
+      :config
+      ;; Make `avy-goto-char-timer' support pinyin, refer to:
+      ;; https://emacs-china.org/t/avy-avy-goto-char-timer/20900/2
+      (defun my/avy-goto-char-timer (&optional arg)
+	"Make avy-goto-char-timer support pinyin"
+	(interactive "P")
+	(let ((avy-all-windows (if arg
+				   (not avy-all-windows)
+				 avy-all-windows)))
+	  (avy-with avy-goto-char-timer
+	    (setq avy--old-cands (avy--read-candidates
+				  'pinyinlib-build-regexp-string))
+	    (avy-process avy--old-cands))))
+
+      (defun avy-action-kill-whole-line (pt)
+	"avy action: kill the whole line where avy selection is"
+	(save-excursion
+	  (goto-char pt)
+	  (kill-whole-line))
+	(select-window
+	 (cdr
+	  (ring-ref avy-ring 0)))
+	t)
+
+      (defun avy-action-copy-whole-line (pt)
+	"avy action: copy the whole line where avy selection is"
+	(save-excursion
+	  (goto-char pt)
+	  (cl-destructuring-bind (start . end)
+	      (bounds-of-thing-at-point 'line)
+	    (copy-region-as-kill start end)))
+	(select-window
+	 (cdr
+	  (ring-ref avy-ring 0)))
+	t)
+
+      (defun avy-action-yank-whole-line (pt)
+	"avy action: copy the line where avy selection is and paste to current point"
+	(avy-action-copy-whole-line pt)
+	(save-excursion (yank))
+	t)
+
+      (defun avy-action-teleport-whole-line (pt)
+	"avy action: kill the line where avy selection is and paste to current point"
+	(avy-action-kill-whole-line pt)
+	(save-excursion (yank)) t)
+
+      (defun avy-action-helpful (pt)
+	"avy action: get helpful information at point"
+	(save-excursion
+	  (goto-char pt)
+	  (helpful-at-point))
+	;; (select-window
+	;;  (cdr (ring-ref avy-ring 0)))
+	t)
+
+      (defun avy-action-mark-to-char (pt)
+	"avy action: mark from current point to avy selection"
+	(activate-mark)
+	(goto-char pt))
+
+      (defun avy-action-flyspell (pt)
+	"avy action: flyspell the word where avy selection is"
+	(save-excursion
+	  (goto-char pt)
+	  (when (require 'flyspell nil t)
+	    (flyspell-correct-wrapper))))
+
+      (defun avy-action-define (pt)
+	"avy action: define the word in dictionary where avy selection is"
+	(save-excursion
+	  (goto-char pt)
+	  (fanyi-dwim2)))
+
+      (defun avy-action-embark (pt)
+	"avy action: embark where avy selection is"
+	(unwind-protect
+	    (save-excursion
+	      (goto-char pt)
+	      (embark-act))
+	  (select-window
+	   (cdr (ring-ref avy-ring 0))))
+	t)
+
+      (defun avy-action-google (pt)
+	"avy action: google the avy selection when it is a word or browse it when it is a link"
+	(save-excursion
+	  (goto-char pt)
+	  (my/search-or-browse)))
+
+      (setf (alist-get ?k avy-dispatch-alist) 'avy-action-kill-stay
+	    (alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
+	    (alist-get ?w avy-dispatch-alist) 'avy-action-copy
+	    (alist-get ?W avy-dispatch-alist) 'avy-action-copy-whole-line
+	    (alist-get ?y avy-dispatch-alist) 'avy-action-yank
+	    (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line
+	    (alist-get ?t avy-dispatch-alist) 'avy-action-teleport
+	    (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line
+	    (alist-get ?H avy-dispatch-alist) 'avy-action-helpful
+	    (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char
+	    (alist-get ?\; avy-dispatch-alist) 'avy-action-flyspell
+	    (alist-get ?= avy-dispatch-alist) 'avy-action-define
+	    (alist-get ?o avy-dispatch-alist) 'avy-action-embark
+	    (alist-get ?G avy-dispatch-alist) 'avy-action-google
+	    )
+
+      :custom
+      ;; (avy-case-fold-search t)              ; default is t
+      (avy-timeout-seconds 1.0)
+      (avy-all-windows t)
+      (avy-background t)
+      (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?l ?q ?e ?r ?u ?i ?p ?n))
+      )
+
+  (use-package ace-pinyin)
+
+  (ace-pinyin-global-mode +1)
+#+END_SRC
+** init-edit.el 文件尾
+#+BEGIN_SRC emacs-lisp
 
 (provide 'init-edit)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1160,7 +980,7 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   :ensure nil
   :mode ("\\.org\\'" . org-mode)
   :hook ((org-mode . visual-line-mode)
-		 (org-mode . my/org-prettify-symbols))
+	 (org-mode . my/org-prettify-symbols))
   :commands (org-find-exact-headline-in-buffer org-set-tags)
   :custom-face
   ;; 设置Org mode标题以及每级标题行的大小
@@ -1174,57 +994,55 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   (org-level-7 ((t (:height 1.0 :weight bold))))
   (org-level-8 ((t (:height 1.0 :weight bold))))
   (org-level-9 ((t (:height 1.0 :weight bold))))
-  ;; 设置代码块用上下边线包裹
-  (org-block-begin-line ((t (:underline t :background unspecified))))
-  (org-block-end-line ((t (:overline t :underline nil :background unspecified))))
   :config
   ;; ================================
   ;; 在org mode里美化字符串
   ;; ================================
   (defun my/org-prettify-symbols ()
-	(setq prettify-symbols-alist
-		  (mapcan (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
-				  '(
-					("[ ]"              . 9744)         ; ☐
-					("[X]"              . 9745)         ; ☑
-					("[-]"              . 8863)         ; ⊟
-					("#+begin_src"      . 9998)         ; ✎
-					("#+end_src"        . 9633)         ; □
-                    ("#+begin_ai"       . 9883)         ; ⚛
-                    ("#+end_ai"         . 9998)         ; ✎
-					("#+begin_example"  . 129083)       ; 🌛
-					("#+end_example"    . 129081)       ; 🌙
-					("#+results:"       . 9776)         ; ☰
-					("#+attr_latex:"    . "🄛")
-					("#+attr_html:"     . "🄗")
-					("#+attr_org:"      . "🄞")
-					("#+name:"          . "🄝")         ; 127261
-					("#+caption:"       . "🄒")         ; 127250
-					("#+date:"          . "📅")         ; 128197
-					("#+author:"        . "💁")         ; 128100
-					("#+setupfile:"     . 128221)       ; 📝
-					("#+email:"         . 128231)       ; 📧
-					("#+startup:"       . 10034)        ; ✲
-					("#+options:"       . 9965)         ; ⛭
-					("#+title:"         . 10162)        ; ➲
-					("#+subtitle:"      . 11146)        ; ⮊
-					("#+downloaded:"    . 8650)         ; ⇊
-					("#+language:"      . 128441)       ; 🖹
-					("#+begin_quote"    . 187)          ; »
-					("#+end_quote"      . 171)          ; «
+    (interactive)
+    (setq prettify-symbols-alist
+	  (mapcan (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
+		  '(
+		    ("[ ]"              . 9744)         ; ☐
+		    ("[X]"              . 9745)         ; ☑
+		    ("[-]"              . 8863)         ; ⊟
+		    ("#+begin_src"      . 9998)         ; ✎
+		    ("#+end_src"        . 9633)         ; □
+		    ("#+begin_ai"       . 9883)         ; ⚛
+		    ("#+end_ai"         . 9998)         ; ✎
+		    ("#+begin_example"  . 129083)       ; 🌛
+		    ("#+end_example"    . 129081)       ; 🌙
+		    ("#+results:"       . 9776)         ; ☰
+		    ("#+attr_latex:"    . "🄛")
+		    ("#+attr_html:"     . "🄗")
+		    ("#+attr_org:"      . "🄞")
+		    ("#+name:"          . "🄝")         ; 127261
+		    ("#+caption:"       . "🄒")         ; 127250
+		    ("#+date:"          . "📅")         ; 128197
+		    ("#+author:"        . "💁")         ; 128100
+		    ("#+setupfile:"     . 128221)       ; 📝
+		    ("#+email:"         . 128231)       ; 📧
+		    ("#+startup:"       . 10034)        ; ✲
+		    ("#+options:"       . 9965)         ; ⛭
+		    ("#+title:"         . 10162)        ; ➲
+		    ("#+subtitle:"      . 11146)        ; ⮊
+		    ("#+downloaded:"    . 8650)         ; ⇊
+		    ("#+language:"      . 128441)       ; 🖹
+		    ("#+begin_quote"    . 187)          ; »
+		    ("#+end_quote"      . 171)          ; «
                     ("#+begin_results"  . 8943)         ; ⋯
                     ("#+end_results"    . 8943)         ; ⋯
-					)))
+		    )))
     (setq prettify-symbols-unprettify-at-point t)
-	(prettify-symbols-mode 1))
+    (prettify-symbols-mode 1))
 
   ;; 提升latex预览的图片清晰度
   (plist-put org-format-latex-options :scale 1.8)
 
   ;; 设置标题行之间总是有空格；列表之间根据情况自动加空格
   (setq org-blank-before-new-entry '((heading . t)
-									 (plain-list-item . auto)
-									 ))
+				     (plain-list-item . auto)
+				     ))
 
   (setq org-clock-sound "~/.emacs.d/ding.wav")
 
@@ -1232,17 +1050,17 @@ Emacs默认选择文本后直接输入，是不会直接删除所选择的文本
   ;; 设置打开Org links的程序
   ;; ======================================
   (defun my-func/open-and-play-gif-image (file &optional link)
-	"Open and play GIF image `FILE' in Emacs buffer.
+    "Open and play GIF image `FILE' in Emacs buffer.
 
 Optional for Org-mode file: `LINK'."
-	(let ((gif-image (create-image file))
-		  (tmp-buf (get-buffer-create "*Org-mode GIF image animation*")))
-	  (switch-to-buffer tmp-buf)
-	  (erase-buffer)
-	  (insert-image gif-image)
-	  (image-animate gif-image nil t)
-	  (local-set-key (kbd "q") 'bury-buffer)
-	  ))
+    (let ((gif-image (create-image file))
+	  (tmp-buf (get-buffer-create "*Org-mode GIF image animation*")))
+      (switch-to-buffer tmp-buf)
+      (erase-buffer)
+      (insert-image gif-image)
+      (image-animate gif-image nil t)
+      (local-set-key (kbd "q") 'bury-buffer)
+      ))
   (setq org-file-apps '(("\\.png\\'"     . default)
                         (auto-mode       . emacs)
                         (directory       . emacs)
@@ -1302,10 +1120,10 @@ Optional for Org-mode file: `LINK'."
   (org-list-allow-alphabetical t)
   ;; 列表的下一级设置
   (org-list-demote-modify-bullet '(
-								   ("-"  . "+")
+				   ("-"  . "+")
                                    ("+"  . "1.")
-								   ("1." . "a.")
-								   ))
+				   ("1." . "a.")
+				   ))
   ;; 编辑时检查是否在折叠的不可见区域
   (org-fold-catch-invisible-edits 'smart)
   ;; 在当前位置插入新标题行还是在当前标题行后插入，这里设置为当前位置
@@ -1326,18 +1144,18 @@ Optional for Org-mode file: `LINK'."
 
   ;; TOOD的关键词设置，可以设置不同的组
   (org-todo-keywords '((sequence "TODO(t)" "HOLD(h!)" "WIP(i!)" "WAIT(w!)" "|" "DONE(d!)" "CANCELLED(c@/!)")
-					   (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f!)")))
+		       (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f!)")))
   ;; TODO关键词的样式设置
   (org-todo-keyword-faces '(("TODO"       :foreground "#7c7c75" :weight bold)
-							("HOLD"       :foreground "#feb24c" :weight bold)
-							("WIP"        :foreground "#0098dd" :weight bold)
-							("WAIT"       :foreground "#9f7efe" :weight bold)
-							("DONE"       :foreground "#50a14f" :weight bold)
-							("CANCELLED"  :foreground "#ff6480" :weight bold)
-							("REPORT"     :foreground "magenta" :weight bold)
-							("BUG"        :foreground "red"     :weight bold)
-							("KNOWNCAUSE" :foreground "yellow"  :weight bold)
-							("FIXED"      :foreground "green"   :weight bold)))
+			    ("HOLD"       :foreground "#feb24c" :weight bold)
+			    ("WIP"        :foreground "#0098dd" :weight bold)
+			    ("WAIT"       :foreground "#9f7efe" :weight bold)
+			    ("DONE"       :foreground "#50a14f" :weight bold)
+			    ("CANCELLED"  :foreground "#ff6480" :weight bold)
+			    ("REPORT"     :foreground "magenta" :weight bold)
+			    ("BUG"        :foreground "red"     :weight bold)
+			    ("KNOWNCAUSE" :foreground "yellow"  :weight bold)
+			    ("FIXED"      :foreground "green"   :weight bold)))
   ;; 当标题行状态变化时标签同步发生的变化
   ;; Moving a task to CANCELLED adds a CANCELLED tag
   ;; Moving a task to WAIT adds a WAIT tag
@@ -1347,11 +1165,11 @@ Optional for Org-mode file: `LINK'."
   ;; Moving a task to DONE removes WAIT, CANCELLED, and HOLD tags
   (org-todo-state-tags-triggers
    (quote (("CANCELLED" ("CANCELLED" . t))
-		   ("WAIT" ("WAIT" . t))
-		   ("HOLD" ("WAIT") ("HOLD" . t))
-		   (done ("WAIT") ("HOLD"))
-		   ("TODO" ("WAIT") ("CANCELLED") ("HOLD"))
-		   ("DONE" ("WAIT") ("CANCELLED") ("HOLD")))))
+	   ("WAIT" ("WAIT" . t))
+	   ("HOLD" ("WAIT") ("HOLD" . t))
+	   (done ("WAIT") ("HOLD"))
+	   ("TODO" ("WAIT") ("CANCELLED") ("HOLD"))
+	   ("DONE" ("WAIT") ("CANCELLED") ("HOLD")))))
   ;; 使用专家模式选择标题栏状态
   (org-use-fast-todo-selection 'expert)
   ;; 父子标题栏状态有依赖
@@ -1360,13 +1178,13 @@ Optional for Org-mode file: `LINK'."
   (org-enforce-todo-checkbox-dependencies t)
   ;; 优先级样式设置
   (org-priority-faces '((?A :foreground "red")
-						(?B :foreground "orange")
-						(?C :foreground "yellow")))
+			(?B :foreground "orange")
+			(?C :foreground "yellow")))
   ;; 标题行全局属性设置
   (org-global-properties '(("EFFORT_ALL" . "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 7:00 8:00")
-						   ("APPT_WARNTIME_ALL" . "0 5 10 15 20 25 30 45 60")
-						   ("RISK_ALL" . "Low Medium High")
-						   ("STYLE_ALL" . "habit")))
+			   ("APPT_WARNTIME_ALL" . "0 5 10 15 20 25 30 45 60")
+			   ("RISK_ALL" . "Low Medium High")
+			   ("STYLE_ALL" . "habit")))
   ;; Org columns的默认格式
   (org-columns-default-format "%25ITEM %TODO %SCHEDULED %DEADLINE %3PRIORITY %TAGS %CLOCKSUM %EFFORT{:}")
   ;; 当状态从DONE改成其他状态时，移除 CLOSED: [timestamp]
@@ -1411,19 +1229,19 @@ Optional for Org-mode file: `LINK'."
   (org-track-ordered-property-with-tag t)
   ;; 始终存在的的标签
   (org-tag-persistent-alist '(("read"     . ?r)
-							  ("mail"     . ?m)
-							  ("emacs"    . ?e)
-							  ("study"    . ?s)
-							  ("work"     . ?w)))
+			      ("mail"     . ?m)
+			      ("emacs"    . ?e)
+			      ("study"    . ?s)
+			      ("work"     . ?w)))
   ;; 预定义好的标签
   (org-tag-alist '((:startgroup)
-				   ("crypt"    . ?c)
-				   ("linux"    . ?l)
-				   ("apple"    . ?a)
-				   ("noexport" . ?n)
-				   ("ignore"   . ?i)
-				   ("TOC"      . ?t)
-				   (:endgroup)))
+		   ("crypt"    . ?c)
+		   ("linux"    . ?l)
+		   ("apple"    . ?a)
+		   ("noexport" . ?n)
+		   ("ignore"   . ?i)
+		   ("TOC"      . ?t)
+		   (:endgroup)))
 
   ;; 归档设置
   (org-archive-location "%s_archive::datetree/")
@@ -1453,7 +1271,8 @@ Optional for Org-mode file: `LINK'."
   (setq org-modern-table-vertical 2)
   ;; 设置表格横线为0，默认为0.1
   (setq org-modern-table-horizontal 0)
-  ;; 复选框美化
+
+   ;; 复选框美化
   (setq org-modern-checkbox
         '((?X . #("▢✓" 0 2 (composition ((2)))))
           (?- . #("▢–" 0 2 (composition ((2)))))
@@ -1463,14 +1282,14 @@ Optional for Org-mode file: `LINK'."
         '((?- . "•")
           (?+ . "◦")
           (?* . "▹")))
-  ;; 代码块左边加上一条竖边线（需要Org mode顶头，如果启用了 `visual-fill-column-mode' 会很难看）
-  (setq org-modern-block-fringe t)
+  
   ;; 代码块类型美化，我们使用了 `prettify-symbols-mode'
   (setq org-modern-block-name nil)
   ;; #+关键字美化，我们使用了 `prettify-symbols-mode'
   (setq org-modern-keyword nil)
   )
 #+END_SRC
+
 ** org-appear
 #+BEGIN_SRC emacs-lis
 (use-package org-appear
@@ -1796,7 +1615,7 @@ Optional for Org-mode file: `LINK'."
                            ("zhihu"         . "https://zhihu.com/question/"))))
 #+END_SRC
 
-** org mode auto update date
+** org mode自动更新时间
 #+BEGIN_SRC emacs-lisp
 (defun update-org-date ()
   "Update the DATE property to the current date."
@@ -1814,7 +1633,6 @@ Optional for Org-mode file: `LINK'."
 #+END_SRC
 
 ** init-org.el 文件尾
-
 #+BEGIN_SRC emacs-lisp
 
 (provide 'init-org)
@@ -1822,145 +1640,21 @@ Optional for Org-mode file: `LINK'."
 ;;; init-org.el ends here
 #+END_SRC
 
-* init-completion.el
+* init-complete
 :PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-completion.el :mkdirp yes
+:HEADER-ARGS: :tangle lisp/init-complete.el :mkdirp yes
 :END:
+编辑设置
 
-Emacs的补全设置。
-
-** init-completion.el 文件头
+** init-complete.el文件头
 #+BEGIN_SRC emacs-lisp
-;;; init-completion.el --- Completion settings -*- lexical-binding: t -*-
+;;; init-complete.el -- hugo settings -*-  lexical-binding: t -*-
 ;;; Commentary:
 
 ;;; Code:
-
 #+END_SRC
 
-** consult
-#+BEGIN_SRC emacs-lisp
-;; Example configuration for Consult
-(use-package consult
-  ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (;; C-c bindings in `mode-specific-map'
-         ("C-c M-x" . consult-mode-command)
-         ("C-c h" . consult-history)
-         ("C-c k" . consult-kmacro)
-         ("C-c m" . consult-man)
-         ("C-c i" . consult-info)
-         ([remap Info-search] . consult-info)
-         ;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ;; M-g bindings in `goto-map'
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings in `search-map'
-         ("M-s d" . consult-find)
-         ("M-s D" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
-
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
-  ;; The :init configuration is always executed (Not lazy)
-  :init
-
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
-  :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key "M-.")
-  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
-  (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key "M-."
-   :preview-key '(:debounce 0.4 any))
-
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; "C-+"
-
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
-
-  ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-  ;;;; 1. project.el (the default)
-  ;; (setq consult-project-function #'consult--default-project--function)
-  ;;;; 2. vc.el (vc-root-dir)
-  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
-  ;;;; 3. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-  ;;;; 4. projectile.el (projectile-project-root)
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
-  ;;;; 5. No project support
-  ;; (setq consult-project-function nil)
-)
-#+END_SRC
 ** vertico
-为M-x命令行提供补全的功能
 #+BEGIN_SRC emacs-lisp
 (use-package vertico
   :ensure t
@@ -1992,24 +1686,9 @@ folder, otherwise delete a word"
   )
 #+END_SRC
 
-** orderless
-
-[[https://github.com/oantolin/orderless][oderless]] 插件提供一种无序的补全新姿势，将一个搜索的范式变成数个以空格分隔的部分，各部分之间没有顺序，你要做的就是根据记忆输入关键词、空格、关键词。
-
-#+BEGIN_SRC emacs-lisp
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
-#+END_SRC
-
 ** marginalia
 
-[[https://github.com/minad/marginalia][marginalia]] 插件给迷你缓冲区的补全候选条目添加一些提示。
-
 #+BEGIN_SRC emacs-lisp
-;; minibuffer helpful annotations
 (use-package marginalia
   :ensure t
   :hook (after-init . marginalia-mode)
@@ -2017,10 +1696,18 @@ folder, otherwise delete a word"
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 #+END_SRC
 
+** company-mode
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :ensure t
+  :hook (prog-mode . company-mode)
+  :config
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.0))
+#+END_SRC
+
 ** corfu
-
-[[https://github.com/minad/corfu][corfu]] 通过弹窗进行补全。
-
 #+BEGIN_SRC emacs-lisp
 (use-package corfu
   ;; Optional customizations
@@ -2052,7 +1739,6 @@ folder, otherwise delete a word"
 #+END_SRC
 
 ** cape
-[[https://github.com/minad/cape][Cape]] 提供了一系列开箱即用的补全后端，跟corfu联合使用。
 
 #+BEGIN_SRC emacs-lisp
 (use-package cape
@@ -2091,30 +1777,13 @@ folder, otherwise delete a word"
 )
 #+END_SRC
 
-** completion
+** orderless
 #+BEGIN_SRC emacs-lisp
-(use-package company)
-#+END_SRC
-
-** lsp-mode
-#+BEGIN_SRC emacs-lisp
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (XXX-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
-
-;; optionally
-;; (use-package lsp-ui :commands lsp-ui-mode)
-;; if you are helm user
-;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
-;; if you are ivy user
-;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
 ** eglot
@@ -2122,11 +1791,9 @@ folder, otherwise delete a word"
 (use-package eglot)
 #+END_SRC
 
-** yasnippet模板补全
+** yasnippet
 
-[[https://github.com/joaotavora/yasnippet][yasnippet]] 插件是一个非常强大的模板补全系统。
-
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 ;; yasnippet settings
 (use-package yasnippet
   :ensure t
@@ -2148,25 +1815,12 @@ folder, otherwise delete a word"
       (when (and (eq old-point (point))
                  (eq old-tick (buffer-chars-modified-tick)))
         (ignore-errors (yas-next-field))))))
-#+end_src
 
-** all-the-icons-completion补全图标美化
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons-completion
-  :ensure t
-  :hook ((after-init . all-the-icons-completion-mode)
-         (marginalia-mode . all-the-icons-completion-marginalia-setup))
-  )
 #+END_SRC
 
-** smartparens
+** 括号补全
 #+BEGIN_SRC emacs-lisp
-(use-package smartparens
-  :ensure t
-  :config
-  (progn
-    (smartparens-global-mode t))
-  )
+(use-package smartparens)
 
 (use-package smartparens-config
   :ensure smartparens
@@ -2178,364 +1832,29 @@ folder, otherwise delete a word"
 (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 #+END_SRC
 
-** paren高亮匹配的括号
-
-#+BEGIN_SRC emacs-lisp
-(use-package paren
-  :ensure nil
-  :hook (after-init . show-paren-mode)
-  :custom
-  (show-paren-when-point-inside-paren t)
-  (show-paren-when-point-in-periphery t))
-#+END_SRC
-
-** rainbow-delimeters多彩括号
-
-[[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] 插件将多彩显示括号等分隔符。
-
-#+begin_src emacs-lisp
-(use-package rainbow-delimiters
-  :ensure t
-  :hook (prog-mode . rainbow-delimiters-mode))
-#+end_src
-** init-completion.el 文件尾
+** init-complete.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
-(provide 'init-completion)
+(provide 'init-complete)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-completion.el ends here
+;;; init-complete.el ends here
 #+END_SRC
 
-* init-dired.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-dired.el :mkdirp yes
-:END:
-
-Emacs文件管理设置。
-
-** init-dired.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-dired.el --- Dired settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
-#+END_SRC
-
-** diredfl多彩美化
-
-默认的Dired只有两种颜色以区分文件和文件夹，我们可以使用 [[https://github.com/purcell/diredfl][diredfl]] 插件让Dired变得更加多彩一些：
-
-#+BEGIN_SRC emacs-lisp
-(use-package diredfl
-  :ensure t
-  :hook (dired-mode . diredfl-mode))
-#+END_SRC
-
-** all-the-icons-dired图标美化
-
-我们通过 [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]] 插件给Dired添加好看的图标。
-
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons-dired
-  :ensure t
-  :hook (dired-mode . all-the-icons-dired-mode)
-  )
-#+END_SRC
-
-** dirvish文件管理
-
-[[https://github.com/alexluigit/dirvish][dirvish]] 是在Dired基础之上的文件管理增强插件。需要安装 =poppler= 来预览PDF；安装 =ffmpegthumbnailer= 来预览视频。
-
-#+BEGIN_SRC emacs-lisp
-(use-package dirvish
-  :ensure t
-  :hook (dired-mode . dirvish-mode)
-  :config
-  (use-package all-the-icons-dired
-    :ensure t
-    :config
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
-;; (dirvish-override-dired-mode)
-#+END_SRC
-
-** init-dired.el 文件尾
-
-#+BEGIN_SRC emacs-lisp
-(provide 'init-dired)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-dired.el ends here
-#+END_SRC
-
-* Init-shell.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-shell.el :mkdirp yes
-:END:
-
-Emacs里的shell设置。
-
-** init-shell.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-shell.el --- (E)shell settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
-#+END_SRC
-
-** eshell 基本配置
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell
-  :ensure nil
-  :functions eshell/alias
-  :hook ((eshell-mode . (lambda ()
-                          (term-mode-common-init)
-                          ;; Remove cmd args word by word
-                          (modify-syntax-entry ?- "w")
-                          (visual-line-mode 1)
-                          (setenv "PAGER" "cat")))
-         )
-  :config
-  (defun term-mode-common-init ()
-  "The common initialization for term."
-  (setq-local scroll-margin 0)
-  (setq-local truncate-lines t)
-  )
-  ;; 在Emacs里输入vi，直接在buffer里打开文件
-  (defalias 'eshell/vi 'find-file)
-  (defalias 'eshell/vim 'find-file)
-
-  ;; 语法高亮显示
-  (defun eshell/bat (file)
-    "cat FILE with syntax highlight."
-    (with-temp-buffer
-      (insert-file-contents file)
-      (let ((buffer-file-name file))
-        (delay-mode-hooks
-          (set-auto-mode)
-          (font-lock-ensure)))
-      (buffer-string)))
-  (defalias 'eshell/cat 'eshell/bat)
-
-  ;; 交互式进入目录
-  (defun eshell/z ()
-    "cd to directory with completion."
-    (let ((dir (completing-read "Directory: " (ring-elements eshell-last-dir-ring) nil t)))
-      (eshell/cd dir)))
-
-  ;; 查找文件
-  (defun eshell/f (filename &optional dir)
-    "Search for files matching FILENAME in either DIR or the
-current directory."
-    (let ((cmd (concat
-                ;; using find
-                (executable-find "find")
-                " " (or dir ".")
-                " -not -path '*/.git*'"            ; ignore .git directory
-                " -and -not -path 'build'"         ; ignore cmake build directory
-                " -and -not -path '*/eln-cache*'"  ; ignore eln cache
-                " -and -type f -and -iname "
-                "'*" filename "*'")))
-      (eshell-command-result cmd)))
-
-  :custom
-  (eshell-banner-message
-   '(format "%s %s\n"
-            (propertize (format " %s " (string-trim (buffer-name)))
-                        'face 'mode-line-highlight)
-            (propertize (current-time-string)
-                        'face 'font-lock-keyword-face)))
-  (eshell-scroll-to-bottom-on-input 'all)
-  (eshell-scroll-to-bottom-on-output 'all)
-  (eshell-kill-on-exit t)
-  (eshell-kill-processes-on-exit t)
-  ;; Don't record command in history if starts with whitespace
-  (eshell-input-filter 'eshell-input-filter-initial-space)
-  (eshell-error-if-no-glob t)
-  (eshell-glob-case-insensitive t)
-  ;; set scripts
-  (eshell-rc-script (locate-user-emacs-file "etc/eshell/profile"))
-  (eshell-login-script (locate-user-emacs-file "etc/eshell/login"))
-  )
-#+END_SRC
-
-** eshell alias 设置
-
-#+BEGIN_SRC text :tangle etc/eshell/aliases
-alias ff find-file $1
-alias fo find-file-other-window $1
-alias d dired $1
-alias ll ls -alh
-alias l. ls -dh .*
-alias up eshell-up $1
-alias pk eshell-up-peek $1
-alias less view-file $1
-alias more view-file $1
-#+END_SRC
-
-** eshell 里的 C-d
-
-让 =C-d= 更智能：
-
-#+BEGIN_SRC emacs-lisp
-(use-package em-rebind
-  :ensure nil
-  :commands eshell-delchar-or-maybe-eof)
-
-(use-package esh-mode
-  :ensure nil
-  :bind (:map eshell-mode-map
-              ("C-d" . eshell-delchar-or-maybe-eof)
-              ("C-r" . consult-history)
-              ("C-l" . eshell/clear))
-  )
-#+END_SRC
-
-** Eshell 的命令历史
-
-#+BEGIN_SRC emacs-lisp
-(use-package em-hist
-  :ensure nil
-  :defer t
-  :custom
-  (eshell-history-size 1024)
-  (eshell-hist-ignoredups t)
-  (eshell-save-history-on-exit t))
-#+END_SRC
-
-** 有些命令使用 term
-
-有一些命令如 top，我们还是使用 term：
-
-#+BEGIN_SRC emacs-lisp
-;; following commands will run on term instead
-(use-package em-term
-  :ensure nil
-  :defer t
-  :custom
-  (eshell-visual-commands '("top" "htop" "less" "more"))
-  (eshell-visual-subcommands '(("git" "help" "lg" "log" "diff" "show")))
-  (eshell-visual-options '(("git" "--help" "--paginate")))
-  (eshell-destroy-buffer-when-process-dies t))
-#+END_SRC
-
-** eshell-git-prompt 命令行主题
-
-[[https://github.com/xuchunyang/eshell-git-prompt][eshell-git-prompt]] 插件提供了数个好看的 Eshell 命令行主题。
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell-git-prompt
-  :ensure t
-  :after esh-mode
-  :custom-face
-  (eshell-git-prompt-multiline2-dir-face ((t (:foreground "#c09035" :bold t))))
-  :config
-  (eshell-git-prompt-use-theme 'powerline)
-  )
-#+END_SRC
-
-** eshell-syntax-highlighting 语法高亮
-
-[[https://github.com/akreisher/eshell-syntax-highlighting][eshell-syntax-highlighting]] 插件为Eshell提供语法高亮。
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell-syntax-highlighting
-  :after esh-mode
-  :ensure t
-  :hook (eshell-mode . eshell-syntax-highlighting-global-mode)
-  :custom-face
-  (eshell-syntax-highlighting-shell-command-face ((t (:foreground "#7cc77f" :bold t))))
-  )
-#+END_SRC
-
-** esh-autosuggest自动补全
-
-[[https://github.com/dieggsy/esh-autosuggest][esh-autosuggest]] 提供Fish类似的Eshell命令自动补全功能。类似的插件还有 [[https://github.com/emacsmirror/capf-autosuggest][capf-autosuggest]]。
-
-#+BEGIN_QUOTE
-使用 =C-f= 来补全整句，使用 =M-f= 来补全一个词。
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-(use-package esh-autosuggest
-  :ensure t
-  :hook (eshell-mode . esh-autosuggest-mode)
-  )
-#+END_SRC
-
-** eshell-up快速进入父级文件夹
-
-[[https://github.com/peterwvj/eshell-up][eshell-up]] 插件可以快速进入当前文件夹的任何一个父级文件夹。通过 =up= 命令（已经设置了alias）进入当前文件夹的任何一级父目录。
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell-up
-  :ensure t
-  :commands (eshell-up eshell-up-peek)
-  :config
-  ;; to print the matching parent directory before changing to it
-  (setq eshell-up-print-parent-dir t)
-  )
-#+END_SRC
-
-** eshell 快捷键
-#+BEGIN_SRC emacs-lisp
-(defun my-start-eshell-mode ()
-  "启动 eshell 模式并将其放置在上方的窗口中"
-  (interactive)
-  (split-window-below)
-  (other-window 1)
-  (eshell)
-  (enlarge-window (- 15)))
-
-(global-set-key (kbd "<f9>") 'my-start-eshell-mode)
-#+END_SRC
-
-** shell
-#+BEGIN_SRC emacs-lisp
-(defun my-start-shell-mode ()
-  "启动 Shell 模式并将其放置在上方的窗口中"
-  (interactive)
-  (split-window-below)
-  (other-window 1)
-  (term "/bin/zsh")
-  (enlarge-window (- 15)))
-
-(global-set-key (kbd "<f10>") 'my-start-shell-mode)
-#+END_SRC
-
-** init-shell.el 文件尾
-#+BEGIN_SRC emacs-lisp
-
-(provide 'init-shell)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-shell.el ends here
-#+END_SRC
-* init-tools.el
+* init-tools
 :PROPERTIES:
 :HEADER-ARGS: :tangle lisp/init-tools.el :mkdirp yes
 :END:
+工具设置
 
-** init-tools.el 文件头
-
+** init-tools.el文件头
 #+BEGIN_SRC emacs-lisp
-;;; init-tools.el --- Tools settings -*- lexical-binding: t -*-
-;;; Commentary: Useful tools to make Emacs efficient!
+;;; init-tools.el -- hugo settings -*-  lexical-binding: t -*-
+;;; Commentary:
 
 ;;; Code:
-
 #+END_SRC
-
-** cl-lib
-#+BEGIN_SRC emacs-lisp
-(use-package cl-lib)
-#+END_SRC
-
 ** helpful帮助增强
-
-[[https://github.com/Wilfred/helpful][helpful]] 插件提供了帮助增强。
-
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (use-package helpful
   :ensure t
   :commands (helpful-callable helpful-variable helpful-command helpful-key helpful-mode)
@@ -2548,153 +1867,85 @@ alias more view-file $1
          ("C-h F" . describe-face)
          ([remap describe-key] . helpful-key))
   )
-#+end_src
+#+END_SRC
 
 ** which-key快捷键
-
-[[https://github.com/justbur/emacs-which-key][which-key]] 插件将提示快捷键。
-
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
+;; 使用 use-package 来配置 which-key
 (use-package which-key
   :ensure t
-  :hook (after-init . which-key-mode)
   :config
-  (which-key-add-key-based-replacements
-    "C-c !" "flycheck"
-    "C-c @" "hideshow"
-    "C-c i" "ispell"
-    "C-c t" "hl-todo"
-    "C-x a" "abbrev"
-    "C-x n" "narrow"
-    "C-x t" "tab")
-  :custom
-  (which-key-idle-delay 0.7)
-  (which-key-add-column-padding 1))
-#+end_src
+  ;; 启用 which-key
+  (which-key-mode)
 
-** pyvenv-auto
+  ;; 设置 which-key 弹出的延迟时间（可选）
+  (setq which-key-idle-delay 0.5)
 
-#+BEGIN_SRC emacs-lisp
-(use-package pyvenv-auto)
-(setenv "WORKON_HOME" "/home/elon/anaconda3/envs/")
-#+END_SRC
+  ;; 设置 which-key 弹出窗口的位置（可选）
+  ;; 'bottom 表示在 Emacs 窗口底部显示，'right 则在右侧显示
+  (setq which-key-side-window-location 'bottom)
 
-** vc设置
+  ;; 设置 which-key 显示的个数（可选）
+  ;; 默认为 3，如果你希望显示更多键绑定，可以增加此值
+  (setq which-key-show-remaining-keys 5)
 
-Emacs自带的vc设置。
+  ;; 设置 which-key 显示的特殊按键（可选）
+  ;; 这里将 F1-F9、C-x和M-x 的键绑定隐藏起来
+  (setq which-key-special-keys '("SPC" "TAB" "RET" "ESC" "DEL"))
 
-#+BEGIN_SRC emacs-lisp
-(use-package vc
-  :ensure nil
-  :custom
-  ;; 打开链接文件时，不进行追问
-  (vc-follow-symlinks t)
-  (vc-allow-async-revert t)
-  (vc-handled-backends '(Git)))
-#+END_SRC
+  ;; 自定义 which-key 的外观（可选）
+  ;; 以下是设置 which-key 弹出窗口的宽度和颜色
+  (setq which-key-popup-type 'side-window)
+  (setq which-key-side-window-max-width 0.33)
+  (setq which-key-side-window-background nil)
 
-** magit版本管理
+  ;; 设置 which-key 的排除列表（可选）
+  ;; 指定一些模式或命令在 which-key 弹出窗口中不显示
+  ;; 这里的例子将 ivy-mode、dired-mode 和 neotree-mode 排除在外
+  (setq which-key-compute-remaps nil)
+  (setq which-key-compute-prefixes nil)
+  (setq which-key-compute-prefixes-function 'which-key-compute-prefixes-default)
 
-[[https://github.com/magit/magit][magit]] 是Emacs里的另一个杀手级应用！可以直接在Emacs里进行基于git的版本管理。
-
-#+begin_src emacs-lisp
-(use-package magit
-  :ensure t
-  :hook (git-commit-mode . flyspell-mode)
-  :bind (("C-x g"   . magit-status)
-         ("C-x M-g" . magit-dispatch)
-         ("C-c M-g" . magit-file-dispatch))
-  :custom
-  (magit-diff-refine-hunk t)
-  (magit-ediff-dwim-show-on-hunks t))
-#+end_src
-
-** diff-hl高亮显示修改的部分
-
-[[https://github.com/dgutov/diff-hl][diff-hl]] 插件可以在左侧高亮显示相对于远程仓库的修改部分。
-
-#+BEGIN_SRC emacs-lisp
-(use-package diff-hl
-  :ensure t
-  :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
-         (magit-pre-refresh  . diff-hl-magit-pre-refresh)
-         (magit-post-refresh . diff-hl-magit-post-refresh))
-  :init
-  (global-diff-hl-mode t)
-  :config
-  ;; When Emacs runs in terminal, show the indicators in margin instead.
-  (unless (display-graphic-p)
-    (diff-hl-margin-mode)))
-#+END_SRC
-
-** magit-delta增强git diff
-
-[[https://github.com/dandavison/magit-delta][magit-delta]] 插件可以通过 =git-delta= 来更优化的方式显示diff内容（需要提前安装 =brew install git-delta= ）。
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit-delta
-  :ensure t
-  :hook (magit-mode . magit-delta-mode)
-  :config
-  (setq magit-delta-hide-plus-minus-markers nil)
-  )
-#+END_SRC
-
-** swiper(find-help)
-#+BEGIN_SRC emacs-lisp
-(use-package swiper
-  :ensure t
-  :bind (("C-s" . swiper)
-         )
-  )
-#+END_SRC
-
-** eaf
-#+BEGIN_SRC emacs-lisp
-(use-package eaf
-  :load-path "~/emacs-application-framework"
-  :config
-  (require 'eaf-browser)                ; 启用浏览器
-  (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
-  ;; (require 'eaf-video-player)
-  ;; (require 'eaf-terminal)
-  ;; (require 'eaf-file-manager)
-  (require 'eaf-music-player)
-  ;; (require 'eaf-markdown-previewer)
-  ;; (require 'eaf-rss-reader)
-  ;; (require 'eaf-org-previewer)
+  ;; 在 minibuffer 中显示 which-key 提示（可选）
+  (setq which-key-show-prefix 'bottom)
+  (setq which-key-min-display-lines 6)
+  
+  ;; 自定义 which-key 提示的外观（可选）
+  (setq which-key-separator " → ")
+  (setq which-key-prefix-prefix "+")
+  
+  ;; 如果你希望在某些模式下禁用 which-key，可以使用下面的钩子函数（可选）
+  ;; (add-hook 'some-mode-hook (lambda () (which-key-mode -1)))
   )
 
+;; 最后加载配置
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
+#+END_SRC
+
+** eaf-pdf
+#+BEGIN_SRC emacs-lisp
+;; Check if running in Emacs server mode
+(defvar running-in-server (daemonp))
+
+(unless running-in-server
+  (use-package eaf
+    :load-path "~/emacs-application-framework"
+    :config
+    (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
+    )
+  
 ;;;LaTeX config
-(add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
-(add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
-(add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
-#+END_SRC
-** init-tools.el 文件尾
-
-#+BEGIN_SRC emacs-lisp
-
-(provide 'init-tools)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-tools.el ends here
-#+END_SRC
-* init-note.el
-:PROPERTIES:
-:HEADER-ARGS: :tangle lisp/init-note.el :mkdirp yes
-:END:
-emacs 写作助手
-** init-note.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-note.el --- Noting settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
+  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
+  (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
+  )
 #+END_SRC
 
 ** org-ai
-[[https://github.com/rksm/org-ai][org-ai]] 插件可以访问 ChatGPT 并成为 Emacs 的智能助手。
-
 #+BEGIN_SRC emacs-lisp
 (use-package org-ai
   :ensure t
@@ -2824,8 +2075,8 @@ emacs 写作助手
   :ensure t
   :commands (consult-notes
              consult-notes-search-in-all-notes)
-  :bind (("C-c n f" . consult-notes)
-         ("C-c n c" . consult-notes-search-in-all-notes))
+  :bind (("C-c c n" . consult-notes)
+         ("C-c c s" . consult-notes-search-in-all-notes))
   :config
   (setq consult-notes-file-dir-sources
         `(
@@ -2889,31 +2140,16 @@ Marked 2 is a mac app that renders markdown."
 #+END_SRC
 
 ** rime
-输入法设置
 #+BEGIN_SRC emacs-lisp
 (use-package rime
   :custom
-  (default-input-method "rime")
-  )
+  (default-input-method "rime"))
 
 (global-set-key (kbd "C-\\") 'toggle-input-method)
 #+END_SRC
 
-** youdao dictionary
-有道翻译
-#+BEGIN_SRC emacs-lisp
-(use-package youdao-dictionary)
-(global-set-key (kbd "C-c y") 'youdao-dictionary-search-at-point-tooltip)
-(setq url-automatic-caching t)
-(setq youdao-dictionary-search-history-file "~/.emacs.d/.youdao")
-(setq youdao-dictionary-use-chinese-word-segmentation t)
-#+END_SRC
 
 ** plantuml绘图
-[[https://plantuml.com/zh/][plantuml]] 可以让我们在Org mode里通过纯文本画各种图，具体参考：[[https://plantuml.com/zh/emacs][PlantUML integration with Emacs]]。
-
-需要提前通过 =brew install plantuml= 安装 =plantuml= 。
-
 #+BEGIN_SRC emacs-lisp
 (use-package plantuml-mode
   :ensure t
@@ -2937,28 +2173,7 @@ Marked 2 is a mac app that renders markdown."
   )
 #+END_SRC
 
-** gnuplot绘图
-
-[[https://github.com/emacs-gnuplot/gnuplot][gnuplot]] 插件可以让Emacs通过gnuplot绘图。
-
-#+BEGIN_SRC emacs-lisp
-(use-package gnuplot
-  :ensure t
-  :mode ("\\.gp$" . gnuplot-mode)
-  :init
-  (add-to-list 'org-src-lang-modes '("gnuplot" . gnuplot))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((gnuplot . t))))
-  :config
-  ;; (add-to-list 'auto-mode-alist '("\\.gp$" . gnuplot-mode))
-  (setq org-babel-default-header-args:gnuplot
-      '((:exports . "results")
-        (:results . "file")))
-  )
-#+END_SRC
 ** org-capture快速记录设置
-
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture
   :ensure nil
@@ -2994,44 +2209,18 @@ Marked 2 is a mac app that renders markdown."
   )
 #+END_SRC
 
-** whisper
-#+BEGIN_SRC emacs-lisp
- (use-package whisper
-  :load-path "/home/elon/.emacs.d/whisper.el"
-  :bind ("M-s-r" . whisper-run)
-  :config
-  (setq whisper-model "base"
-        whisper-language "en"
-        whisper-translate nil)
-  )
-
-(use-package greader :ensure)
-#+END_SRC
-** init-note.el 文件尾
+** init-tools.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
-(provide 'init-note)
+(provide 'init-tools)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-dev.el ends here
+;;; init-tools.el ends here
 #+END_SRC
-
-* Init-language.el
+* init-language
 :PROPERTIES:
 :HEADER-ARGS: :tangle lisp/init-language.el :mkdirp yes
 :END:
-
-Emacs里的language设置。
-
-
-** init-language.el 文件头
-#+BEGIN_SRC emacs-lisp
-;;; init-language.el --- language settings -*- lexical-binding: t -*-
-;;; Commentary:
-
-;;; Code:
-
-#+END_SRC
-
+编程语言设置
 ** Python-mode
 #+BEGIN_SRC emacs-lisp
 (use-package python
@@ -3050,97 +2239,11 @@ Emacs里的language设置。
   :config
   (add-hook 'python-mode-hook 'pyvenv-mode))
 
-(use-package anaconda-mode
-  :ensure t
-  :hook (python-mode . anaconda-mode)
-  :init
-  (setq anaconda-mode-eldoc-as-single-line t))
-
-(use-package company-anaconda
-  :ensure t
-  :after anaconda-mode
-  :config
-  (eval-after-load "company"
-    '(add-to-list 'company-backends 'company-anaconda)))
-
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable)
-  :config
-  (setq elpy-rpc-python-command "python3") ;; 设置 Python 解释器路径
-  (setq python-shell-interpreter "python3")) ;; 设置 Python 解释器路径
-
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
-
 (use-package blacken
   :ensure t
   :hook (python-mode . blacken-mode))
 #+END_SRC
-** Rust-mode
-#+BEGIN_SRC emacs-lisp
-;; (use-package rust-mode)
-;; (add-hook 'rust-mode-hook
-;;           (lambda () (setq indent-tabs-mode nil)))
-;; (setq rust-format-on-save t)
-
-;; ;; (add-hook 'rust-mode-hook 'eglot-ensure)
-;; (add-hook 'rust-mode-hook 'lsp-deferred)
-
-;; Rust 开发配置
-(use-package rust-mode
-  :ensure t
-  :hook (rust-mode . lsp-deferred)
-  :config
-  (setq rust-format-on-save t))
-
-(add-hook 'rust-mode-hook
-           (lambda () (prettify-symbols-mode)))
-
-(use-package lsp-mode
-  :ensure t
-  :commands lsp
-  :hook (rust-mode . lsp-deferred)
-  :init
-  (setq lsp-rust-server 'rust-analyzer))
-
-(use-package company
-  :ensure t
-  :hook (prog-mode . company-mode)
-  :config
-  (setq company-tooltip-align-annotations t)
-  (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.0))
-
-(use-package lsp-ui
-  :ensure t
-  :hook (lsp-mode . lsp-ui-mode)
-  :config
-  (setq lsp-ui-doc-enable nil)
-  (setq lsp-ui-peek-enable t)
-  (setq lsp-ui-sideline-enable nil))
-
-(use-package lsp-treemacs
-  :ensure t
-  :commands lsp-treemacs-errors-list)
-
-(use-package cargo
-  :ensure t
-  :hook (rust-mode . cargo-minor-mode))
-
-
-
-(org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((rust . t))))
-
-;; 设置 Rust 语言的执行命令
-(setq org-babel-rust-command "rustc")
-#+END_SRC
-** emacs-lisp-mode
-
+** Emacs Lisp-mode
 #+BEGIN_SRC emacs-lisp
 (use-package elisp-mode
   :ensure nil
@@ -3175,30 +2278,41 @@ Emacs里的language设置。
     (end-of-line 1))
   )
 #+END_SRC
+** Rust-mode
+#+BEGIN_SRC emacs-lisp
+;; Rust 开发配置
+(use-package rust-mode
+  :ensure t
+  :config
+  (setq rust-format-on-save t))
 
-** lua-moode
+(add-hook 'rust-mode-hook
+           (lambda () (prettify-symbols-mode)))
+
+(use-package cargo
+  :ensure t
+  :hook (rust-mode . cargo-minor-mode))
+
+(org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((rust . t))))
+
+(use-package ob-rust)
+
+;; 设置 Rust 语言的执行命令
+(setq org-babel-rust-command "rustc")
+#+END_SRC
+** Lua-moode
 #+BEGIN_SRC emacs-lisp
 (use-package lua-mode)
 #+END_SRC
-
-** c-mode
+** C/Cpp-mode
 #+BEGIN_SRC emacs-lisp
-;; 配置 C/C++ 开发环境
-(use-package cc-mode
+ (use-package cc-mode
   :config
-  ;; 启用语法检查
-  (add-hook 'c-mode-hook 'flycheck-mode)
-  (add-hook 'c++-mode-hook 'flycheck-mode)
-  
-  ;; 使用 company 补全
-  (add-hook 'c-mode-hook 'company-mode)
-  (add-hook 'c++-mode-hook 'company-mode)
-  
-  ;; 使用 clangd 作为 LSP 服务器
-  (use-package lsp-mode
-    :config
-    (add-hook 'c-mode-hook 'lsp)
-    (add-hook 'c++-mode-hook 'lsp))
+   使用 company 补全
+   (add-hook 'c-mode-hook 'company-mode)
+   (add-hook 'c++-mode-hook 'company-mode)
   
   ;; 配置代码风格
   (setq c-default-style "linux"
@@ -3208,13 +2322,13 @@ Emacs里的language设置。
   
   ;; 设置快捷键
   (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
-#+END_SRC
+#+END_SRC、
 ** init-language.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
 (provide 'init-language)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init-dev.el ends here
+;;; init-language.el ends here
 #+END_SRC
 * init-hugo.el
 :PROPERTIES:
@@ -3229,7 +2343,6 @@ hugo设置
 
 ;;; Code:
 #+END_SRC
-
 
 ** ox-hugo
 #+BEGIN_SRC emacs-lisp
@@ -3252,6 +2365,7 @@ hugo设置
       (message "deploy.sh script file not found"))))
 #+END_SRC
 
+
 ** init-hugo.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
@@ -3259,4 +2373,11 @@ hugo设置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here
 #+END_SRC
+
+
+
+
+
+
+
 
