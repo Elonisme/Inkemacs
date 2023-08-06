@@ -1,7 +1,7 @@
 #+TITLE: Emacs Config
 #+SUBTITLE: One modern, fast, and visually appealing Emacs configuration
 #+AUTHOR:  Elon Li
-#+DATE: <2023-08-02 WED>
+#+DATE: <2023-08-06 SUN>
 
 #+STARTUP: overview
 
@@ -234,6 +234,8 @@
 (setq scroll-up-aggressively 0.01)
 (setq scroll-down-aggressively 0.01)
 (setq scroll-preserve-screen-position 'always)
+
+(setq pixel-scroll-precision-mode t)
 
 ;; 对于高的行禁止自动垂直滚动
 (setq auto-window-vscroll nil)
@@ -595,7 +597,7 @@
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-one-light t)
+  (load-theme 'doom-challenger-deep t)
 
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
@@ -787,10 +789,10 @@
 
 ** good-scroll
 #+BEGIN_SRC emacs-lisp
-(use-package good-scroll
-  :ensure t
-  :if window-system          ; 在图形化界面时才使用这个插件
-  :init (good-scroll-mode))
+;; (use-package good-scroll
+;;   :ensure t
+;;   :if window-system          ; 在图形化界面时才使用这个插件
+;;   :init (good-scroll-mode))
 #+END_SRC
 
 ** multiple-cursors多光标编辑
@@ -1533,43 +1535,6 @@ Optional for Org-mode file: `LINK'."
 (setq org-image-actual-width '(400))
 #+END_SRC
 
-** 显示数学公式
-#+BEGIN_SRC emacs-lisp
-(defun my/latex-hook ()
-  (interactive)
-  (turn-on-cdlatex)
-  (turn-on-reftex))
-
-(use-package tex
-  :ensure auctex
-  :custom
-  (TeX-parse-self t) ; 自动解析 tex 文件
-  (TeX-PDF-mode t)
-  (TeX-DVI-via-PDFTeX t)
-  :config
-  (setq-default TeX-master t) ; 默认询问主文件
-  (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
-
-(use-package cdlatex
-  :ensure t
-  :defer t
-  :hook
-  (LaTeX-mode . turn-on-cdlatex)) ;; 在 LaTeX 模式下自动开启 cdlatex
-
-(use-package texfrag
-  :ensure t
-  :hook (org-mode . texfrag-mode)
-  :config
-  (setq texfrag-extensions '("pdf"))
-  (setq texfrag-dpi 900))
-
-(setq TeX-source-correlate-mode t) ;; 编译后开启正反向搜索
-(setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
-(setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
-
-(add-hook 'org-mode-hook 'org-cdlatex-mode)
-#+END_SRC
-
 ** org-download实现粘贴复制图片到orgmode
 
 #+BEGIN_SRC emacs-lisp
@@ -1700,11 +1665,13 @@ folder, otherwise delete a word"
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :ensure t
-  :hook (prog-mode . company-mode)
+  :init (global-company-mode)
   :config
   (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.0))
+  (setq company-idle-delay 0.0)
+  (setq company-show-numbers t)
+  (add-hook 'org-mode-hook 'company-mode))
 #+END_SRC
 
 ** corfu
@@ -1720,6 +1687,7 @@ folder, otherwise delete a word"
 
 #+BEGIN_SRC emacs-lisp
 (use-package cape
+  :ensure t
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :bind (("C-c p p" . completion-at-point) ;; capf
@@ -1740,18 +1708,18 @@ folder, otherwise delete a word"
   :init
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
   ;; NOTE: The order matters!
-  ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  ;; (add-to-list 'completion-at-point-functions #'cape-file)
-  ;; (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-  ;; (add-to-list 'completion-at-point-functions #'cape-history)
-  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  (add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (add-to-list 'completion-at-point-functions #'cape-tex)
+  (add-to-list 'completion-at-point-functions #'cape-sgml)
+  (add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
   (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  (add-to-list 'completion-at-point-functions #'cape-line)
 )
 #+END_SRC
 
@@ -1766,11 +1734,15 @@ folder, otherwise delete a word"
 
 ** eglot
 #+BEGIN_SRC emacs-lisp
-(use-package eglot)
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
+  (add-hook 'LaTeX-mode-hook 'eglot-ensure)
+  (add-hook 'python-mode-hook 'eglot-ensure))
 #+END_SRC
 
 ** yasnippet
-
 #+BEGIN_SRC emacs-lisp
 ;; yasnippet settings
 (use-package yasnippet
@@ -1798,16 +1770,22 @@ folder, otherwise delete a word"
 
 ** 括号补全
 #+BEGIN_SRC emacs-lisp
-(use-package smartparens)
+(use-package smartparens
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook 'smartparens-mode)
+  (add-hook 'LaTeX-mode-hook 'smartparens-mode)
+  (add-hook 'rust-mode-hook 'smartparens-mode)
+  )
 
 (use-package smartparens-config
   :ensure smartparens
   :config
   (progn
-    (show-smartparens-global-mode t)))
-
-(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
-(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+    (show-smartparens-global-mode t))
+  (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+  (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+  )
 #+END_SRC
 
 ** init-complete.el 文件尾
@@ -1915,12 +1893,7 @@ folder, otherwise delete a word"
     :config
     (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
     )
-  
-;;;LaTeX config
-  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
-  (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
-  (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
-  )
+)
 #+END_SRC
 
 ** org-ai
@@ -2017,7 +1990,6 @@ folder, otherwise delete a word"
   )
 #+END_SRC
 
-
 ** plantuml绘图
 #+BEGIN_SRC emacs-lisp
 (use-package plantuml-mode
@@ -2085,6 +2057,7 @@ folder, otherwise delete a word"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-tools.el ends here
 #+END_SRC
+
 * init-language
 :PROPERTIES:
 :HEADER-ARGS: :tangle lisp/init-language.el :mkdirp yes
@@ -2106,12 +2079,55 @@ folder, otherwise delete a word"
   :ensure t
   :after python
   :config
+  (setenv "WORKON_HOME" "/home/elon/.conda/envs/")
   (add-hook 'python-mode-hook 'pyvenv-mode))
 
 (use-package blacken
   :ensure t
   :hook (python-mode . blacken-mode))
 #+END_SRC
+
+** Latex配置
+#+BEGIN_SRC emacs-lisp
+(defun my/latex-hook ()
+  (interactive)
+  (turn-on-cdlatex)
+  (turn-on-reftex))
+
+(use-package tex
+  :ensure auctex
+  :custom
+  (TeX-parse-self t) ; 自动解析 tex 文件
+  (TeX-PDF-mode t)
+  (TeX-DVI-via-PDFTeX t)
+  :config
+  (setq-default TeX-master t) ; 默认询问主文件
+  (setq TeX-source-correlate-mode t) ;; 编译后开启正反向搜索
+  (setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
+  (setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
+  ;;;LaTeX config
+  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
+  (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
+  (add-hook 'LaTeX-mode-hook 'company-mode)
+  (add-hook 'LaTeX-mode-hook 'my/latex-hook)
+  ) ; 加载LaTeX模式钩子
+
+(use-package cdlatex
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'org-mode-hook 'org-cdlatex-mode)
+  ) ;; 在 LaTeX 模式下自动开启 cdlatex
+
+(use-package texfrag
+  :ensure t
+  :hook (org-mode . texfrag-mode)
+  :config
+  (setq texfrag-extensions '("pdf"))
+  (setq texfrag-dpi 900))
+#+END_SRC
+
 ** Emacs Lisp-mode
 #+BEGIN_SRC emacs-lisp
 (use-package elisp-mode
@@ -2153,10 +2169,14 @@ folder, otherwise delete a word"
 (use-package rust-mode
   :ensure t
   :config
-  (setq rust-format-on-save t))
-
-(add-hook 'rust-mode-hook
-           (lambda () (prettify-symbols-mode)))
+  (setq rust-format-on-save t)
+  ;; 设置 Rust 语言的执行命令
+  (setq org-babel-rust-command "rustc")
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((rust . t))))
+  (add-hook 'rust-mode-hook
+           (lambda () (prettify-symbols-mode))))
 
 (use-package cargo
   :ensure t
@@ -2164,12 +2184,6 @@ folder, otherwise delete a word"
 
 (use-package ob-rust
   :ensure t)
-
-(org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((rust . t))))
-;; 设置 Rust 语言的执行命令
-(setq org-babel-rust-command "rustc")
 #+END_SRC
 ** Lua-moode
 #+BEGIN_SRC emacs-lisp

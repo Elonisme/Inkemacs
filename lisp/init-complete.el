@@ -40,11 +40,13 @@ folder, otherwise delete a word"
 
 (use-package company
   :ensure t
-  :hook (prog-mode . company-mode)
+  :init (global-company-mode)
   :config
   (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1)
-  (setq company-idle-delay 0.0))
+  (setq company-idle-delay 0.0)
+  (setq company-show-numbers t)
+  (add-hook 'org-mode-hook 'company-mode))
 
 ;; 使用 `use-package` 来安装和配置 `corfu`
 (use-package corfu
@@ -53,6 +55,7 @@ folder, otherwise delete a word"
   (global-corfu-mode)) ;; 全局启用 corfu 补全
 
 (use-package cape
+  :ensure t
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :bind (("C-c p p" . completion-at-point) ;; capf
@@ -73,18 +76,18 @@ folder, otherwise delete a word"
   :init
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
   ;; NOTE: The order matters!
-  ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  ;; (add-to-list 'completion-at-point-functions #'cape-file)
-  ;; (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-  ;; (add-to-list 'completion-at-point-functions #'cape-history)
-  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  (add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (add-to-list 'completion-at-point-functions #'cape-tex)
+  (add-to-list 'completion-at-point-functions #'cape-sgml)
+  (add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
   (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  (add-to-list 'completion-at-point-functions #'cape-line)
 )
 
 (use-package orderless
@@ -93,7 +96,12 @@ folder, otherwise delete a word"
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
-(use-package eglot)
+(use-package eglot
+  :ensure t
+  :config
+  (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
+  (add-hook 'LaTeX-mode-hook 'eglot-ensure)
+  (add-hook 'python-mode-hook 'eglot-ensure))
 
 ;; yasnippet settings
 (use-package yasnippet
@@ -117,16 +125,22 @@ folder, otherwise delete a word"
                  (eq old-tick (buffer-chars-modified-tick)))
         (ignore-errors (yas-next-field))))))
 
-(use-package smartparens)
+(use-package smartparens
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook 'smartparens-mode)
+  (add-hook 'LaTeX-mode-hook 'smartparens-mode)
+  (add-hook 'rust-mode-hook 'smartparens-mode)
+  )
 
 (use-package smartparens-config
   :ensure smartparens
   :config
   (progn
-    (show-smartparens-global-mode t)))
-
-(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
-(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+    (show-smartparens-global-mode t))
+  (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+  (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+  )
 
 (provide 'init-complete)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -24,10 +24,10 @@
 
 (global-set-key (kbd "C-x k") 'my-kill-buffer-and-close-window)
 
-(use-package good-scroll
-  :ensure t
-  :if window-system          ; 在图形化界面时才使用这个插件
-  :init (good-scroll-mode))
+;; (use-package good-scroll
+;;   :ensure t
+;;   :if window-system          ; 在图形化界面时才使用这个插件
+;;   :init (good-scroll-mode))
 
 (use-package multiple-cursors
   :ensure t

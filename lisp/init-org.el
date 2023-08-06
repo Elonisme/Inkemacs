@@ -546,40 +546,6 @@ Optional for Org-mode file: `LINK'."
 ;; 图片默认宽度
 (setq org-image-actual-width '(400))
 
-(defun my/latex-hook ()
-  (interactive)
-  (turn-on-cdlatex)
-  (turn-on-reftex))
-
-(use-package tex
-  :ensure auctex
-  :custom
-  (TeX-parse-self t) ; 自动解析 tex 文件
-  (TeX-PDF-mode t)
-  (TeX-DVI-via-PDFTeX t)
-  :config
-  (setq-default TeX-master t) ; 默认询问主文件
-  (add-hook 'LaTeX-mode-hook 'my/latex-hook)) ; 加载LaTeX模式钩子
-
-(use-package cdlatex
-  :ensure t
-  :defer t
-  :hook
-  (LaTeX-mode . turn-on-cdlatex)) ;; 在 LaTeX 模式下自动开启 cdlatex
-
-(use-package texfrag
-  :ensure t
-  :hook (org-mode . texfrag-mode)
-  :config
-  (setq texfrag-extensions '("pdf"))
-  (setq texfrag-dpi 900))
-
-(setq TeX-source-correlate-mode t) ;; 编译后开启正反向搜索
-(setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
-(setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
-
-(add-hook 'org-mode-hook 'org-cdlatex-mode)
-
 (use-package org-download
   :defer t ;; 延迟加载
   :bind

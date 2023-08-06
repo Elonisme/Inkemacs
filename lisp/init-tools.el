@@ -78,12 +78,7 @@
     :config
     (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
     )
-  
-;;;LaTeX config
-  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
-  (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
-  (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
-  )
+)
 
 (use-package org-ai
   :ensure t

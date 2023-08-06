@@ -80,16 +80,3 @@
 (provide 'init)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(lua-mode yasnippet which-key vertico toc-org texfrag swiper smartparens rust-mode rime restart-emacs quelpa-use-package pyvenv plantuml-mode ox-hugo org-super-links org-roam-ui org-modern org-contrib org-auto-tangle org-appear org-ai orderless ob-rust no-littering multiple-cursors marginalia keycast helpful good-scroll fontaine doom-themes doom-modeline diminish denote dashboard crux corfu consult-notes company cdlatex cargo blacken ace-window)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

@@ -12,11 +12,50 @@
   :ensure t
   :after python
   :config
+  (setenv "WORKON_HOME" "/home/elon/.conda/envs/")
   (add-hook 'python-mode-hook 'pyvenv-mode))
 
 (use-package blacken
   :ensure t
   :hook (python-mode . blacken-mode))
+
+(defun my/latex-hook ()
+  (interactive)
+  (turn-on-cdlatex)
+  (turn-on-reftex))
+
+(use-package tex
+  :ensure auctex
+  :custom
+  (TeX-parse-self t) ; 自动解析 tex 文件
+  (TeX-PDF-mode t)
+  (TeX-DVI-via-PDFTeX t)
+  :config
+  (setq-default TeX-master t) ; 默认询问主文件
+  (setq TeX-source-correlate-mode t) ;; 编译后开启正反向搜索
+  (setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
+  (setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
+  ;;;LaTeX config
+  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
+  (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
+  (add-hook 'LaTeX-mode-hook 'company-mode)
+  (add-hook 'LaTeX-mode-hook 'my/latex-hook)
+  ) ; 加载LaTeX模式钩子
+
+(use-package cdlatex
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'org-mode-hook 'org-cdlatex-mode)
+  ) ;; 在 LaTeX 模式下自动开启 cdlatex
+
+(use-package texfrag
+  :ensure t
+  :hook (org-mode . texfrag-mode)
+  :config
+  (setq texfrag-extensions '("pdf"))
+  (setq texfrag-dpi 900))
 
 (use-package elisp-mode
   :ensure nil
@@ -55,10 +94,14 @@
 (use-package rust-mode
   :ensure t
   :config
-  (setq rust-format-on-save t))
-
-(add-hook 'rust-mode-hook
-           (lambda () (prettify-symbols-mode)))
+  (setq rust-format-on-save t)
+  ;; 设置 Rust 语言的执行命令
+  (setq org-babel-rust-command "rustc")
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((rust . t))))
+  (add-hook 'rust-mode-hook
+           (lambda () (prettify-symbols-mode))))
 
 (use-package cargo
   :ensure t
@@ -66,12 +109,6 @@
 
 (use-package ob-rust
   :ensure t)
-
-(org-babel-do-load-languages 'org-babel-load-languages
-                               (append org-babel-load-languages
-                                       '((rust . t))))
-;; 设置 Rust 语言的执行命令
-(setq org-babel-rust-command "rustc")
 
 (use-package lua-mode
   :ensure t)

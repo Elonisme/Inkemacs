@@ -53,6 +53,8 @@
 (setq scroll-down-aggressively 0.01)
 (setq scroll-preserve-screen-position 'always)
 
+(setq pixel-scroll-precision-mode t)
+
 ;; 对于高的行禁止自动垂直滚动
 (setq auto-window-vscroll nil)
 
