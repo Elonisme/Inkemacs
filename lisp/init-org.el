@@ -547,6 +547,7 @@ Optional for Org-mode file: `LINK'."
 (setq org-image-actual-width '(400))
 
 (use-package org-download
+  :ensure t
   :defer t ;; 延迟加载
   :bind
   (:map org-mode-map

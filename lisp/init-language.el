@@ -57,6 +57,17 @@
   (setq texfrag-extensions '("pdf"))
   (setq texfrag-dpi 900))
 
+(defun my/vterm-below ()
+  (interactive)
+  (split-window-below)
+  (other-window 1)
+  (window-resize (selected-window) -7 nil)
+  (vterm))
+
+(use-package vterm
+    :ensure t
+    :bind (("C-c t" .  my/vterm-below)))
+
 (use-package elisp-mode
   :ensure nil
   :after org

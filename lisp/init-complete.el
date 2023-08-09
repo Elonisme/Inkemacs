@@ -40,13 +40,12 @@ folder, otherwise delete a word"
 
 (use-package company
   :ensure t
-  :init (global-company-mode)
   :config
   (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0.0)
   (setq company-show-numbers t)
-  (add-hook 'org-mode-hook 'company-mode))
+  (add-hook 'python-mode-hook 'company-mode))
 
 ;; 使用 `use-package` 来安装和配置 `corfu`
 (use-package corfu
@@ -102,6 +101,16 @@ folder, otherwise delete a word"
   (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
   (add-hook 'LaTeX-mode-hook 'eglot-ensure)
   (add-hook 'python-mode-hook 'eglot-ensure))
+
+(use-package treesit-auto
+  :ensure t
+  :config
+  (global-treesit-auto-mode))
+
+(use-package quickrun
+    :ensure t
+    :commands (quickrun)
+    )
 
 ;; yasnippet settings
 (use-package yasnippet
