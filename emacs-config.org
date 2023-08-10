@@ -1,7 +1,7 @@
 #+TITLE: Emacs Config
 #+SUBTITLE: One modern, fast, and visually appealing Emacs configuration
 #+AUTHOR:  Elon Li
-#+DATE: <2023-08-09 WED>
+#+DATE: <2023-08-10 THU>
 
 #+STARTUP: overview
 
@@ -1898,6 +1898,11 @@ folder, otherwise delete a word"
 
 #+END_SRC
 
+
+** DocView
+#+BEGIN_SRC emacs-lisp
+(setq doc-view-resolution 300) ; 设置分辨率，根据需要进行调整
+#+END_SRC
 ** eaf-pdf
 #+BEGIN_SRC emacs-lisp
 ;; Check if running in Emacs server mode
@@ -1907,6 +1912,9 @@ folder, otherwise delete a word"
   (use-package eaf
     :load-path "~/emacs-application-framework"
     :config
+    (require 'eaf-video-player)
+    (require 'eaf-file-manager)
+    (require 'eaf-image-viewer)
     (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
     )
 )

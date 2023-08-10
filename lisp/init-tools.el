@@ -69,6 +69,8 @@
   :config
   (which-key-mode))
 
+(setq doc-view-resolution 300) ; 设置分辨率，根据需要进行调整
+
 ;; Check if running in Emacs server mode
 (defvar running-in-server (daemonp))
 
@@ -76,6 +78,9 @@
   (use-package eaf
     :load-path "~/emacs-application-framework"
     :config
+    (require 'eaf-video-player)
+    (require 'eaf-file-manager)
+    (require 'eaf-image-viewer)
     (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
     )
 )
