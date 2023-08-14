@@ -40,12 +40,13 @@ folder, otherwise delete a word"
 
 (use-package company
   :ensure t
+  :hook (python-mode . company-mode)
   :config
   (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0.0)
   (setq company-show-numbers t)
-  (add-hook 'python-mode-hook 'company-mode))
+  )
 
 ;; 使用 `use-package` 来安装和配置 `corfu`
 (use-package corfu
@@ -97,10 +98,11 @@ folder, otherwise delete a word"
 
 (use-package eglot
   :ensure t
+  :hook (python-mode . eglot-ensure)
   :config
   (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
-  (add-hook 'LaTeX-mode-hook 'eglot-ensure)
-  (add-hook 'python-mode-hook 'eglot-ensure))
+  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
+  (add-hook 'LaTeX-mode-hook 'eglot-ensure))
 
 (use-package treesit-auto
   :ensure t

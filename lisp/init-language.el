@@ -1,12 +1,10 @@
-(use-package python
+;; Configure elpy
+(use-package elpy
   :ensure t
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode)
+  :init
+  (elpy-enable)
   :config
-  ;; 在保存时自动格式化代码
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook 'py-autopep8-before-save))))
+  (setq elpy-rpc-python-command "python3"))
 
 (use-package pyvenv
   :ensure t
@@ -14,10 +12,6 @@
   :config
   (setenv "WORKON_HOME" "/home/elon/.conda/envs/")
   (add-hook 'python-mode-hook 'pyvenv-mode))
-
-(use-package blacken
-  :ensure t
-  :hook (python-mode . blacken-mode))
 
 (defun my/latex-hook ()
   (interactive)
@@ -36,7 +30,7 @@
   (setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
   (setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
   ;;;LaTeX config
-  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
+  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex -shell-escape --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
   (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
   (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
   (add-hook 'LaTeX-mode-hook 'company-mode)
@@ -56,6 +50,12 @@
   :config
   (setq texfrag-extensions '("pdf"))
   (setq texfrag-dpi 900))
+
+(use-package org-fragtog
+  :ensure t
+  :after org
+  :hook
+  (org-mode . org-fragtog-mode))
 
 (defun my/vterm-below ()
   (interactive)

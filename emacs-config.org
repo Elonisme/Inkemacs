@@ -1,7 +1,7 @@
 #+TITLE: Emacs Config
 #+SUBTITLE: One modern, fast, and visually appealing Emacs configuration
 #+AUTHOR:  Elon Li
-#+DATE: <2023-08-10 THU>
+#+DATE: <2023-08-14 MON>
 
 #+STARTUP: overview
 
@@ -1044,6 +1044,8 @@
 
   (setq org-clock-sound "~/.emacs.d/ding.wav")
 
+  (setq org-latex-listings 'minted)
+
   ;; ======================================
   ;; 设置打开Org links的程序
   ;; ======================================
@@ -1527,9 +1529,9 @@ Optional for Org-mode file: `LINK'."
 #+BEGIN_SRC emacs-lisp
 ;; 使用xelatex，配合当前org文件最开始的配置来正常输出中文
 (setq org-latex-pdf-process
-      '("xelatex -interaction nonstopmode -output-directory %o %f"
-        "xelatex -interaction nonstopmode -output-directory %o %f"
-        "xelatex -interaction nonstopmode -output-directory %o %f"))
+      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
 ;; 图片默认宽度
 (setq org-image-actual-width '(400))
@@ -1666,12 +1668,13 @@ folder, otherwise delete a word"
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :ensure t
+  :hook (python-mode . company-mode)
   :config
   (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1)
   (setq company-idle-delay 0.0)
   (setq company-show-numbers t)
-  (add-hook 'python-mode-hook 'company-mode))
+  )
 #+END_SRC
 
 ** corfu
@@ -1736,10 +1739,11 @@ folder, otherwise delete a word"
 #+BEGIN_SRC emacs-lisp
 (use-package eglot
   :ensure t
+  :hook (python-mode . eglot-ensure)
   :config
   (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
-  (add-hook 'LaTeX-mode-hook 'eglot-ensure)
-  (add-hook 'python-mode-hook 'eglot-ensure))
+  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
+  (add-hook 'LaTeX-mode-hook 'eglot-ensure))
 #+END_SRC
 
 ** treesite auto
@@ -1912,6 +1916,7 @@ folder, otherwise delete a word"
   (use-package eaf
     :load-path "~/emacs-application-framework"
     :config
+    (require 'eaf-browser)
     (require 'eaf-video-player)
     (require 'eaf-file-manager)
     (require 'eaf-image-viewer)
@@ -2036,6 +2041,21 @@ folder, otherwise delete a word"
           (:results . "file")
           ))
   )
+
+(use-package gnuplot
+  :ensure t
+  :mode ("\\.gp$" . gnuplot-mode)
+  :init
+  (add-to-list 'org-src-lang-modes '("gnuplot" . gnuplot))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((gnuplot . t))))
+  :config
+  ;; (add-to-list 'auto-mode-alist '("\\.gp$" . gnuplot-mode))
+   (setq org-babel-default-header-args:gnuplot
+        '((:exports . "results")
+          (:results . "file")))
+  )
 #+END_SRC
 
 ** org-capture快速记录设置
@@ -2089,15 +2109,13 @@ folder, otherwise delete a word"
 编程语言设置
 ** Python-mode
 #+BEGIN_SRC emacs-lisp
-(use-package python
+;; Configure elpy
+(use-package elpy
   :ensure t
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode)
+  :init
+  (elpy-enable)
   :config
-  ;; 在保存时自动格式化代码
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook 'py-autopep8-before-save))))
+  (setq elpy-rpc-python-command "python3"))
 
 (use-package pyvenv
   :ensure t
@@ -2105,10 +2123,6 @@ folder, otherwise delete a word"
   :config
   (setenv "WORKON_HOME" "/home/elon/.conda/envs/")
   (add-hook 'python-mode-hook 'pyvenv-mode))
-
-(use-package blacken
-  :ensure t
-  :hook (python-mode . blacken-mode))
 #+END_SRC
 
 ** Latex配置
@@ -2130,7 +2144,7 @@ folder, otherwise delete a word"
   (setq TeX-source-correlate-method 'synctex) ;; 正反向搜索的执行方式
   (setq TeX-source-correlate-start-server t) ;; 不再询问是否开启服务器以执行反向搜索
   ;;;LaTeX config
-  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
+  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex -shell-escape --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
   (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
   (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
   (add-hook 'LaTeX-mode-hook 'company-mode)
@@ -2150,6 +2164,12 @@ folder, otherwise delete a word"
   :config
   (setq texfrag-extensions '("pdf"))
   (setq texfrag-dpi 900))
+
+(use-package org-fragtog
+  :ensure t
+  :after org
+  :hook
+  (org-mode . org-fragtog-mode))
 #+END_SRC
 
 ** Vterm

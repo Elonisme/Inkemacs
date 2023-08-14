@@ -78,6 +78,7 @@
   (use-package eaf
     :load-path "~/emacs-application-framework"
     :config
+    (require 'eaf-browser)
     (require 'eaf-video-player)
     (require 'eaf-file-manager)
     (require 'eaf-image-viewer)
@@ -189,6 +190,21 @@
         '((:exports . "results")
           (:results . "file")
           ))
+  )
+
+(use-package gnuplot
+  :ensure t
+  :mode ("\\.gp$" . gnuplot-mode)
+  :init
+  (add-to-list 'org-src-lang-modes '("gnuplot" . gnuplot))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((gnuplot . t))))
+  :config
+  ;; (add-to-list 'auto-mode-alist '("\\.gp$" . gnuplot-mode))
+   (setq org-babel-default-header-args:gnuplot
+        '((:exports . "results")
+          (:results . "file")))
   )
 
 (use-package org-capture

@@ -73,6 +73,8 @@
 
   (setq org-clock-sound "~/.emacs.d/ding.wav")
 
+  (setq org-latex-listings 'minted)
+
   ;; ======================================
   ;; 设置打开Org links的程序
   ;; ======================================
@@ -539,9 +541,9 @@ Optional for Org-mode file: `LINK'."
 
 ;; 使用xelatex，配合当前org文件最开始的配置来正常输出中文
 (setq org-latex-pdf-process
-      '("xelatex -interaction nonstopmode -output-directory %o %f"
-        "xelatex -interaction nonstopmode -output-directory %o %f"
-        "xelatex -interaction nonstopmode -output-directory %o %f"))
+      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
 ;; 图片默认宽度
 (setq org-image-actual-width '(400))
