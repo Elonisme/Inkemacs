@@ -1,4 +1,4 @@
-#+TITLE: Emacs Config
+#+TITLE: inkwell emacs
 #+SUBTITLE: One modern, fast, and visually appealing Emacs configuration
 #+AUTHOR:  Elon Li
 #+DATE: <2023-08-14 MON>
