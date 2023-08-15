@@ -52,7 +52,7 @@
 
 ;; Directly modify when selecting text
 (use-package delsel
-  :ensure nil
+  :ensure t
   :hook (after-init . delete-selection-mode))
 
     (use-package avy
