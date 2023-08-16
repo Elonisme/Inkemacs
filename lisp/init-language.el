@@ -1,3 +1,7 @@
+(use-package python
+  :ensure t
+)
+
 ;; Configure elpy
 (use-package elpy
   :ensure t
@@ -33,7 +37,7 @@
   (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex -shell-escape --synctex=1%(mode)%' %t" TeX-run-TeX nil t))
   (add-to-list 'TeX-view-program-list '("eaf" eaf-pdf-synctex-forward-view))
   (add-to-list 'TeX-view-program-selection '(output-pdf "eaf"))
-  (add-hook 'LaTeX-mode-hook 'company-mode)
+
   (add-hook 'LaTeX-mode-hook 'my/latex-hook)
   ) ; 加载LaTeX模式钩子
 
