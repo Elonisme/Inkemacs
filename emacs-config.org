@@ -1,7 +1,7 @@
 #+TITLE: Inkwell emacs
 #+SUBTITLE: One modern, fast, and visually appealing Emacs configuration
 #+AUTHOR:  Elon Li
-#+DATE: <2023-08-15 TUE>
+#+DATE: <2023-08-16 WED>
 
 #+STARTUP: overview
 
@@ -523,28 +523,29 @@
 
 ** Dashboard
 #+BEGIN_SRC emacs-lisp
-  (use-package dashboard
-    :ensure t
-    :init
-    (progn
-      ;; Set the title
-      (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
-      ;; Set the banner
-      (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
-      ;; Content is not centered by default. To center, set
-      (setq dashboard-center-content t)
-      (setq dashboard-set-heading-icons t)
-      (setq dashboard-icon-type 'all-the-icons)
-      (setq dashboard-set-file-icons t)
-      )
-    :config
-    (dashboard-setup-startup-hook)
-
-    ;; Customize the dashboard items
-    (setq dashboard-items '((recents . 6)
-                            (bookmarks . 6)
-                            ))
+(use-package dashboard
+  :ensure t
+  :init
+  (progn
+    ;; Set the title
+    (setq dashboard-banner-logo-title "Welcom Inkwell Emacs")
+    ;; Set the banner
+    (setq dashboard-startup-banner "/home/elon/.emacs.d/logo.png")
+    ;; Content is not centered by default. To center, set
+    (setq dashboard-center-content t)
+    (setq dashboard-display-icons-p t) ;; display icons on both GUI and terminal
+    (setq dashboard-icon-type 'nerd-icons) ;; use `nerd-icons' package
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
     )
+  :config
+  (dashboard-setup-startup-hook)
+
+  ;; Customize the dashboard items
+  (setq dashboard-items '((recents . 6)
+                          (bookmarks . 6)
+                          ))
+  )
 #+END_SRC
 
 ** keycast按键展示
@@ -1665,17 +1666,15 @@ folder, otherwise delete a word"
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :ensure t
-  ;; :hook
-  ;; (python-mode . company-mode)
-  ;; (LaTeX-mode . company-mode)
-  ;; (c-mode-hook . company-mode)
-  ;; (c++-mode-hook . company-mode)
-  ;; :config
-  ;; (setq company-tooltip-align-annotations t)
-  ;; (setq company-minimum-prefix-length 1)
-  ;; (setq company-idle-delay 0.0)
-  ;; (setq company-show-numbers t
-  ;;      )
+  :hook((python-mode . company-mode)
+        (LaTeX-mode . company-mode)
+        (c-mode . company-mode)
+        (c++-mode . company-mode))
+  :config
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.0)
+  (setq company-show-numbers t)
   )
 #+END_SRC
 
@@ -1686,16 +1685,16 @@ folder, otherwise delete a word"
   :ensure t
   :custom
   (corfu-separator ?\s)  
-  :hook
-  (LaTeX-mode . corfu-mode)
-  (c-mode . corfu-mode)
-  (rust-mode . corfu-mode)
-  (shell-mode . corfu-mode)
-  (eshell-mode . corfu-mode)
+  :hook((c-mode . corfu-mode)
+        (c++-mode . corfu-mode)
+        (LaTeX-mode . corfu-mode)
+        (shell-mode . corfu-mode)
+        (eshell-mode . corfu-mode))
   :config
   (setq corfu-cycle t) ;; 允许在候选项之间循环
   (setq corfu-auto t) ;; 自动显示补全候选项
   (setq corfu-quit-at-boundary t) ;; 当光标在补全边界时，退出补全界面
+  (setq corfu-auto-delay 0)
 )
 #+END_SRC
 
@@ -1752,12 +1751,13 @@ folder, otherwise delete a word"
 #+BEGIN_SRC emacs-lisp
 (use-package eglot
   :ensure t
+  :hook((c-mode . eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
   (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
   (add-hook 'LaTeX-mode-hook 'eglot-ensure)
   (add-hook 'python-mode-hook 'eglot-ensure)
-  (add-hook 'c-mode-hook 'eglot-ensure)
+  ;;(add-hook 'c-mode-hook 'eglot-ensure)
   (add-hook 'rust-mode-hook 'eglot-ensure)
   )
 #+END_SRC
@@ -2270,7 +2270,15 @@ folder, otherwise delete a word"
 #+END_SRC
 ** C/Cpp-mode
 #+BEGIN_SRC emacs-lisp
- (use-package cc-mode
+(use-package irony
+  :ensure t
+  :config
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (setq irony-server-install-prefix "~/.emacs.d/irony/")
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+(use-package cc-mode
   :ensure t
   :config
   ;; 配置代码风格
@@ -2278,10 +2286,11 @@ folder, otherwise delete a word"
         c-basic-offset 4
         tab-width 4
         indent-tabs-mode t)
-  
   ;; 设置快捷键
-  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent))
-#+END_SRC、
+  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent)
+)
+#+END_SRC
+
 ** init-language.el 文件尾
 #+BEGIN_SRC emacs-lisp
 

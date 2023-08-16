@@ -128,6 +128,26 @@
 (use-package lua-mode
   :ensure t)
 
+(use-package irony
+  :ensure t
+  :config
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (setq irony-server-install-prefix "~/.emacs.d/irony/")
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+(use-package cc-mode
+  :ensure t
+  :config
+  ;; 配置代码风格
+  (setq c-default-style "linux"
+        c-basic-offset 4
+        tab-width 4
+        indent-tabs-mode t)
+  ;; 设置快捷键
+  (define-key c-mode-base-map (kbd "RET") 'newline-and-indent)
+)
+
 (provide 'init-language)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-language.el ends here

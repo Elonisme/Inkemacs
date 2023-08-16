@@ -40,17 +40,15 @@ folder, otherwise delete a word"
 
 (use-package company
   :ensure t
-  ;; :hook
-  ;; (python-mode . company-mode)
-  ;; (LaTeX-mode . company-mode)
-  ;; (c-mode-hook . company-mode)
-  ;; (c++-mode-hook . company-mode)
-  ;; :config
-  ;; (setq company-tooltip-align-annotations t)
-  ;; (setq company-minimum-prefix-length 1)
-  ;; (setq company-idle-delay 0.0)
-  ;; (setq company-show-numbers t
-  ;;      )
+  :hook((python-mode . company-mode)
+        (LaTeX-mode . company-mode)
+        (c-mode . company-mode)
+        (c++-mode . company-mode))
+  :config
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.0)
+  (setq company-show-numbers t)
   )
 
 ;; 使用 `use-package` 来安装和配置 `corfu`
@@ -58,16 +56,16 @@ folder, otherwise delete a word"
   :ensure t
   :custom
   (corfu-separator ?\s)  
-  :hook
-  (LaTeX-mode . corfu-mode)
-  (c-mode . corfu-mode)
-  (rust-mode . corfu-mode)
-  (shell-mode . corfu-mode)
-  (eshell-mode . corfu-mode)
+  :hook((c-mode . corfu-mode)
+        (c++-mode . corfu-mode)
+        (LaTeX-mode . corfu-mode)
+        (shell-mode . corfu-mode)
+        (eshell-mode . corfu-mode))
   :config
   (setq corfu-cycle t) ;; 允许在候选项之间循环
   (setq corfu-auto t) ;; 自动显示补全候选项
   (setq corfu-quit-at-boundary t) ;; 当光标在补全边界时，退出补全界面
+  (setq corfu-auto-delay 0)
 )
 
 (use-package cape
@@ -114,12 +112,13 @@ folder, otherwise delete a word"
 
 (use-package eglot
   :ensure t
+  :hook((c-mode . eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
   (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
   (add-hook 'LaTeX-mode-hook 'eglot-ensure)
   (add-hook 'python-mode-hook 'eglot-ensure)
-  (add-hook 'c-mode-hook 'eglot-ensure)
+  ;;(add-hook 'c-mode-hook 'eglot-ensure)
   (add-hook 'rust-mode-hook 'eglot-ensure)
   )
 
