@@ -36,6 +36,10 @@
 ;; 禁止闪烁光标
 (blink-cursor-mode -1)
 
+;; 设置光标样式
+(setq-default cursor-type 'bar) 
+
+
 ;; 在光标处而非鼠标所在位置粘贴
 (setq mouse-yank-at-point t)
 
@@ -44,16 +48,18 @@
 (setq select-enable-clipboard t)        ; 拷贝时使用剪贴板
 
 ;; 鼠标滚动设置
-(setq scroll-step 2)
-(setq scroll-margin 2)
-(setq hscroll-step 2)
-(setq hscroll-margin 2)
-(setq scroll-conservatively 101)
-(setq scroll-up-aggressively 0.01)
-(setq scroll-down-aggressively 0.01)
-(setq scroll-preserve-screen-position 'always)
+;; (setq scroll-step 2)
+;; (setq scroll-margin 2)
+;; (setq hscroll-step 2)
+;; (setq hscroll-margin 2)
+;; (setq scroll-conservatively 101)
+;; (setq scroll-up-aggressively 0.01)
+;; (setq scroll-down-aggressively 0.01)
+;; (setq scroll-preserve-screen-position 'always)
 
+;; 启动像素滚动
 (setq pixel-scroll-precision-mode t)
+(setq pixel-scroll-precision-large-scroll-height 40.0)
 
 ;; 对于高的行禁止自动垂直滚动
 (setq auto-window-vscroll nil)
