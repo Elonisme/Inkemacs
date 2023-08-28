@@ -56,9 +56,7 @@ folder, otherwise delete a word"
   :ensure t
   :custom
   (corfu-separator ?\s)  
-  :hook((c-mode . corfu-mode)
-        (c++-mode . corfu-mode)
-        (LaTeX-mode . corfu-mode)
+  :hook((LaTeX-mode . corfu-mode)
         (shell-mode . corfu-mode)
         (eshell-mode . corfu-mode))
   :config
@@ -118,7 +116,7 @@ folder, otherwise delete a word"
   (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
   (add-hook 'LaTeX-mode-hook 'eglot-ensure)
   (add-hook 'python-mode-hook 'eglot-ensure)
-  ;;(add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c-mode-hook 'eglot-ensure)
   (add-hook 'rust-mode-hook 'eglot-ensure)
   )
 

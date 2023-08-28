@@ -86,22 +86,23 @@
 	  (locate-user-emacs-file "etc/fontaine-latest-state.eld"))
     (setq fontaine-presets
 	  '((regular
-	     :default-height 140
-	     :default-weight regular
+	     :default-height 150
+	     :default-weight normal
 	     :fixed-pitch-height 1.0
 	     :variable-pitch-height 1.0
 	     )
 	    (large
-	     :default-height 180
+	     :default-height 250
 	     :default-weight normal
 	     :fixed-pitch-height 1.0
 	     :variable-pitch-height 1.05
 	     )
 	    (t
-	     :default-family "Source Code Pro"
-             :fixed-pitch-family "Source Code Pro"
-             :variable-pitch-family "Source Code Pro"
-             :italic-family "Source Code Pro"
+	     :default-family "IntelOne Mono"
+         :fixed-pitch-family "IntelOne Mono"
+         :variable-pitch-family "IntelOne Mono"
+         :italic-family "IntelOne Mono"
+         :default-weight normal
 	     :variable-pitch-weight normal
 	     :bold-weight normal
 	     :italic-slant italic
@@ -149,7 +150,7 @@
 		     )))
 		  )))
     
-    ;; set Chinese font scale
+    ;; set font scale
  (setq face-font-rescale-alist `(
                                   ("Symbola"             . 1.3)
                                   ("Microsoft YaHei"     . 1.2)
@@ -164,31 +165,13 @@
     
  )
 
-(defun set-emacsclient-font ()
-  "Set the font for Emacs client frames."
-  (let ((chinese-font "Sarasa Term SC Nerd")   ; 设置中文字体名称
-        (english-font "Source Code Pro")        ; 设置英文字体名称
-        (font-size 18)                         ; 设置字体大小
-        (chinese-font-scale 1.2))               ; 设置中文字体缩放比例
-    (set-face-attribute 'default nil :family english-font :height (* font-size 10))
-    (set-fontset-font t 'han (font-spec :family chinese-font))
-    (setq face-font-rescale-alist `((,chinese-font . ,chinese-font-scale)))))
-
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (select-frame frame)
-            (when (window-system frame)
-              (set-emacsclient-font))))
-
-(set-emacsclient-font) ; 在非 GUI 模式下设置默认字体
-
 (use-package nerd-icons
   :ensure t
-  ;; :custom
+  :custom
   ;; The Nerd Font you want to use in GUI
   ;; "Symbols Nerd Font Mono" is the default and is recommended
   ;; but you can use any other Nerd Font if you want
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
   )
 
 (provide 'init-ui)
