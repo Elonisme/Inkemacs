@@ -2,13 +2,8 @@
 
 [[./README.en.org][English Band]]
 
-<img src="./imgs/inkemacs .png" alt="ink emacs" width="150" height="150">
 #+ATTR_HTML: :width 150px :height 150px
-# [[./imgs/inkemacs .png]]
-
-#+ATTR_HTML: :width 200px :height 150px
-# [[./imgs/dashband.png]]
-
+[[./imgs/inkemacs .png]]
 
 ** 配置介绍
 这是我的 Emacs 配置,我取名为Inkwell Emacs。我的配置主要用于笔记和编写代码( =主要是写笔记= )， =不是一个全能的配置= 。我尽量使得我的配置都是我真正需要用的，使之尽量美观，快速，以及简单。
@@ -151,3 +146,8 @@ Emacs 社区非常欢迎新人。毕竟在专有软件还在世界上横行霸�
 我的邮箱是 elonisme@163.com。
 
 祝你在 Emacs 中编写代码和笔记愉快！
+
+** 示例
+#+ATTR_HTML: :width 200px :height 150px
+[[./imgs/dashband.png]]
+
