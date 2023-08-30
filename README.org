@@ -2,17 +2,12 @@
 
 [[./README.en.org][English Band]]
 
-#+ATTR_ORG: :width 700
-[[./imgs/dashband.png]]
+<img src="./imgs/inkemacs .png" alt="ink emacs" width="150" height="150">
+#+ATTR_HTML: :width 150px :height 150px
+# [[./imgs/inkemacs .png]]
 
-#+ATTR_ORG: :width 700
-[[./imgs/org.png]]
-
-#+ATTR_ORG: :width 700
-[[./imgs/coding.png]]
-
-#+ATTR_ORG: :width 700
-[[./imgs/emacs.png]]
+#+ATTR_HTML: :width 200px :height 150px
+# [[./imgs/dashband.png]]
 
 
 ** 配置介绍
