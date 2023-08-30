@@ -1,9 +1,11 @@
 #+TITLE: Inkwell emacs
-#+SUBTITLE: One modern, fast, and visually appealing Emacs configuration
-#+AUTHOR:  Elon Li
-#+DATE: <2023-08-28 MON>
+#+SUBTITLE:  One modern, fast, and visually appealing Emacs configuration
+#+AUTHOR: Elon Li
+#+DATE: <2023-08-30 WED>
+#+EMAIL: elonisme@keemail.me
 
 #+STARTUP: overview
+#+OPTIONS: author:nil date:nil email:nil timestamp:nil num:t
 
 * early-init.el
 :PROPERTIES:
@@ -1481,6 +1483,7 @@ Optional for Org-mode file: `LINK'."
   )
 #+END_SRC
 
+
 ** limit the babel result length
 #+BEGIN_SRC emacs-lisp
 ;; limit the babel result length
@@ -2111,6 +2114,8 @@ folder, otherwise delete a word"
 #+BEGIN_SRC emacs-lisp
 (use-package python
   :ensure t
+  :config
+  (setq python-indent-offset 4)
 )
 
 ;; Configure elpy
@@ -2324,11 +2329,3 @@ hugo设置
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-dev.el ends here
 #+END_SRC
-
-
-
-
-
-
-
-

@@ -1,5 +1,7 @@
 (use-package python
   :ensure t
+  :config
+  (setq python-indent-offset 4)
 )
 
 ;; Configure elpy
