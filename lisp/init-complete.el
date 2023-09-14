@@ -41,7 +41,7 @@ folder, otherwise delete a word"
 (use-package company
   :ensure t
   :hook((python-mode . company-mode)
-        (LaTeX-mode . company-mode)
+        ;;(LaTeX-mode . company-mode)
         (c-mode . company-mode)
         (c++-mode . company-mode))
   :config
@@ -56,7 +56,8 @@ folder, otherwise delete a word"
   :ensure t
   :custom
   (corfu-separator ?\s)  
-  :hook((LaTeX-mode . corfu-mode)
+  :hook(
+        ;;(LaTeX-mode . corfu-mode)
         (shell-mode . corfu-mode)
         (eshell-mode . corfu-mode))
   :config
@@ -108,16 +109,15 @@ folder, otherwise delete a word"
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
-(use-package eglot
-  :ensure t
-  :hook((c-mode . eglot-ensure))
-  :config
-  (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
-  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
-  (add-hook 'LaTeX-mode-hook 'eglot-ensure)
-  (add-hook 'python-mode-hook 'eglot-ensure)
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'rust-mode-hook 'eglot-ensure)
+(use-package lsp-bridge
+  :straight '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge"
+            :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
+            :build (:not compile))
+  :hook
+  (python-ts-mode . lsp-bridge-mode)
+  (LaTeX-mode . lsp-bridge-mode)
+  (c-ts-mode . lsp-bridge-mode)
+  (rust-ts-mode . lsp-bridge-mode)
   )
 
 (use-package treesit-auto
@@ -128,6 +128,8 @@ folder, otherwise delete a word"
 (use-package quickrun
     :ensure t
     :commands (quickrun)
+    :bind
+    (("C-c r" . quickrun))
     )
 
 ;; yasnippet settings

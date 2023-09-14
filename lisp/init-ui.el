@@ -174,6 +174,37 @@
   (nerd-icons-font-family "Symbols Nerd Font Mono")
   )
 
+(use-package diredfl
+  :ensure t
+  :hook (dired-mode . diredfl-mode))
+
+(use-package nerd-icons-dired
+  :ensure t
+  :hook (dired-mode . nerd-icons-dired-mode)
+  )
+
+(use-package nerd-icons-completion
+  :ensure t
+  :hook
+  (after-init . nerd-icons-completion-mode)
+  )
+
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+
+(use-package treemacs
+  :ensure t
+  :init
+  (setq treemacs-follow-mode t)
+  :config
+  (treemacs-resize-icons 18)) ; 调整图标大小（可选）
+
+(use-package treemacs-nerd-icons
+  :ensure t
+  :config
+  (treemacs-load-theme "nerd-icons"))
+
 (provide 'init-ui)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init-ui.el ends here

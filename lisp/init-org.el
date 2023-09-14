@@ -105,7 +105,7 @@ Optional for Org-mode file: `LINK'."
 
   :custom
   ;; 设置Org mode的目录
-  (org-directory "~/org")
+  (org-directory "~/Nutstore Files/org")
   ;; 设置笔记的默认存储位置
   (org-default-notes-file (expand-file-name "capture.org" org-directory))
   ;; 启用一些子模块

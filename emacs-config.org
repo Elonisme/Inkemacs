@@ -132,6 +132,22 @@
   :ensure t)
 #+END_SRC
 
+** straight
+#+BEGIN_SRC emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+END_SRC
+
 ** find-config
 #+BEGIN_SRC emacs-lisp
 (defun open-custom-post-file()
@@ -723,6 +739,54 @@
   )
 #+END_SRC
 
+** diredfl
+#+BEGIN_SRC emacs-lisp
+(use-package diredfl
+  :ensure t
+  :hook (dired-mode . diredfl-mode))
+#+END_SRC
+
+** nerd-icons-dired
+#+BEGIN_SRC emacs-lisp
+(use-package nerd-icons-dired
+  :ensure t
+  :hook (dired-mode . nerd-icons-dired-mode)
+  )
+#+END_SRC
+** nerd-icons-completion
+#+BEGIN_SRC emacs-lisp
+(use-package nerd-icons-completion
+  :ensure t
+  :hook
+  (after-init . nerd-icons-completion-mode)
+  )
+#+END_SRC
+
+** nerd-icons-ibuffer
+#+BEGIN_SRC emacs-lisp
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+#+END_SRC
+
+**  treemacs
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs
+  :ensure t
+  :init
+  (setq treemacs-follow-mode t)
+  :config
+  (treemacs-resize-icons 18)) ; 调整图标大小（可选）
+#+END_SRC
+
+** treemacs-nerd-icons
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs-nerd-icons
+  :ensure t
+  :config
+  (treemacs-load-theme "nerd-icons"))
+#+END_SRC
+
 ** init-ui.el 文件尾
 #+BEGIN_SRC emacs-lisp
 
@@ -1062,7 +1126,7 @@ Optional for Org-mode file: `LINK'."
 
   :custom
   ;; 设置Org mode的目录
-  (org-directory "~/org")
+  (org-directory "~/Nutstore Files/org")
   ;; 设置笔记的默认存储位置
   (org-default-notes-file (expand-file-name "capture.org" org-directory))
   ;; 启用一些子模块
@@ -1982,7 +2046,7 @@ folder, otherwise delete a word"
 (use-package company
   :ensure t
   :hook((python-mode . company-mode)
-        (LaTeX-mode . company-mode)
+        ;;(LaTeX-mode . company-mode)
         (c-mode . company-mode)
         (c++-mode . company-mode))
   :config
@@ -2000,7 +2064,8 @@ folder, otherwise delete a word"
   :ensure t
   :custom
   (corfu-separator ?\s)  
-  :hook((LaTeX-mode . corfu-mode)
+  :hook(
+        ;;(LaTeX-mode . corfu-mode)
         (shell-mode . corfu-mode)
         (eshell-mode . corfu-mode))
   :config
@@ -2060,18 +2125,17 @@ folder, otherwise delete a word"
   (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
-** eglot
+** lsp-bridge
 #+BEGIN_SRC emacs-lisp
-(use-package eglot
-  :ensure t
-  :hook((c-mode . eglot-ensure))
-  :config
-  (add-to-list 'eglot-server-programs '((Latex-mode) "texlab"))
-  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
-  (add-hook 'LaTeX-mode-hook 'eglot-ensure)
-  (add-hook 'python-mode-hook 'eglot-ensure)
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'rust-mode-hook 'eglot-ensure)
+(use-package lsp-bridge
+  :straight '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge"
+            :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
+            :build (:not compile))
+  :hook
+  (python-ts-mode . lsp-bridge-mode)
+  (LaTeX-mode . lsp-bridge-mode)
+  (c-ts-mode . lsp-bridge-mode)
+  (rust-ts-mode . lsp-bridge-mode)
   )
 #+END_SRC
 
@@ -2088,6 +2152,8 @@ folder, otherwise delete a word"
 (use-package quickrun
     :ensure t
     :commands (quickrun)
+    :bind
+    (("C-c r" . quickrun))
     )
 #+END_SRC
 
@@ -2235,7 +2301,7 @@ folder, otherwise delete a word"
 #+BEGIN_SRC emacs-lisp
 (setq doc-view-resolution 300) ; 设置分辨率，根据需要进行调整
 #+END_SRC
-** eaf-pdf
+** eaf
 #+BEGIN_SRC emacs-lisp
 ;; Check if running in Emacs server mode
 (defvar running-in-server (daemonp))
@@ -2245,34 +2311,19 @@ folder, otherwise delete a word"
     :load-path "~/emacs-application-framework"
     :config
     (require 'eaf-browser)
-    (require 'eaf-video-player)
-    (require 'eaf-file-manager)
+    (require 'eaf-pdf-viewer)
     (require 'eaf-image-viewer)
-    (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
     )
 )
 #+END_SRC
 
-** org-ai
+** OrgtoFlomo
 #+BEGIN_SRC emacs-lisp
-(use-package org-ai
-  :ensure t
-  :commands (org-ai-mode
-             org-ai-global-mode)
-  :bind (
-         ("C-c q" . org-ai-prompt)
-         ("C-c x" . org-ai-on-region)
-         )
-  :hook (org-mode . org-ai-mode)
-  :config
-  (setq org-ai-default-chat-system-prompt "You are an Emacs helper, please reply me in Org-mode format")
-  (org-ai-install-yasnippets)
+(use-package org-flomo
+  :ensure nil
+  :load-path "~/.emacs.d/org-flomo/"
   )
-
-(load-file "~/.emacs.d/keys/chatai-key.el")
-(require 'chatai-key)
 #+END_SRC
-
 ** org-roam
 #+BEGIN_SRC emacs-lisp
 (use-package org-roam
@@ -2344,6 +2395,31 @@ folder, otherwise delete a word"
 
   :config
   (global-set-key (kbd "C-\\") 'toggle-input-method)
+  )
+#+END_SRC
+
+** proxy setting
+#+BEGIN_SRC emacs-lisp
+(defun set-proxy-settings ()
+  "Set HTTP and SOCKS proxy settings and check internet connectivity."
+  (interactive)
+  (setq url-proxy-services
+          '(("http" . "127.0.0.1:7890")
+            ("https" . "127.0.0.1:7890")))
+    
+  (setq socks-server '("Default server" "127.0.0.1" 7890 5))
+  (message "代理设置成功")
+
+  (let ((url "https://www.google.com.hk/")) ; 你可以使用任何一个已知的可访问的网站
+    (condition-case err
+        (url-retrieve url
+                      (lambda (status)
+                        (if (buffer-live-p (current-buffer))
+                            (kill-buffer (current-buffer)))
+                        (if status
+                            (message "网络连接正常")
+                          (message "无法连接到网络"))))
+      (error (message "无法连接到网络"))))
   )
 #+END_SRC
 
@@ -2603,7 +2679,7 @@ hugo设置
 (defun execute-hugo-deploy-script (args)
   "执行 deploy.sh 脚本文件并将结果输出到 *Shell Output* 缓冲区"
   (interactive "sArguments: ")
-  (let ((script-file "/home/elon/hugo_blog/blogsite/deploy.sh"))
+  (let ((script-file "/home/elon/hugoblog/myblog/deploy.sh"))
     (if (file-exists-p script-file)
         (progn
           (message "Running deploy.sh script...")

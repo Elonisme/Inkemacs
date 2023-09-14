@@ -79,29 +79,15 @@
     :load-path "~/emacs-application-framework"
     :config
     (require 'eaf-browser)
-    (require 'eaf-video-player)
-    (require 'eaf-file-manager)
+    (require 'eaf-pdf-viewer)
     (require 'eaf-image-viewer)
-    (require 'eaf-pdf-viewer)          ; 启用PDF阅读器
     )
 )
 
-(use-package org-ai
-  :ensure t
-  :commands (org-ai-mode
-             org-ai-global-mode)
-  :bind (
-         ("C-c q" . org-ai-prompt)
-         ("C-c x" . org-ai-on-region)
-         )
-  :hook (org-mode . org-ai-mode)
-  :config
-  (setq org-ai-default-chat-system-prompt "You are an Emacs helper, please reply me in Org-mode format")
-  (org-ai-install-yasnippets)
+(use-package org-flomo
+  :ensure nil
+  :load-path "~/.emacs.d/org-flomo/"
   )
-
-(load-file "~/.emacs.d/keys/chatai-key.el")
-(require 'chatai-key)
 
 (use-package org-roam
   :ensure t
@@ -169,6 +155,28 @@
 
   :config
   (global-set-key (kbd "C-\\") 'toggle-input-method)
+  )
+
+(defun set-proxy-settings ()
+  "Set HTTP and SOCKS proxy settings and check internet connectivity."
+  (interactive)
+  (setq url-proxy-services
+          '(("http" . "127.0.0.1:7890")
+            ("https" . "127.0.0.1:7890")))
+    
+  (setq socks-server '("Default server" "127.0.0.1" 7890 5))
+  (message "代理设置成功")
+
+  (let ((url "https://www.google.com.hk/")) ; 你可以使用任何一个已知的可访问的网站
+    (condition-case err
+        (url-retrieve url
+                      (lambda (status)
+                        (if (buffer-live-p (current-buffer))
+                            (kill-buffer (current-buffer)))
+                        (if status
+                            (message "网络连接正常")
+                          (message "无法连接到网络"))))
+      (error (message "无法连接到网络"))))
   )
 
 (use-package plantuml-mode
